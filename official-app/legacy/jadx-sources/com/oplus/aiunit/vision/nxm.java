@@ -1,0 +1,24 @@
+package com.oplus.aiunit.vision;
+
+import com.heytap.connect.cipher.AESUtil;
+
+/* JADX INFO: loaded from: classes10.dex */
+public final class nxm {
+    public static String a(byte[] bArr) {
+        if (bArr == null) {
+            return null;
+        }
+        if (bArr.length == 0) {
+            return "";
+        }
+        char[] charArray = AESUtil.HEX.toCharArray();
+        char[] cArr = new char[bArr.length * 2];
+        for (int i = 0; i < bArr.length; i++) {
+            int i2 = bArr[i] & 255;
+            int i3 = i * 2;
+            cArr[i3] = charArray[i2 >>> 4];
+            cArr[i3 + 1] = charArray[i2 & 15];
+        }
+        return new String(cArr);
+    }
+}

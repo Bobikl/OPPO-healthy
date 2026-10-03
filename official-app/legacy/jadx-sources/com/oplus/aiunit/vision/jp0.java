@@ -1,0 +1,87 @@
+package com.oplus.aiunit.vision;
+
+/* JADX INFO: loaded from: classes11.dex */
+public interface jp0 {
+    public static final n1 bc;
+    public static final n1 bc_exch;
+    public static final n1 bc_pbe;
+    public static final n1 bc_pbe_sha1;
+    public static final n1 bc_pbe_sha1_pkcs12;
+    public static final n1 bc_pbe_sha1_pkcs12_aes128_cbc;
+    public static final n1 bc_pbe_sha1_pkcs12_aes192_cbc;
+    public static final n1 bc_pbe_sha1_pkcs12_aes256_cbc;
+    public static final n1 bc_pbe_sha1_pkcs5;
+    public static final n1 bc_pbe_sha224;
+    public static final n1 bc_pbe_sha256;
+    public static final n1 bc_pbe_sha256_pkcs12;
+    public static final n1 bc_pbe_sha256_pkcs12_aes128_cbc;
+    public static final n1 bc_pbe_sha256_pkcs12_aes192_cbc;
+    public static final n1 bc_pbe_sha256_pkcs12_aes256_cbc;
+    public static final n1 bc_pbe_sha256_pkcs5;
+    public static final n1 bc_pbe_sha384;
+    public static final n1 bc_pbe_sha512;
+    public static final n1 bc_sig;
+    public static final n1 newHope;
+    public static final n1 sphincs256;
+    public static final n1 sphincs256_with_BLAKE512;
+    public static final n1 sphincs256_with_SHA3_512;
+    public static final n1 sphincs256_with_SHA512;
+    public static final n1 xmss;
+    public static final n1 xmss_mt;
+    public static final n1 xmss_mt_with_SHA256;
+    public static final n1 xmss_mt_with_SHA512;
+    public static final n1 xmss_mt_with_SHAKE128;
+    public static final n1 xmss_mt_with_SHAKE256;
+    public static final n1 xmss_with_SHA256;
+    public static final n1 xmss_with_SHA512;
+    public static final n1 xmss_with_SHAKE128;
+    public static final n1 xmss_with_SHAKE256;
+
+    static {
+        n1 n1Var = new n1("1.3.6.1.4.1.22554");
+        bc = n1Var;
+        n1 n1VarM = n1Var.m("1");
+        bc_pbe = n1VarM;
+        n1 n1VarM2 = n1VarM.m("1");
+        bc_pbe_sha1 = n1VarM2;
+        n1 n1VarM3 = n1VarM.m("2.1");
+        bc_pbe_sha256 = n1VarM3;
+        bc_pbe_sha384 = n1VarM.m("2.2");
+        bc_pbe_sha512 = n1VarM.m("2.3");
+        bc_pbe_sha224 = n1VarM.m("2.4");
+        bc_pbe_sha1_pkcs5 = n1VarM2.m("1");
+        n1 n1VarM4 = n1VarM2.m("2");
+        bc_pbe_sha1_pkcs12 = n1VarM4;
+        bc_pbe_sha256_pkcs5 = n1VarM3.m("1");
+        n1 n1VarM5 = n1VarM3.m("2");
+        bc_pbe_sha256_pkcs12 = n1VarM5;
+        bc_pbe_sha1_pkcs12_aes128_cbc = n1VarM4.m("1.2");
+        bc_pbe_sha1_pkcs12_aes192_cbc = n1VarM4.m("1.22");
+        bc_pbe_sha1_pkcs12_aes256_cbc = n1VarM4.m("1.42");
+        bc_pbe_sha256_pkcs12_aes128_cbc = n1VarM5.m("1.2");
+        bc_pbe_sha256_pkcs12_aes192_cbc = n1VarM5.m("1.22");
+        bc_pbe_sha256_pkcs12_aes256_cbc = n1VarM5.m("1.42");
+        n1 n1VarM6 = n1Var.m("2");
+        bc_sig = n1VarM6;
+        n1 n1VarM7 = n1VarM6.m("1");
+        sphincs256 = n1VarM7;
+        sphincs256_with_BLAKE512 = n1VarM7.m("1");
+        sphincs256_with_SHA512 = n1VarM7.m("2");
+        sphincs256_with_SHA3_512 = n1VarM7.m("3");
+        n1 n1VarM8 = n1VarM6.m("2");
+        xmss = n1VarM8;
+        xmss_with_SHA256 = n1VarM8.m("1");
+        xmss_with_SHA512 = n1VarM8.m("2");
+        xmss_with_SHAKE128 = n1VarM8.m("3");
+        xmss_with_SHAKE256 = n1VarM8.m("4");
+        n1 n1VarM9 = n1VarM6.m("3");
+        xmss_mt = n1VarM9;
+        xmss_mt_with_SHA256 = n1VarM9.m("1");
+        xmss_mt_with_SHA512 = n1VarM9.m("2");
+        xmss_mt_with_SHAKE128 = n1VarM9.m("3");
+        xmss_mt_with_SHAKE256 = n1VarM9.m("4");
+        n1 n1VarM10 = n1Var.m("3");
+        bc_exch = n1VarM10;
+        newHope = n1VarM10.m("1");
+    }
+}

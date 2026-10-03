@@ -1,0 +1,87 @@
+package com.support.preference;
+
+/* JADX INFO: loaded from: classes10.dex */
+public final class R$style {
+    public static final int COUIInputPreferenceTheme = 2132148671;
+    public static final int COUIPreferenceCategoryStyle = 2132148735;
+    public static final int COUIPreferenceCategoryStyle_Title = 2132148736;
+    public static final int COUIPreferenceDescriptionStyle = 2132148737;
+    public static final int COUIPreferenceSummaryStyle = 2132148738;
+    public static final int COUIPreferenceSummaryStyle_Tiny = 2132148739;
+    public static final int COUIPreferenceTitleStyle = 2132148740;
+    public static final int COUIPreferenceTitleStyle_Tiny = 2132148741;
+    public static final int COUIToolBarInAppBarLayoutStyle = 2132148759;
+    public static final int Preference = 2132149428;
+    public static final int PreferenceAssignment = 2132149506;
+    public static final int PreferenceContent = 2132149508;
+    public static final int PreferenceFocusTitle = 2132149509;
+    public static final int PreferenceFragment_Material_WithToolBar = 2132149512;
+    public static final int PreferenceIcon = 2132149515;
+    public static final int PreferenceLayout = 2132149516;
+    public static final int PreferenceStatusText = 2132149517;
+    public static final int PreferenceStatusText_Tiny = 2132149518;
+    public static final int PreferenceSummary = 2132149519;
+    public static final int PreferenceThemeOverlay_COUITheme = 2132149522;
+    public static final int PreferenceThemeOverlay_COUITheme_Tiny = 2132149523;
+    public static final int PreferenceThemeOverlay_COUITheme_WithToolBar = 2132149524;
+    public static final int PreferenceTitle = 2132149529;
+    public static final int PreferenceWarnTitle = 2132149530;
+    public static final int Preference_COUI = 2132149429;
+    public static final int Preference_COUIRecommendedPreference = 2132149460;
+    public static final int Preference_COUITiny = 2132149461;
+    public static final int Preference_COUITiny_COUIButtonPreference = 2132149462;
+    public static final int Preference_COUITiny_COUIJumpPreference = 2132149463;
+    public static final int Preference_COUITiny_COUILoadInstallProgressPreference = 2132149464;
+    public static final int Preference_COUITiny_COUIMenuPreference = 2132149465;
+    public static final int Preference_COUITiny_COUISelectPreference = 2132149466;
+    public static final int Preference_COUITiny_COUISpannablePreference = 2132149467;
+    public static final int Preference_COUITiny_Category = 2132149468;
+    public static final int Preference_COUITiny_StatusSwitchingPreference = 2132149469;
+    public static final int Preference_COUITiny_SwitchPreferenceLoading = 2132149470;
+    public static final int Preference_COUI_COUIButtonPreference = 2132149430;
+    public static final int Preference_COUI_COUICheckBoxPreference = 2132149431;
+    public static final int Preference_COUI_COUICheckBoxPreference_Tiny = 2132149432;
+    public static final int Preference_COUI_COUICheckBoxWithDividerPreference = 2132149433;
+    public static final int Preference_COUI_COUICheckBoxWithDividerPreference_Tiny = 2132149434;
+    public static final int Preference_COUI_COUIInputPreference = 2132149435;
+    public static final int Preference_COUI_COUIInputPreference_Tiny = 2132149436;
+    public static final int Preference_COUI_COUIJumpPreference = 2132149437;
+    public static final int Preference_COUI_COUILoadInstallProgressPreference = 2132149438;
+    public static final int Preference_COUI_COUIMarkPreference = 2132149439;
+    public static final int Preference_COUI_COUIMarkPreference_Tiny = 2132149440;
+    public static final int Preference_COUI_COUIMenuPreference = 2132149441;
+    public static final int Preference_COUI_COUIRadioWithDividerPreference = 2132149442;
+    public static final int Preference_COUI_COUIRadioWithDividerPreference_Tiny = 2132149443;
+    public static final int Preference_COUI_COUISelectPreference = 2132149444;
+    public static final int Preference_COUI_COUISpannablePreference = 2132149445;
+    public static final int Preference_COUI_COUIStepperPreference = 2132149446;
+    public static final int Preference_COUI_COUISwitchWithDividerPreference = 2132149447;
+    public static final int Preference_COUI_COUISwitchWithDividerPreference_Tiny = 2132149448;
+    public static final int Preference_COUI_COUIWithPopupIcon = 2132149449;
+    public static final int Preference_COUI_Category = 2132149450;
+    public static final int Preference_COUI_CheckBoxPreference = 2132149451;
+    public static final int Preference_COUI_DialogPreference = 2132149452;
+    public static final int Preference_COUI_DialogPreference_Activity = 2132149453;
+    public static final int Preference_COUI_DialogPreference_EditTextPreference = 2132149454;
+    public static final int Preference_COUI_PreferenceScreen = 2132149455;
+    public static final int Preference_COUI_StatusSwitchingPreference = 2132149456;
+    public static final int Preference_COUI_SwitchPreference = 2132149457;
+    public static final int Preference_COUI_SwitchPreferenceCompat = 2132149459;
+    public static final int Preference_COUI_SwitchPreference_Loading = 2132149458;
+    public static final int TextAppearance_COUI_List_Assignment = 2132149679;
+    public static final int TextAppearance_COUI_List_Assignment_End = 2132149680;
+    public static final int TextAppearance_COUI_List_Assignment_End_Tiny = 2132149681;
+    public static final int TextAppearance_COUI_List_Assignment_Tiny = 2132149682;
+    public static final int TextAppearance_COUI_List_FocusTitle = 2132149683;
+    public static final int TextAppearance_COUI_List_WarnTitle = 2132149685;
+    public static final int TextAppearance_COUI_List_WarnTitle_Tiny = 2132149686;
+    public static final int TextAppearance_COUI_Preference_Description = 2132149687;
+    public static final int Widget_COUI_ListView_Group = 2132150341;
+    public static final int Widget_COUI_List_Category = 2132150335;
+    public static final int Widget_COUI_List_Category_Title = 2132150336;
+    public static final int Widget_COUI_List_Category_Title_Tiny = 2132150337;
+    public static final int preferenceClassificationTextStyle = 2132150904;
+
+    private R$style() {
+    }
+}

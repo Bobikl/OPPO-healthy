@@ -1,0 +1,90 @@
+package com.health.health_seedlingcard.bean;
+
+import androidx.annotation.Keep;
+import kotlin.Metadata;
+import kotlin.jvm.internal.DefaultConstructorMarker;
+import kotlin.jvm.internal.Intrinsics;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/* JADX INFO: loaded from: D:\项目\oppo通知转发\analysis\health667-dex\classes14.dex */
+@Keep
+@Metadata(d1 = {"\u0000,\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\t\n\u0002\u0010\u000b\n\u0002\b\u0002\n\u0002\u0010\b\n\u0000\n\u0002\u0010\u000e\n\u0000\b\u0087\b\u0018\u00002\u00020\u0001B\u0017\u0012\u0006\u0010\u0002\u001a\u00020\u0003\u0012\b\b\u0002\u0010\u0004\u001a\u00020\u0005¢\u0006\u0002\u0010\u0006J\t\u0010\u000b\u001a\u00020\u0003HÆ\u0003J\t\u0010\f\u001a\u00020\u0005HÆ\u0003J\u001d\u0010\r\u001a\u00020\u00002\b\b\u0002\u0010\u0002\u001a\u00020\u00032\b\b\u0002\u0010\u0004\u001a\u00020\u0005HÆ\u0001J\u0013\u0010\u000e\u001a\u00020\u000f2\b\u0010\u0010\u001a\u0004\u0018\u00010\u0001HÖ\u0003J\t\u0010\u0011\u001a\u00020\u0012HÖ\u0001J\t\u0010\u0013\u001a\u00020\u0014HÖ\u0001R\u0011\u0010\u0002\u001a\u00020\u0003¢\u0006\b\n\u0000\u001a\u0004\b\u0007\u0010\bR\u0011\u0010\u0004\u001a\u00020\u0005¢\u0006\b\n\u0000\u001a\u0004\b\t\u0010\n¨\u0006\u0015"}, d2 = {"Lcom/health/health_seedlingcard/bean/SleepReminderUiData;", "", "sleepWaveInfo", "Lcom/health/health_seedlingcard/bean/SleepReminderWaveInfo;", "sleepWaveOpt", "Lcom/health/health_seedlingcard/bean/SleepReminderWaveOpt;", "(Lcom/health/health_seedlingcard/bean/SleepReminderWaveInfo;Lcom/health/health_seedlingcard/bean/SleepReminderWaveOpt;)V", "getSleepWaveInfo", "()Lcom/health/health_seedlingcard/bean/SleepReminderWaveInfo;", "getSleepWaveOpt", "()Lcom/health/health_seedlingcard/bean/SleepReminderWaveOpt;", "component1", "component2", "copy", "equals", "", "other", "hashCode", "", "toString", "", "health_seedlingcard_release"}, k = 1, mv = {1, 8, 0}, xi = 48)
+public final /* data */ class SleepReminderUiData {
+
+    @NotNull
+    private final SleepReminderWaveInfo sleepWaveInfo;
+
+    @NotNull
+    private final SleepReminderWaveOpt sleepWaveOpt;
+
+    public SleepReminderUiData(@NotNull SleepReminderWaveInfo sleepReminderWaveInfo, @NotNull SleepReminderWaveOpt sleepReminderWaveOpt) {
+        Intrinsics.checkNotNullParameter(sleepReminderWaveInfo, "sleepWaveInfo");
+        Intrinsics.checkNotNullParameter(sleepReminderWaveOpt, "sleepWaveOpt");
+        this.sleepWaveInfo = sleepReminderWaveInfo;
+        this.sleepWaveOpt = sleepReminderWaveOpt;
+    }
+
+    public static /* synthetic */ SleepReminderUiData copy$default(SleepReminderUiData sleepReminderUiData, SleepReminderWaveInfo sleepReminderWaveInfo, SleepReminderWaveOpt sleepReminderWaveOpt, int i, Object obj) {
+        if ((i & 1) != 0) {
+            sleepReminderWaveInfo = sleepReminderUiData.sleepWaveInfo;
+        }
+        if ((i & 2) != 0) {
+            sleepReminderWaveOpt = sleepReminderUiData.sleepWaveOpt;
+        }
+        return sleepReminderUiData.copy(sleepReminderWaveInfo, sleepReminderWaveOpt);
+    }
+
+    @NotNull
+    /* JADX INFO: renamed from: component1, reason: from getter */
+    public final SleepReminderWaveInfo getSleepWaveInfo() {
+        return this.sleepWaveInfo;
+    }
+
+    @NotNull
+    /* JADX INFO: renamed from: component2, reason: from getter */
+    public final SleepReminderWaveOpt getSleepWaveOpt() {
+        return this.sleepWaveOpt;
+    }
+
+    @NotNull
+    public final SleepReminderUiData copy(@NotNull SleepReminderWaveInfo sleepWaveInfo, @NotNull SleepReminderWaveOpt sleepWaveOpt) {
+        Intrinsics.checkNotNullParameter(sleepWaveInfo, "sleepWaveInfo");
+        Intrinsics.checkNotNullParameter(sleepWaveOpt, "sleepWaveOpt");
+        return new SleepReminderUiData(sleepWaveInfo, sleepWaveOpt);
+    }
+
+    public boolean equals(@Nullable Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof SleepReminderUiData)) {
+            return false;
+        }
+        SleepReminderUiData sleepReminderUiData = (SleepReminderUiData) other;
+        return Intrinsics.areEqual(this.sleepWaveInfo, sleepReminderUiData.sleepWaveInfo) && Intrinsics.areEqual(this.sleepWaveOpt, sleepReminderUiData.sleepWaveOpt);
+    }
+
+    @NotNull
+    public final SleepReminderWaveInfo getSleepWaveInfo() {
+        return this.sleepWaveInfo;
+    }
+
+    @NotNull
+    public final SleepReminderWaveOpt getSleepWaveOpt() {
+        return this.sleepWaveOpt;
+    }
+
+    public int hashCode() {
+        return (this.sleepWaveInfo.hashCode() * 31) + this.sleepWaveOpt.hashCode();
+    }
+
+    @NotNull
+    public String toString() {
+        return "SleepReminderUiData(sleepWaveInfo=" + this.sleepWaveInfo + ", sleepWaveOpt=" + this.sleepWaveOpt + ")";
+    }
+
+    public /* synthetic */ SleepReminderUiData(SleepReminderWaveInfo sleepReminderWaveInfo, SleepReminderWaveOpt sleepReminderWaveOpt, int i, DefaultConstructorMarker defaultConstructorMarker) {
+        this(sleepReminderWaveInfo, (i & 2) != 0 ? new SleepReminderWaveOpt(null, 1, null) : sleepReminderWaveOpt);
+    }
+}

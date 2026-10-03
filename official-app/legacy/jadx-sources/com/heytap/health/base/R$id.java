@@ -1,0 +1,106 @@
+package com.heytap.health.base;
+
+/* JADX INFO: loaded from: classes15.dex */
+public final class R$id {
+    public static final int add = 2131427571;
+    public static final int appBarLayout = 2131427667;
+    public static final int btn_confirm = 2131428002;
+    public static final int btn_progress = 2131428067;
+    public static final int btn_reject = 2131428073;
+    public static final int cancel = 2131428169;
+    public static final int cb_retry = 2131428262;
+    public static final int cl_exception = 2131428423;
+    public static final int cl_load = 2131428448;
+    public static final int clamp = 2131428488;
+    public static final int collapsingToolbarLayout = 2131428506;
+    public static final int content_content = 2131428588;
+    public static final int content_layout = 2131428592;
+    public static final int content_title = 2131428598;
+    public static final int contents = 2131428601;
+    public static final int decode = 2131428813;
+    public static final int decode_failed = 2131428814;
+    public static final int decode_succeeded = 2131428815;
+    public static final int deviceConnectError = 2131428902;
+    public static final int deviceSyncTimeout = 2131428903;
+    public static final int device_page_layout = 2131428919;
+    public static final int dialog_sub_title = 2131428968;
+    public static final int dialog_title = 2131428969;
+    public static final int full_page_scroll = 2131429475;
+    public static final int full_page_statement = 2131429476;
+    public static final int go_setting = 2131429495;
+    public static final int iv_exception_image = 2131430270;
+    public static final int iv_icon = 2131430311;
+    public static final int iv_no_internet = 2131430369;
+    public static final int iv_tip = 2131430481;
+    public static final int launch_product_query = 2131430544;
+    public static final int lib_base_action = 2131430663;
+    public static final int lib_base_content_container = 2131430665;
+    public static final int lib_base_info = 2131430666;
+    public static final int lib_base_operation_index_medal_view = 2131430667;
+    public static final int lib_base_operation_tag = 2131430668;
+    public static final int lib_base_partial_container = 2131430669;
+    public static final int lib_base_share_to_douyin = 2131430670;
+    public static final int lib_base_share_to_friend = 2131430671;
+    public static final int lib_base_share_to_more = 2131430672;
+    public static final int lib_base_share_to_timeline = 2131430673;
+    public static final int lib_base_share_to_xhs = 2131430674;
+    public static final int lib_base_toolbar = 2131430676;
+    public static final int lib_base_view_top_1 = 2131430677;
+    public static final int lib_base_view_top_2 = 2131430678;
+    public static final int lib_base_view_top_3 = 2131430679;
+    public static final int lib_base_vsc_clip = 2131430681;
+    public static final int lib_base_vsc_fill = 2131430682;
+    public static final int ll_app_info = 2131430774;
+    public static final int loading = 2131430901;
+    public static final int menu_avatar = 2131431087;
+    public static final int menu_cancel = 2131431088;
+    public static final int menu_qr_code = 2131431127;
+    public static final int menu_share = 2131431135;
+
+    /* JADX INFO: renamed from: mirror, reason: collision with root package name */
+    public static final int f3156mirror = 2131431169;
+    public static final int networkError = 2131431281;
+    public static final int network_progress_text = 2131431285;
+    public static final int no_network_text = 2131431326;
+    public static final int normal = 2131431335;
+    public static final int notify_message_tv = 2131431357;
+    public static final int notify_notice_cb = 2131431358;
+    public static final int onStubModule = 2131431428;
+    public static final int panel_toolbar = 2131431536;
+    public static final int pb_loading = 2131431596;
+    public static final int progress_bar = 2131431765;
+    public static final int progressbar = 2131431782;
+    public static final int quit = 2131431804;
+    public static final int radio_off = 2131431809;
+    public static final int radio_on = 2131431810;
+    public static final int rank_loading = 2131431817;
+    public static final int rank_loading_layout = 2131431818;
+    public static final int red_dot = 2131431917;
+    public static final int repeat = 2131431945;
+    public static final int restart_preview = 2131431955;
+    public static final int return_scan_result = 2131431967;
+    public static final int scroll_layout = 2131432281;
+    public static final int scroll_text = 2131432289;
+    public static final int serverInternalError = 2131432455;
+    public static final int setNet = 2131432459;
+    public static final int statement_ua_content = 2131432785;
+    public static final int statement_ua_title = 2131432786;
+    public static final int toolbar = 2131433156;
+    public static final int tv_exception_tips = 2131433930;
+    public static final int tv_exception_title = 2131433931;
+    public static final int tv_loading_tip = 2131434176;
+    public static final int tv_loading_tips = 2131434177;
+    public static final int tv_no_internet = 2131434260;
+    public static final int tv_progress = 2131434372;
+    public static final int tv_tip = 2131434677;
+    public static final int txt_3 = 2131434838;
+    public static final int txt_exit = 2131434840;
+    public static final int txt_progress = 2131434843;
+    public static final int txt_second_statement = 2131434844;
+    public static final int txt_statement = 2131434845;
+    public static final int txt_title = 2131434847;
+    public static final int vertical_layout = 2131434965;
+
+    private R$id() {
+    }
+}

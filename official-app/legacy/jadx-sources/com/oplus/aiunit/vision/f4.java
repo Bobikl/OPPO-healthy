@@ -1,0 +1,37 @@
+package com.oplus.aiunit.vision;
+
+import android.location.Location;
+import android.location.LocationListener;
+import android.os.Bundle;
+import java.util.List;
+
+/* JADX INFO: loaded from: classes15.dex */
+public interface f4 extends LocationListener {
+    @Override // android.location.LocationListener
+    default void onFlushComplete(int i) {
+    }
+
+    @Override // android.location.LocationListener
+    void onLocationChanged(Location location);
+
+    @Override // android.location.LocationListener
+    default void onLocationChanged(List<Location> list) {
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            onLocationChanged(list.get(i));
+        }
+    }
+
+    @Override // android.location.LocationListener
+    default void onProviderDisabled(String str) {
+    }
+
+    @Override // android.location.LocationListener
+    default void onProviderEnabled(String str) {
+    }
+
+    @Override // android.location.LocationListener
+    @Deprecated
+    default void onStatusChanged(String str, int i, Bundle bundle) {
+    }
+}

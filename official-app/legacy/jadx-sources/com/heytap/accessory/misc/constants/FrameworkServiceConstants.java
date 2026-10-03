@@ -1,0 +1,53 @@
+package com.heytap.accessory.misc.constants;
+
+/* JADX INFO: loaded from: classes14.dex */
+public class FrameworkServiceConstants {
+    public static final String CONNECTION_ERROR_KEY = "ErrorKey";
+    public static final int CONNECTION_SUCCESS = 100;
+    public static final String EXTRA_ACCESSORIES = "accessories";
+    public static final String EXTRA_ACCESSORY = "android.accessory.device.extra.Accessory";
+    public static final String EXTRA_ACCESSORY_ADDRESS = "com.heytap.accessory.device.extra.AccessoryAddress";
+    public static final String EXTRA_ACCESSORY_ID = "accessoryId";
+    public static final String EXTRA_ACC_STATUS = "accessoryStatus";
+    public static final String EXTRA_AGENT_ID = "agentId";
+    public static final String EXTRA_AGENT_IMPL_CLASS = "agentImplclass";
+    public static final String EXTRA_APDU_SIZE = "android.accessory.device.extra.ApduSize";
+    public static final String EXTRA_CERTIFICATE_TYPE = "CERT_TYPE";
+    public static final String EXTRA_CHANNEL_ID = "channelId";
+    public static final String EXTRA_CLIENT_ID = "clientId";
+    public static final String EXTRA_CONNNECTION_ID = "connectionId";
+    public static final String EXTRA_CONSUMER_ID = "android.accessory.device.extra.ServiceConsumerKey";
+    public static final String EXTRA_DETACH_RECOVERY = "android.accessory.device.extra.DetachRecovery";
+    public static final String EXTRA_ERROR = "com.heytap.accessory.adapter.extra.ERROR";
+    public static final String EXTRA_ERROR_CODE = "errorcode";
+    public static final String EXTRA_KEY_MAX_FOOTER_LEN = "com.heytap.accessory.adapter.extra.FOOTER_LEN";
+    public static final String EXTRA_KEY_MAX_HEADER_LEN = "com.heytap.accessory.adapter.extra.HEADER_LEN";
+    public static final String EXTRA_KEY_MAX_MSG_HEADER_LEN = "com.heytap.accessory.adapter.extra.MSG_HEADER_LEN";
+    public static final String EXTRA_KEY_PROCESS_ID = "com.heytap.accessory.adapter.extra.PROCESS_ID";
+    public static final String EXTRA_PACKAGE_NAME = "packageName";
+    public static final String EXTRA_PADDING_LENGTH = "android.accessory.device.extra.PaddingLength";
+    public static final String EXTRA_PEER_ACCESSORY = "com.heytap.accessory.device.extra.PeerAccessory";
+    public static final String EXTRA_PEER_AGENT = "peerAgent";
+    public static final String EXTRA_PEER_AGENTS = "peerAgents";
+    public static final String EXTRA_PEER_AGENT_STATUS = "peerAgentStatus";
+    public static final String EXTRA_PEER_AUTH_KEY = "PEER_AGENT_KEY";
+    public static final String EXTRA_PRIORITY = "priority";
+    public static final String EXTRA_PROVIDER_ID = "android.accessory.device.extra.ServiceProviderKey";
+    public static final String EXTRA_READ_BYTES = "com.heytap.accessory.adapter.extra.READ_BYTES";
+    public static final String EXTRA_READ_LENGHT = "com.heytap.accessory.adapter.extra.READ_LENGHT";
+    public static final String EXTRA_READ_OFFSET = "com.heytap.accessory.adapter.extra.READ_OFFSET";
+    public static final String EXTRA_READ_SDK_HEADER = "com.heytap.accessory.adapter.extra.READ_HEADER";
+    public static final String EXTRA_SEND_TIMEOUT = "com.heytap.accessory.adapter.extra.SEND_TIMEOUT";
+    public static final String EXTRA_SSDU_SIZE = "android.accessory.device.extra.SsduSize";
+    public static final String EXTRA_STATUS = "status";
+    public static final String EXTRA_TRANSACTION_ID = "transactionId";
+    public static final int MSG_RESUME_CONNECT = 205;
+    public static final int ONDISCONNECT = 300;
+    public static final int ONRETRANSMISSIONFAILURE = 204;
+    public static final int ON_ERROR = 203;
+    public static final int ON_MESSAGES_FLUSHED = 204;
+    public static final int ON_READ = 201;
+    public static final int ON_SPACE_AVAILABLE = 202;
+    public static final String SERVICE_CONNECTION_ID = "android.accessory.consumer.ServiceConnectionId";
+    public static final int TRANSFER_COMPLETE = 101;
+}

@@ -1,0 +1,46 @@
+package com.oplus.pantanal.seedling.utrace;
+
+import android.content.Context;
+import com.oplus.pantanal.seedling.constants.Constants;
+import com.oplus.pantanal.seedling.util.Logger;
+import com.oplus.utrace.sdk.UTraceApp;
+import kotlin.Metadata;
+import kotlin.Result;
+import kotlin.ResultKt;
+import kotlin.Unit;
+import kotlin.jvm.internal.Intrinsics;
+import org.jetbrains.annotations.NotNull;
+
+/* JADX INFO: loaded from: D:\项目\oppo通知转发\analysis\health667-dex\classes8.dex */
+@Metadata(d1 = {"\u0000 \n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000b\n\u0002\b\u0003\bÀ\u0002\u0018\u00002\u00020\u0001B\u0007\b\u0002¢\u0006\u0002\u0010\u0002J\u0016\u0010\u0003\u001a\u00020\u00042\u0006\u0010\u0005\u001a\u00020\u00062\u0006\u0010\u0007\u001a\u00020\bJ\u000e\u0010\t\u001a\u00020\u00042\u0006\u0010\n\u001a\u00020\b¨\u0006\u000b"}, d2 = {"Lcom/oplus/pantanal/seedling/utrace/UTraceWrapper;", "", "()V", "init", "", "context", "Landroid/content/Context;", "isAboveOSVersion14", "", "setDebbugable", "value", "seedling-support_manualRelease"}, k = 1, mv = {1, 9, 0}, xi = 48)
+public final class UTraceWrapper {
+
+    @NotNull
+    public static final UTraceWrapper INSTANCE = new UTraceWrapper();
+
+    private UTraceWrapper() {
+    }
+
+    public final void init(@NotNull Context context, boolean isAboveOSVersion14) {
+        Object obj;
+        Intrinsics.checkNotNullParameter(context, "context");
+        try {
+            Result.Companion companion = Result.Companion;
+            UTraceApp.init(context);
+            Logger.INSTANCE.d(Constants.TAG, "init flavorLite = 1, checkAboveOSVersion14 = " + (isAboveOSVersion14 ? 1 : 0));
+            UTraceApp.setFlag(1, isAboveOSVersion14 ? 1 : 0);
+            obj = Result.constructor-impl(Unit.INSTANCE);
+        } catch (Throwable th) {
+            Result.Companion companion2 = Result.Companion;
+            obj = Result.constructor-impl(ResultKt.createFailure(th));
+        }
+        Throwable th2 = Result.exceptionOrNull-impl(obj);
+        if (th2 != null) {
+            Logger.INSTANCE.e(Constants.TAG, "UTraceApp.init error = " + th2.getMessage());
+        }
+    }
+
+    public final void setDebbugable(boolean value) {
+        UTraceApp.setFlag(3, value ? 1 : 0);
+    }
+}

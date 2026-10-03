@@ -1,0 +1,10 @@
+package p010kotlin.io.encoding;
+
+import p010kotlin.Metadata;
+
+/* JADX INFO: loaded from: classes10.dex */
+@Metadata(d1 = {"kotlin/io/encoding/StreamEncodingKt__Base64IOStreamKt"}, k = 4, mv = {1, 9, 0}, xi = 49)
+public final class StreamEncodingKt extends StreamEncodingKt__Base64IOStreamKt {
+    private StreamEncodingKt() {
+    }
+}

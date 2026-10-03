@@ -1,0 +1,66 @@
+package com.health.health_seedlingcard.bean;
+
+import androidx.annotation.Keep;
+import kotlin.Metadata;
+import kotlin.jvm.internal.Intrinsics;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/* JADX INFO: loaded from: D:\项目\oppo通知转发\analysis\health667-dex\classes14.dex */
+@Keep
+@Metadata(d1 = {"\u0000&\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0007\n\u0002\u0010\u000b\n\u0002\b\u0002\n\u0002\u0010\b\n\u0000\n\u0002\u0010\u000e\n\u0000\b\u0087\b\u0018\u00002\u00020\u0001B\r\u0012\u0006\u0010\u0002\u001a\u00020\u0003¢\u0006\u0002\u0010\u0004J\t\u0010\b\u001a\u00020\u0003HÆ\u0003J\u0013\u0010\t\u001a\u00020\u00002\b\b\u0002\u0010\u0002\u001a\u00020\u0003HÆ\u0001J\u0013\u0010\n\u001a\u00020\u000b2\b\u0010\f\u001a\u0004\u0018\u00010\u0001HÖ\u0003J\t\u0010\r\u001a\u00020\u000eHÖ\u0001J\t\u0010\u000f\u001a\u00020\u0010HÖ\u0001R\u001a\u0010\u0002\u001a\u00020\u0003X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\u0005\u0010\u0006\"\u0004\b\u0007\u0010\u0004¨\u0006\u0011"}, d2 = {"Lcom/health/health_seedlingcard/bean/SeriesSleepItemData;", "", "value", "Lcom/health/health_seedlingcard/bean/SleepItemDataValue;", "(Lcom/health/health_seedlingcard/bean/SleepItemDataValue;)V", "getValue", "()Lcom/health/health_seedlingcard/bean/SleepItemDataValue;", "setValue", "component1", "copy", "equals", "", "other", "hashCode", "", "toString", "", "health_seedlingcard_release"}, k = 1, mv = {1, 8, 0}, xi = 48)
+public final /* data */ class SeriesSleepItemData {
+
+    @NotNull
+    private SleepItemDataValue value;
+
+    public SeriesSleepItemData(@NotNull SleepItemDataValue sleepItemDataValue) {
+        Intrinsics.checkNotNullParameter(sleepItemDataValue, "value");
+        this.value = sleepItemDataValue;
+    }
+
+    public static /* synthetic */ SeriesSleepItemData copy$default(SeriesSleepItemData seriesSleepItemData, SleepItemDataValue sleepItemDataValue, int i, Object obj) {
+        if ((i & 1) != 0) {
+            sleepItemDataValue = seriesSleepItemData.value;
+        }
+        return seriesSleepItemData.copy(sleepItemDataValue);
+    }
+
+    @NotNull
+    /* JADX INFO: renamed from: component1, reason: from getter */
+    public final SleepItemDataValue getValue() {
+        return this.value;
+    }
+
+    @NotNull
+    public final SeriesSleepItemData copy(@NotNull SleepItemDataValue value) {
+        Intrinsics.checkNotNullParameter(value, "value");
+        return new SeriesSleepItemData(value);
+    }
+
+    public boolean equals(@Nullable Object other) {
+        if (this == other) {
+            return true;
+        }
+        return (other instanceof SeriesSleepItemData) && Intrinsics.areEqual(this.value, ((SeriesSleepItemData) other).value);
+    }
+
+    @NotNull
+    public final SleepItemDataValue getValue() {
+        return this.value;
+    }
+
+    public int hashCode() {
+        return this.value.hashCode();
+    }
+
+    public final void setValue(@NotNull SleepItemDataValue sleepItemDataValue) {
+        Intrinsics.checkNotNullParameter(sleepItemDataValue, "<set-?>");
+        this.value = sleepItemDataValue;
+    }
+
+    @NotNull
+    public String toString() {
+        return "SeriesSleepItemData(value=" + this.value + ")";
+    }
+}

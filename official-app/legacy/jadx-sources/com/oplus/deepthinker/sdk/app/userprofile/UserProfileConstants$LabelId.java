@@ -1,0 +1,70 @@
+package com.oplus.deepthinker.sdk.app.userprofile;
+
+/* JADX INFO: loaded from: classes5.dex */
+public enum UserProfileConstants$LabelId {
+    NOTIFICATION_IMPORTANCE(2),
+    APP_ACTIVATION(3),
+    TOP_APPS(4),
+    MORNING_APPS(5),
+    NOON_APPS(6),
+    EVENING_APPS(7),
+    SLEEP_APPS(8),
+    APP_ACTIVE_TIME_PERIOD(9),
+    TOP_POWER_COMSUMPTION_APPS(10),
+    BATTERY_USAGE(11),
+    POWER_ACCESSIBILITY(12),
+    ACTIVE_TIME_PERIOD(13),
+    INACTIVE_TIME_PERIOD(14),
+    TRAFFIC_USAGE(15),
+    WIFI_DEPENDENCY(16),
+    TRAFFIC_SENSITIVE(17),
+    SLEEP_HABIT(18),
+    SLEEP_CHARGE(19),
+    SLEEP_ADEQUACY(20),
+    WAKE_APPS(21),
+    APP_INACTIVE_TIME_PERIOD(22),
+    CHARGING_LOCATION(23),
+    WIFI_LOCATION(24),
+    BATTERY_CHARGE_HABIT(25),
+    BATTERY_DISCHARGE_HABIT(26),
+    WIFI_SETTING_HABIT(27),
+    BT_SETTING_HABIT(28),
+    MUTE_SETTING_HABIT(29),
+    APP_JUMP_RELATION(30),
+    APP_EXPLORE(31),
+    RESIDENCE(32),
+    APP_WIFI_DEPENDENCY(33),
+    APP_MOBILE_TRAFFIC_SENSITIVE(34),
+    APP_WEEKDAY_ACTIVE_TIME_PERIOD(35),
+    APP_WEEKEND_ACTIVE_TIME_PERIOD(36),
+    APP_WEEKDAY_INACTIVE_TIME_PERIOD(37),
+    APP_WEEKEND_INACTIVE_TIME_PERIOD(38),
+    APP_NOTIFICATION(39),
+    APP_LONG_TIME_USE(40),
+    APP_PREFERENCE(41),
+    APP_BG_VECTOR(42),
+    COMMUTE(43),
+    PERSON_CATEGORY(44),
+    YELLOW_PAGE(45),
+    APP_ACTIVE_CLUSTER(46),
+    HOME(47),
+    COMPANY(48),
+    COMMUTE_V2(49),
+    RESIDENCE_V2(50),
+    APP_TAXI_HABIT(51),
+    LEAVE_HOME(52);
+
+    private int value;
+
+    UserProfileConstants$LabelId(int i) {
+        this.value = i;
+    }
+
+    public final int getValue() {
+        return this.value;
+    }
+
+    public final void setValue(int i) {
+        this.value = i;
+    }
+}

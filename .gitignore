@@ -34,3 +34,6 @@
 *.apk
 *.idsig
 *.class
+
+!/official-app/
+!/official-app/6.6.7/ui-resources/official-ui-resources.apk

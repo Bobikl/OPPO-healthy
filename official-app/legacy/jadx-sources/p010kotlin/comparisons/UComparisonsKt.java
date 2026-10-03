@@ -1,0 +1,10 @@
+package p010kotlin.comparisons;
+
+import p010kotlin.Metadata;
+
+/* JADX INFO: loaded from: classes10.dex */
+@Metadata(d1 = {"kotlin/comparisons/UComparisonsKt___UComparisonsKt"}, k = 4, mv = {1, 9, 0}, xi = 49)
+public final class UComparisonsKt extends UComparisonsKt___UComparisonsKt {
+    private UComparisonsKt() {
+    }
+}

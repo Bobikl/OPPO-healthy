@@ -1,0 +1,16 @@
+package com.oplus.account.netrequest.annotation;
+
+import androidx.annotation.Keep;
+import com.oplus.aiunit.vision.jea;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/* JADX INFO: loaded from: classes6.dex */
+@Target({ElementType.METHOD})
+@Keep
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AcIgnoreIntercept {
+    Class<? extends jea>[] value() default {};
+}

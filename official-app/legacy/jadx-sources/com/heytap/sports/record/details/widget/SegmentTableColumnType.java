@@ -1,0 +1,48 @@
+package com.heytap.sports.record.details.widget;
+
+import p010kotlin.Metadata;
+
+/* JADX INFO: loaded from: classes2.dex */
+@Metadata(d1 = {"\u0000\f\n\u0002\u0018\u0002\n\u0002\u0010\u0010\n\u0002\b*\b\u0086\u0001\u0018\u00002\b\u0012\u0004\u0012\u00020\u00000\u0001B\u0007\b\u0002¢\u0006\u0002\u0010\u0002j\u0002\b\u0003j\u0002\b\u0004j\u0002\b\u0005j\u0002\b\u0006j\u0002\b\u0007j\u0002\b\bj\u0002\b\tj\u0002\b\nj\u0002\b\u000bj\u0002\b\fj\u0002\b\rj\u0002\b\u000ej\u0002\b\u000fj\u0002\b\u0010j\u0002\b\u0011j\u0002\b\u0012j\u0002\b\u0013j\u0002\b\u0014j\u0002\b\u0015j\u0002\b\u0016j\u0002\b\u0017j\u0002\b\u0018j\u0002\b\u0019j\u0002\b\u001aj\u0002\b\u001bj\u0002\b\u001cj\u0002\b\u001dj\u0002\b\u001ej\u0002\b\u001fj\u0002\b j\u0002\b!j\u0002\b\"j\u0002\b#j\u0002\b$j\u0002\b%j\u0002\b&j\u0002\b'j\u0002\b(j\u0002\b)j\u0002\b*¨\u0006+"}, d2 = {"Lcom/heytap/sports/record/details/widget/SegmentTableColumnType;", "", "(Ljava/lang/String;I)V", "SEGMENT", "SWIM_SEGMENT", "TRIP", "GROUP", "DISTANCE", "SWIM_DISTANCE", "DURATION", "SWIM_DURATION", "CALORIES", "AVG_PACE", "AVG_HEART_RATE", "MAX_HEART_RATE", "AVG_STEP_RATE", "AVG_STRIDE", "CLIMB", "DECLINE", "STEPS", "CADENCE", "STROKES_COUNT", "AVG_PADDLE", "AVG_SPEED", "MAX_SPEED", "ACTIVE_DURATION", "TOTAL_BATTING", "SKI_DISTANCE", "SKI_DURATION", "SWINGS", "JUMPS", "AVG_ROPE_SKIPPING_SPEED", "OVERHAND", "UNDERHAND", "FOREHAND", "BACKHAND", "MAX_SWINGS_SPEED", "TENNIS_FOREHAND", "TENNIS_BACKHAND", "TENNIS_SERVE", "SWIM_STROKE", "SWIM_SWOLF", "FLOORS", "sport_impl_release"}, k = 1, mv = {1, 8, 0}, xi = 48)
+public enum SegmentTableColumnType {
+    SEGMENT,
+    SWIM_SEGMENT,
+    TRIP,
+    GROUP,
+    DISTANCE,
+    SWIM_DISTANCE,
+    DURATION,
+    SWIM_DURATION,
+    CALORIES,
+    AVG_PACE,
+    AVG_HEART_RATE,
+    MAX_HEART_RATE,
+    AVG_STEP_RATE,
+    AVG_STRIDE,
+    CLIMB,
+    DECLINE,
+    STEPS,
+    CADENCE,
+    STROKES_COUNT,
+    AVG_PADDLE,
+    AVG_SPEED,
+    MAX_SPEED,
+    ACTIVE_DURATION,
+    TOTAL_BATTING,
+    SKI_DISTANCE,
+    SKI_DURATION,
+    SWINGS,
+    JUMPS,
+    AVG_ROPE_SKIPPING_SPEED,
+    OVERHAND,
+    UNDERHAND,
+    FOREHAND,
+    BACKHAND,
+    MAX_SWINGS_SPEED,
+    TENNIS_FOREHAND,
+    TENNIS_BACKHAND,
+    TENNIS_SERVE,
+    SWIM_STROKE,
+    SWIM_SWOLF,
+    FLOORS
+}

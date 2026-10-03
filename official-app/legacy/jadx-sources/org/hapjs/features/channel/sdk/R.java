@@ -1,0 +1,7 @@
+package org.hapjs.features.channel.sdk;
+
+/* JADX INFO: loaded from: classes11.dex */
+public final class R {
+    private R() {
+    }
+}

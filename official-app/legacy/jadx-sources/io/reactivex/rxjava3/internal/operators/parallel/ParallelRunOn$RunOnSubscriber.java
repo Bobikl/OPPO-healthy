@@ -1,0 +1,104 @@
+package io.reactivex.rxjava3.internal.operators.parallel;
+
+import com.oplus.aiunit.vision.c3j;
+import com.oplus.aiunit.vision.cfg;
+import com.oplus.aiunit.vision.v2j;
+import io.reactivex.rxjava3.internal.queue.SpscArrayQueue;
+import io.reactivex.rxjava3.internal.subscriptions.SubscriptionHelper;
+
+/* JADX INFO: loaded from: classes10.dex */
+final class ParallelRunOn$RunOnSubscriber<T> extends ParallelRunOn$BaseRunOnSubscriber<T> {
+    private static final long serialVersionUID = 1075119423897941642L;
+    final v2j<? super T> downstream;
+
+    public ParallelRunOn$RunOnSubscriber(v2j<? super T> v2jVar, int i, SpscArrayQueue<T> spscArrayQueue, cfg.c cVar) {
+        super(i, spscArrayQueue, cVar);
+        this.downstream = v2jVar;
+    }
+
+    @Override // io.reactivex.rxjava3.internal.operators.parallel.ParallelRunOn$BaseRunOnSubscriber, com.oplus.aiunit.vision.vu7, com.oplus.aiunit.vision.v2j
+    public void onSubscribe(c3j c3jVar) {
+        if (SubscriptionHelper.validate(this.upstream, c3jVar)) {
+            this.upstream = c3jVar;
+            this.downstream.onSubscribe(this);
+            c3jVar.request(this.prefetch);
+        }
+    }
+
+    @Override // java.lang.Runnable
+    public void run() {
+        Throwable th;
+        int i = this.consumed;
+        SpscArrayQueue<T> spscArrayQueue = this.queue;
+        v2j<? super T> v2jVar = this.downstream;
+        int i2 = this.limit;
+        int iAddAndGet = 1;
+        while (true) {
+            long j2 = this.requested.get();
+            long j3 = 0;
+            while (j3 != j2) {
+                if (this.cancelled) {
+                    spscArrayQueue.clear();
+                    return;
+                }
+                boolean z = this.done;
+                if (z && (th = this.error) != null) {
+                    spscArrayQueue.clear();
+                    v2jVar.onError(th);
+                    this.worker.dispose();
+                    return;
+                }
+                T tPoll = spscArrayQueue.poll();
+                boolean z2 = tPoll == null;
+                if (z && z2) {
+                    v2jVar.onComplete();
+                    this.worker.dispose();
+                    return;
+                } else {
+                    if (z2) {
+                        break;
+                    }
+                    v2jVar.onNext(tPoll);
+                    j3++;
+                    i++;
+                    if (i == i2) {
+                        this.upstream.request(i);
+                        i = 0;
+                    }
+                }
+            }
+            if (j3 == j2) {
+                if (this.cancelled) {
+                    spscArrayQueue.clear();
+                    return;
+                }
+                if (this.done) {
+                    Throwable th2 = this.error;
+                    if (th2 != null) {
+                        spscArrayQueue.clear();
+                        v2jVar.onError(th2);
+                        this.worker.dispose();
+                        return;
+                    } else if (spscArrayQueue.isEmpty()) {
+                        v2jVar.onComplete();
+                        this.worker.dispose();
+                        return;
+                    }
+                }
+            }
+            if (j3 != 0 && j2 != Long.MAX_VALUE) {
+                this.requested.addAndGet(-j3);
+            }
+            int i3 = get();
+            if (i3 == iAddAndGet) {
+                this.consumed = i;
+                iAddAndGet = addAndGet(-iAddAndGet);
+                if (iAddAndGet == 0) {
+                    return;
+                }
+            } else {
+                iAddAndGet = i3;
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+package com.oplus.pay.opensdk.chain.v2;
+
+import com.google.gson.reflect.TypeToken;
+import com.oplus.pay.opensdk.model.response.PreOrderResponse;
+import com.oplus.pay.opensdk.model.response.SuccessResponse;
+
+/* JADX INFO: loaded from: classes8.dex */
+class CheckPreOrderV2$2$1 extends TypeToken<SuccessResponse<PreOrderResponse>> {
+}

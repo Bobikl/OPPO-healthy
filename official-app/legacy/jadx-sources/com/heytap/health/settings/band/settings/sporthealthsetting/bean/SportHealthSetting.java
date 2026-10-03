@@ -1,0 +1,20 @@
+package com.heytap.health.settings.band.settings.sporthealthsetting.bean;
+
+/* JADX INFO: loaded from: classes17.dex */
+public enum SportHealthSetting {
+    STEP_GOAL_VALUE,
+    CALORIE_GOAL_VALUE,
+    AUTO_MEASURE_HEART_RATE_ENABLE,
+    HEART_RATE_TYPE,
+    SEDENTARY_REMIND_ENABLE,
+    HIGH_RATE_NOTIFICATION_ENABLE,
+    AUTO_PAUSE_ENABLE,
+    DISABLE_IN_LUNCH_BREAK,
+    HIGH_RATE_VALUE,
+    QUIET_RATE_NOTIFICATION_ENABLE,
+    QUIET_RATE_VALUE,
+    EXPERIENCE_PLAN,
+    OXIMETRY,
+    OXIMETRY_TYPE,
+    AUTO_RECOGNITION_SPORT
+}

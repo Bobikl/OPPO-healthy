@@ -1,0 +1,86 @@
+package com.heytap.health.stress;
+
+/* JADX INFO: loaded from: classes18.dex */
+public final class R$id {
+    public static final int back_to_today = 2131427816;
+    public static final int calendar_year_value = 2131428150;
+    public static final int chart_health_stress_history = 2131428310;
+    public static final int chart_health_stress_history_day = 2131428311;
+    public static final int chart_health_stress_history_day_pager = 2131428312;
+    public static final int date_container = 2131428787;
+    public static final int date_icon = 2131428789;
+    public static final int first_stress_evaluate = 2131429299;
+    public static final int fl_stress_date_container = 2131429424;
+    public static final int friday = 2131429472;
+    public static final int health_data_group = 2131429643;
+    public static final int health_heart_rate_bar_chart = 2131429660;
+    public static final int health_stress_detail = 2131429703;
+    public static final int health_stress_no_data = 2131429704;
+    public static final int health_stress_progress = 2131429705;
+    public static final int health_stress_range_text = 2131429706;
+    public static final int health_stress_top_tips = 2131429707;
+    public static final int health_stress_view_explanation = 2131429708;
+    public static final int item_evaluate_icon = 2131430058;
+    public static final int item_evaluate_text = 2131430059;
+    public static final int item_evaluate_time = 2131430060;
+    public static final int item_evaluate_value = 2131430061;
+    public static final int iv_next = 2131430367;
+    public static final int iv_previous = 2131430398;
+    public static final int iv_stress_top_tips_close = 2131430466;
+    public static final int iv_stress_top_tips_icon = 2131430467;
+    public static final int ll_range_container = 2131430854;
+    public static final int ll_stress_history_root = 2131430871;
+    public static final int loading_health_stress_day = 2131430910;
+    public static final int loading_health_stress_history = 2131430911;
+    public static final int monday = 2131431175;
+    public static final int month_value = 2131431190;
+    public static final int recycler_view = 2131431911;
+    public static final int saturday = 2131432244;
+    public static final int scrollview_stress = 2131432299;
+    public static final int second_stress_evaluate = 2131432365;
+    public static final int segment_stress_history = 2131432392;
+    public static final int space_stress = 2131432638;
+    public static final int stress_base_content_container = 2131432892;
+    public static final int stress_day_base_content_container = 2131432894;
+    public static final int stress_desc = 2131432895;
+    public static final int stress_progress = 2131432897;
+    public static final int stress_value = 2131432898;
+    public static final int sunday = 2131432922;
+    public static final int test_card_layout = 2131433035;
+    public static final int third_stress_evaluate = 2131433096;
+    public static final int thursday = 2131433099;
+    public static final int top_line = 2131433200;
+    public static final int tuesday = 2131433263;
+    public static final int tv_date = 2131433775;
+    public static final int tv_health_stress_description_high = 2131434023;
+    public static final int tv_health_stress_description_medium = 2131434024;
+    public static final int tv_health_stress_description_normal = 2131434025;
+    public static final int tv_health_stress_description_relax = 2131434026;
+    public static final int tv_health_stress_high_warning = 2131434027;
+    public static final int tv_health_stress_no_data = 2131434028;
+    public static final int tv_health_stress_percent_high = 2131434029;
+    public static final int tv_health_stress_percent_high_time = 2131434030;
+    public static final int tv_health_stress_percent_high_value = 2131434031;
+    public static final int tv_health_stress_percent_medium = 2131434032;
+    public static final int tv_health_stress_percent_medium_time = 2131434033;
+    public static final int tv_health_stress_percent_medium_value = 2131434034;
+    public static final int tv_health_stress_percent_normal = 2131434035;
+    public static final int tv_health_stress_percent_normal_time = 2131434036;
+    public static final int tv_health_stress_percent_normal_value = 2131434037;
+    public static final int tv_health_stress_percent_relax = 2131434038;
+    public static final int tv_health_stress_percent_relax_time = 2131434039;
+    public static final int tv_health_stress_percent_relax_value = 2131434040;
+    public static final int tv_health_stress_percent_title = 2131434041;
+    public static final int tv_health_stress_range = 2131434042;
+    public static final int tv_stress_detail_text = 2131434610;
+    public static final int tv_stress_status = 2131434612;
+    public static final int tv_stress_support_device = 2131434613;
+    public static final int tv_stress_top_tips_text = 2131434614;
+    public static final int view_health_stress_percent = 2131435048;
+    public static final int vp_health_stress_history = 2131435142;
+    public static final int wednesday = 2131435202;
+    public static final int week_day_text = 2131435205;
+
+    private R$id() {
+    }
+}

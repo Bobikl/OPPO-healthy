@@ -1,0 +1,82 @@
+package com.support.preference;
+
+/* JADX INFO: loaded from: classes10.dex */
+public final class R$id {
+    public static final int INPUT_METHOD_FROM_FOCUSABLE = 2131427346;
+    public static final int INPUT_METHOD_NEEDED = 2131427347;
+    public static final int INPUT_METHOD_NOT_NEEDED = 2131427348;
+    public static final int abl = 2131427409;
+    public static final int allSelected = 2131427615;
+    public static final int appbar_layout = 2131427683;
+    public static final int assignment = 2131427777;
+    public static final int assignment_icon = 2131427778;
+    public static final int assignment_red_dot = 2131427779;
+    public static final int catagory_loading = 2131428253;
+    public static final int check_box_layout = 2131428331;
+    public static final int checkedtextview = 2131428346;
+    public static final int circle = 2131428370;
+    public static final int click = 2131428490;
+    public static final int coui_anim = 2131428616;
+    public static final int coui_btn = 2131428618;
+    public static final int coui_head_mark = 2131428650;
+    public static final int coui_image = 2131428653;
+    public static final int coui_load_progress = 2131428654;
+    public static final int coui_preference = 2131428660;
+    public static final int coui_preference_listview = 2131428661;
+    public static final int coui_preference_widget_jump = 2131428662;
+    public static final int coui_statusText1 = 2131428669;
+    public static final int coui_statusText_select = 2131428670;
+    public static final int coui_tail_mark = 2131428671;
+    public static final int coui_text = 2131428672;
+    public static final int customLinearLayoutForList = 2131428736;
+    public static final int divider_line = 2131429006;
+    public static final int edittext_container = 2131429123;
+    public static final int head = 2131429565;
+    public static final int hignEnd = 2131429751;
+    public static final int icon_in_composition = 2131429876;
+    public static final int icon_with_title = 2131429887;
+    public static final int img_layout = 2131429961;
+    public static final int img_red_dot = 2131429974;
+    public static final int item_divider = 2131430054;
+    public static final int jump_icon_red_dot = 2131430518;
+    public static final int large = 2131430537;
+    public static final int lowEnd = 2131430943;
+    public static final int main_layout = 2131431009;
+    public static final int medium = 2131431076;
+    public static final int messageLayout = 2131431149;
+    public static final int midEnd = 2131431153;
+    public static final int noLimit = 2131431308;
+    public static final int noPoint = 2131431310;
+    public static final int nomal = 2131431332;
+    public static final int none = 2131431333;
+    public static final int oneLine = 2131431431;
+    public static final int partSelected = 2131431546;
+    public static final int pointWithNum = 2131431684;
+    public static final int ponitOnly = 2131431685;
+    public static final int preference_bottom = 2131431718;
+    public static final int radio_layout = 2131431808;
+    public static final int radio_off = 2131431809;
+    public static final int radio_on = 2131431810;
+    public static final int recommended_recycler_view = 2131431879;
+    public static final int recycler_view = 2131431911;
+    public static final int reddot_with_title = 2131431926;
+    public static final int round = 2131432098;
+    public static final int singleIcon = 2131432564;
+    public static final int small = 2131432592;
+    public static final int stepper = 2131432870;
+    public static final int switchWidget = 2131432939;
+    public static final int switch_layout = 2131432945;
+    public static final int tail = 2131433013;
+    public static final int text_button = 2131433048;
+    public static final int text_in_composition = 2131433049;
+    public static final int text_in_loading = 2131433050;
+    public static final int toolbar = 2131433156;
+    public static final int twoLine = 2131434837;
+    public static final int txt_content = 2131434839;
+    public static final int ultraLowEnd = 2131434864;
+    public static final int unSelected = 2131434866;
+    public static final int unclick = 2131434868;
+
+    private R$id() {
+    }
+}

@@ -1,0 +1,82 @@
+package com.health.health_seedlingcard;
+
+/* JADX INFO: loaded from: classes14.dex */
+public final class R$string {
+    public static final int health_seedlingcard_duration = 2132087899;
+    public static final int health_seedlingcard_invalid_sport_tip = 2132087900;
+    public static final int health_seedlingcard_km_format = 2132087901;
+    public static final int health_seedlingcard_pause_run = 2132087902;
+    public static final int health_seedlingcard_pause_walk = 2132087903;
+    public static final int health_seedlingcard_sports = 2132087904;
+    public static final int health_seedlingcard_stop_run = 2132087905;
+    public static final int health_seedlingcard_stop_walk = 2132087906;
+    public static final int health_seedlingcard_unit_hour = 2132087907;
+    public static final int health_seedlingcard_unit_minute = 2132087908;
+    public static final int seedling_card_calorie = 2132091735;
+    public static final int seedling_card_fall_asleep = 2132091736;
+    public static final int seedling_card_hour_minute = 2132091737;
+    public static final int seedling_card_last_week = 2132091738;
+    public static final int seedling_card_minute = 2132091739;
+    public static final int seedling_card_monday = 2132091740;
+    public static final int seedling_card_out_of_sleep = 2132091741;
+    public static final int seedling_card_pieces_label_rem = 2132091742;
+    public static final int seedling_card_pieces_label_sleep_deep = 2132091743;
+    public static final int seedling_card_pieces_label_sleep_lightly = 2132091744;
+    public static final int seedling_card_pieces_label_wake = 2132091745;
+    public static final int seedling_card_sleep_reminder_1x2tips1 = 2132091746;
+    public static final int seedling_card_sleep_reminder_1x2tips2 = 2132091747;
+    public static final int seedling_card_sleep_reminder_1x2tips3 = 2132091748;
+    public static final int seedling_card_sleep_reminder_1x2tips4 = 2132091749;
+    public static final int seedling_card_sleep_reminder_1x2tips5 = 2132091750;
+    public static final int seedling_card_sleep_reminder_1x2tips6 = 2132091751;
+    public static final int seedling_card_sleep_reminder_1x2tips7 = 2132091752;
+    public static final int seedling_card_sleep_reminder_1x2tips8 = 2132091753;
+    public static final int seedling_card_sleep_reminder_1x2tips9 = 2132091754;
+    public static final int seedling_card_sleep_reminder_2x2tips1 = 2132091755;
+    public static final int seedling_card_sleep_reminder_2x2tips10 = 2132091756;
+    public static final int seedling_card_sleep_reminder_2x2tips11 = 2132091757;
+    public static final int seedling_card_sleep_reminder_2x2tips12 = 2132091758;
+    public static final int seedling_card_sleep_reminder_2x2tips13 = 2132091759;
+    public static final int seedling_card_sleep_reminder_2x2tips14 = 2132091760;
+    public static final int seedling_card_sleep_reminder_2x2tips15 = 2132091761;
+    public static final int seedling_card_sleep_reminder_2x2tips16 = 2132091762;
+    public static final int seedling_card_sleep_reminder_2x2tips17 = 2132091763;
+    public static final int seedling_card_sleep_reminder_2x2tips18 = 2132091764;
+    public static final int seedling_card_sleep_reminder_2x2tips19 = 2132091765;
+    public static final int seedling_card_sleep_reminder_2x2tips2 = 2132091766;
+    public static final int seedling_card_sleep_reminder_2x2tips20 = 2132091767;
+    public static final int seedling_card_sleep_reminder_2x2tips21 = 2132091768;
+    public static final int seedling_card_sleep_reminder_2x2tips22 = 2132091769;
+    public static final int seedling_card_sleep_reminder_2x2tips23 = 2132091770;
+    public static final int seedling_card_sleep_reminder_2x2tips24 = 2132091771;
+    public static final int seedling_card_sleep_reminder_2x2tips25 = 2132091772;
+    public static final int seedling_card_sleep_reminder_2x2tips26 = 2132091773;
+    public static final int seedling_card_sleep_reminder_2x2tips27 = 2132091774;
+    public static final int seedling_card_sleep_reminder_2x2tips28 = 2132091775;
+    public static final int seedling_card_sleep_reminder_2x2tips29 = 2132091776;
+    public static final int seedling_card_sleep_reminder_2x2tips3 = 2132091777;
+    public static final int seedling_card_sleep_reminder_2x2tips30 = 2132091778;
+    public static final int seedling_card_sleep_reminder_2x2tips4 = 2132091779;
+    public static final int seedling_card_sleep_reminder_2x2tips5 = 2132091780;
+    public static final int seedling_card_sleep_reminder_2x2tips6 = 2132091781;
+    public static final int seedling_card_sleep_reminder_2x2tips7 = 2132091782;
+    public static final int seedling_card_sleep_reminder_2x2tips8 = 2132091783;
+    public static final int seedling_card_sleep_reminder_2x2tips9 = 2132091784;
+    public static final int seedling_card_sleep_reminder_title = 2132091785;
+    public static final int seedling_card_step = 2132091786;
+    public static final int seedling_card_step_distance_unit = 2132091787;
+    public static final int seedling_card_step_flat = 2132091788;
+    public static final int seedling_card_step_goal_achieved_tip = 2132091789;
+    public static final int seedling_card_step_goal_achieved_title = 2132091790;
+    public static final int seedling_card_steps_sync_to_wechat = 2132091791;
+    public static final int seedling_card_subtitle = 2132091792;
+    public static final int seedling_card_sunday = 2132091793;
+    public static final int seedling_card_this_week = 2132091794;
+    public static final int seedling_card_time_hour = 2132091795;
+    public static final int seedling_card_to_punch = 2132091796;
+    public static final int seedling_card_today_step = 2132091797;
+    public static final int seedling_card_unlock_medals = 2132091798;
+
+    private R$string() {
+    }
+}

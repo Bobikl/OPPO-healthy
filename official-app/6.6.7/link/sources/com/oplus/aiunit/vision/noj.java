@@ -1,0 +1,33 @@
+package com.oplus.aiunit.vision;
+
+import com.oplus.smartenginehelper.ParserTag;
+import org.jetbrains.annotations.NotNull;
+
+/* JADX INFO: loaded from: D:\项目\oppo通知转发\analysis\health667-dex\classes8.dex */
+public class noj {
+    @NotNull
+    public static String a(@NotNull String str) {
+        try {
+            Object objInvoke = Class.forName("android.os.SystemProperties").getDeclaredMethod(ParserTag.TAG_GET, String.class, String.class).invoke(null, str, "");
+            if (objInvoke != null) {
+                return (String) objInvoke;
+            }
+            throw new NullPointerException("null cannot be cast to non-null type kotlin.String");
+        } catch (Throwable unused) {
+            return "";
+        }
+    }
+
+    @NotNull
+    public static String b(@NotNull String str, @NotNull String str2) {
+        try {
+            Object objInvoke = Class.forName("android.os.SystemProperties").getDeclaredMethod(ParserTag.TAG_GET, String.class, String.class).invoke(null, str, str2);
+            if (objInvoke != null) {
+                return (String) objInvoke;
+            }
+            throw new NullPointerException("null cannot be cast to non-null type kotlin.String");
+        } catch (Throwable unused) {
+            return str2;
+        }
+    }
+}

@@ -9,3 +9,7 @@
 *.ps1 text eol=crlf
 *.png binary
 *.webp binary
+
+*.dex binary
+*.so binary
+*.apk binary

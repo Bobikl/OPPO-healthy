@@ -1,0 +1,101 @@
+{
+  "sourceApkSha256": "d8163ec849de6ee121171d1d1312b05f1500c8d4ec225c19f949042ae185aeaf",
+  "uiResourceSha256": "7be105bf95fac6f86b203626284e62dee419542f1903b1c7a12a611cdcd89246",
+  "dex": {
+    "classes.dex": "f379cf3698408fc611a66952caa2b322151890bcf6b3df707d11f0f7b22424c7",
+    "classes10.dex": "c92098754fe16c581c8338906592dfd80526a8d128780f88369814e52192fa2c",
+    "classes11.dex": "07e9dca7f82406e59f98f98750090ed495ca54fee91e60e8b2a731137b9ddd74",
+    "classes12.dex": "3ac2e7d8e4a6ffc457f10b482d4629093ac4934cd6d666df9fe9e09be15ed7b9",
+    "classes13.dex": "0fe2704048239be497f978c03cd3bd0cc12c28be68177a9dcfc4d8616e4d8aef",
+    "classes14.dex": "14405a814d511712c17ea6d1649877f244a66cd4916daa756c8aa66806ad22f2",
+    "classes15.dex": "4b1df82b316d4efd3bc94113053ccd077a7ae12909a3cfc4e9653ecfb71d5f0c",
+    "classes16.dex": "30a4a386cd55cbabc8f85fe9868f697c0f95bea74cd5437b6c5eafb033f58797",
+    "classes17.dex": "b95b2329d6b4e4244b6ff7e2964067311e92a75d561569c79ad0682831e0ef23",
+    "classes18.dex": "95ab2e2e44f0dcfd481afd8c75ceecbef8fbb415b6e5ed05eab0c5e9e05cfe46",
+    "classes19.dex": "37f13d72678dbb21c1bb450f91f033c93314cccb03fbaab606560acd7705ec81",
+    "classes2.dex": "a0ba3713c8a53e96f738f110a6c62d8b99764bd1c41cab74a7ab727150a98c56",
+    "classes20.dex": "3144b8f0a6c38a23ae52f1b94193c81d15b5a01cb22812940ed4e6ff17e814a5",
+    "classes3.dex": "aabead9869f87a247568cec9ae92f65e2a39a0e6a1f0e1c540f5b677da45ee48",
+    "classes4.dex": "35e002ab02193cd6482ec4e96d857058df36283e1fdca752db2a7de7c8b43cbe",
+    "classes5.dex": "c50c903d3affe310f27bfb78eb7701311f642723d09ba786e5d30f022ec15ccb",
+    "classes6.dex": "2cfc76094792073d7612cdfdb498750a8c1873a18a2694bb3a08a85306d4eed3",
+    "classes7.dex": "a39dfdb7e53eaa39e326cb353f89a5acc5fa9ef6924e0dce802f1878c6d1e685",
+    "classes8.dex": "095a5cf1a1a0f8aeb067d6f1203b6bfaafe2a008b8050fb6fe3a4bd89659bb97",
+    "classes9.dex": "f49b00016557be2606f7c8470cdf588c954709e93c06ecfa95b7ca2d868e8559"
+  },
+  "groups": [
+    {
+      "source": "analysis/jadx-out/sources",
+      "directory": "legacy/jadx-sources",
+      "files": 41508,
+      "bytes": 238647619
+    },
+    {
+      "source": "analysis/decompiled-temp",
+      "directory": "legacy/targeted/decompiled-temp",
+      "files": 41,
+      "bytes": 453189
+    },
+    {
+      "source": "analysis/targeted",
+      "directory": "legacy/targeted/targeted",
+      "files": 1,
+      "bytes": 28757
+    },
+    {
+      "source": "analysis/notification-targeted",
+      "directory": "legacy/targeted/notification-targeted",
+      "files": 5,
+      "bytes": 52449
+    },
+    {
+      "source": "analysis/listener-targeted",
+      "directory": "legacy/targeted/listener-targeted",
+      "files": 10,
+      "bytes": 226821
+    },
+    {
+      "source": "analysis/transceiver-targeted",
+      "directory": "legacy/targeted/transceiver-targeted",
+      "files": 11,
+      "bytes": 304406
+    },
+    {
+      "source": "analysis/health667-dex",
+      "directory": "6.6.7/dex",
+      "files": 20,
+      "bytes": 149282384
+    },
+    {
+      "source": "analysis/health667-link",
+      "directory": "6.6.7/link",
+      "files": 1705,
+      "bytes": 11997096
+    },
+    {
+      "source": "analysis/health667-oaf",
+      "directory": "6.6.7/oaf",
+      "files": 2554,
+      "bytes": 23083994
+    },
+    {
+      "source": "analysis/native667",
+      "directory": "6.6.7/native",
+      "files": 1,
+      "bytes": 30480
+    },
+    {
+      "source": "*-667.java and analysis/**/*-667.java",
+      "directory": "6.6.7/targeted",
+      "files": 391,
+      "bytes": 9989382
+    },
+    {
+      "source": "standalone-relay/official-ui/assets/official-ui-resources.apk",
+      "directory": "6.6.7/ui-resources",
+      "files": 1,
+      "bytes": 22855101
+    }
+  ],
+  "note": "Static APK-derived files only. Legacy decompiler output has no retained version metadata; 6.6.7 files are kept separate."
+}

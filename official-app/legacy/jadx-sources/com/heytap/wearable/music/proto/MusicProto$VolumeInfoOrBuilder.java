@@ -1,0 +1,10 @@
+package com.heytap.wearable.music.proto;
+
+import com.google.protobuf.MessageLiteOrBuilder;
+
+/* JADX INFO: loaded from: classes2.dex */
+public interface MusicProto$VolumeInfoOrBuilder extends MessageLiteOrBuilder {
+    int getCurrentVolume();
+
+    int getMaxVolume();
+}

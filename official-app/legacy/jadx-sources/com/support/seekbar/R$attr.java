@@ -1,0 +1,79 @@
+package com.support.seekbar;
+
+/* JADX INFO: loaded from: classes10.dex */
+public final class R$attr {
+    public static final int couiIntentSeekBarStyle = 2130969637;
+    public static final int couiSectionSeekBarStyle = 2130969805;
+    public static final int couiSeekBarAdaptiveVibrator = 2130969806;
+    public static final int couiSeekBarBackGroundEnlargeScale = 2130969807;
+    public static final int couiSeekBarBackgroundColor = 2130969808;
+    public static final int couiSeekBarBackgroundHeight = 2130969809;
+    public static final int couiSeekBarBackgroundHighlightColor = 2130969810;
+    public static final int couiSeekBarBackgroundRadius = 2130969811;
+    public static final int couiSeekBarBackgroundRoundCornerWeight = 2130969812;
+    public static final int couiSeekBarDeformation = 2130969813;
+    public static final int couiSeekBarEnableVibrator = 2130969814;
+    public static final int couiSeekBarInnerShadowSize = 2130969815;
+    public static final int couiSeekBarIsFollowThumb = 2130969816;
+    public static final int couiSeekBarMaxWidth = 2130969817;
+    public static final int couiSeekBarMinHeight = 2130969818;
+    public static final int couiSeekBarPhysicsEnable = 2130969819;
+    public static final int couiSeekBarProgressColor = 2130969820;
+    public static final int couiSeekBarProgressEnlargeScale = 2130969822;
+    public static final int couiSeekBarProgressFull = 2130969823;
+    public static final int couiSeekBarProgressHeight = 2130969824;
+    public static final int couiSeekBarProgressPaddingHorizontal = 2130969825;
+    public static final int couiSeekBarProgressRadius = 2130969826;
+    public static final int couiSeekBarProgressRoundCornerWeight = 2130969827;
+    public static final int couiSeekBarProgressScaleRadius = 2130969828;
+    public static final int couiSeekBarSecondaryProgressColor = 2130969829;
+    public static final int couiSeekBarShadowColor = 2130969830;
+    public static final int couiSeekBarShadowSize = 2130969831;
+    public static final int couiSeekBarShowGlitterEffect = 2130969832;
+    public static final int couiSeekBarShowProgress = 2130969833;
+    public static final int couiSeekBarShowText = 2130969834;
+    public static final int couiSeekBarShowThumb = 2130969835;
+    public static final int couiSeekBarStartMiddle = 2130969836;
+    public static final int couiSeekBarStyle = 2130969837;
+    public static final int couiSeekBarText = 2130969838;
+    public static final int couiSeekBarTextColor = 2130969839;
+    public static final int couiSeekBarTextMarginTop = 2130969840;
+    public static final int couiSeekBarThumbColor = 2130969841;
+    public static final int couiSeekBarThumbOutRadius = 2130969842;
+    public static final int couiSeekBarThumbShadowColor = 2130969843;
+    public static final int couiSeekBarThumbShadowSize = 2130969844;
+    public static final int couiVerticalSeekBarAdaptiveVibrator = 2130970024;
+    public static final int couiVerticalSeekBarBackGroundEnlargeScale = 2130970025;
+    public static final int couiVerticalSeekBarBackGroundRadiusEnlargeScale = 2130970026;
+    public static final int couiVerticalSeekBarBackgroundColor = 2130970027;
+    public static final int couiVerticalSeekBarBackgroundHighlightColor = 2130970028;
+    public static final int couiVerticalSeekBarBackgroundRadius = 2130970029;
+    public static final int couiVerticalSeekBarBackgroundRoundCornerWeight = 2130970030;
+    public static final int couiVerticalSeekBarBackgroundWidth = 2130970031;
+    public static final int couiVerticalSeekBarDeformation = 2130970032;
+    public static final int couiVerticalSeekBarEnableVibrator = 2130970033;
+    public static final int couiVerticalSeekBarMaxHeight = 2130970034;
+    public static final int couiVerticalSeekBarMinWidth = 2130970035;
+    public static final int couiVerticalSeekBarPhysicsEnable = 2130970036;
+    public static final int couiVerticalSeekBarProgressColor = 2130970037;
+    public static final int couiVerticalSeekBarProgressEnlargeScale = 2130970038;
+    public static final int couiVerticalSeekBarProgressFull = 2130970039;
+    public static final int couiVerticalSeekBarProgressPaddingVertical = 2130970040;
+    public static final int couiVerticalSeekBarProgressRadius = 2130970041;
+    public static final int couiVerticalSeekBarProgressRadiusEnlargeScale = 2130970042;
+    public static final int couiVerticalSeekBarProgressRoundCornerWeight = 2130970043;
+    public static final int couiVerticalSeekBarProgressScaleRadius = 2130970044;
+    public static final int couiVerticalSeekBarProgressWidth = 2130970045;
+    public static final int couiVerticalSeekBarShowProgress = 2130970046;
+    public static final int couiVerticalSeekBarShowText = 2130970047;
+    public static final int couiVerticalSeekBarShowThumb = 2130970048;
+    public static final int couiVerticalSeekBarStyle = 2130970049;
+    public static final int couiVerticalSeekBarText = 2130970050;
+    public static final int couiVerticalSeekBarTextColor = 2130970051;
+    public static final int couiVerticalSeekBarTextMarginTop = 2130970052;
+    public static final int couiVerticalSeekBarThumbColor = 2130970053;
+    public static final int couiVerticalSeekBarThumbOutRadius = 2130970054;
+
+    private R$attr() {
+    }
+}

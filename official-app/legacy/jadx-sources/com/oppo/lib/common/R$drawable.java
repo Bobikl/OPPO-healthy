@@ -1,0 +1,83 @@
+package com.oppo.lib.common;
+
+/* JADX INFO: loaded from: classes9.dex */
+public final class R$drawable {
+    public static final int activity_bg = 2131233231;
+    public static final int bg_card = 2131233303;
+    public static final int bg_carkey_auth_dialog = 2131233304;
+    public static final int bg_default_card_bg = 2131233306;
+    public static final int bg_nfc_unusable = 2131233310;
+    public static final int bg_placeholder = 2131233311;
+    public static final int bg_placeholder_big = 2131233312;
+    public static final int bg_placeholder_card_package = 2131233313;
+    public static final int bg_shadow_conner = 2131233314;
+    public static final int bg_traffic_migrate_in_pending = 2131233315;
+    public static final int bg_use_notice = 2131233316;
+    public static final int btn_blue_bg = 2131233318;
+    public static final int btn_blue_small_bg = 2131233319;
+    public static final int btn_gray_green_bg = 2131233324;
+    public static final int btn_gray_red_bg = 2131233325;
+    public static final int btn_item_status_bg = 2131233326;
+    public static final int btn_red_corners_bg = 2131233331;
+    public static final int cards_list_selector = 2131233342;
+    public static final int charging_wait = 2131233366;
+    public static final int combitation_expand_arrow = 2131233373;
+    public static final int common_notice_bg_shape = 2131233393;
+    public static final int common_white_bg_shape16 = 2131233394;
+    public static final int conner_shadow = 2131233424;
+    public static final int corner_blue_padding = 2131233426;
+    public static final int cursor_line_blue = 2131233753;
+    public static final int entrance_car_not_active_image = 2131233905;
+    public static final int fee_bg_normal = 2131233979;
+    public static final int fee_bg_selected = 2131233980;
+    public static final int gray_arrow = 2131234026;
+    public static final int ic_baseline_nfc_24 = 2131234801;
+    public static final int icon_add_card_normal = 2131235053;
+    public static final int icon_add_card_pressed = 2131235054;
+    public static final int icon_bus_warn = 2131235058;
+    public static final int icon_card_package_next_page = 2131235060;
+    public static final int icon_consume_enpty = 2131235062;
+    public static final int icon_delete_btn = 2131235065;
+    public static final int icon_dialog_title_close = 2131235066;
+    public static final int icon_fail_big = 2131235072;
+    public static final int icon_finish_big = 2131235076;
+    public static final int icon_operate_item_info = 2131235103;
+    public static final int icon_operate_mobile_info_normal = 2131235104;
+    public static final int icon_recharge_failed = 2131235108;
+    public static final int icon_recharge_success = 2131235109;
+    public static final int icon_speaker_red = 2131235115;
+    public static final int icon_swipe_btn = 2131235119;
+    public static final int icon_title_search = 2131235121;
+    public static final int icon_wallet = 2131235127;
+    public static final int item_bg_radius = 2131235133;
+    public static final int lib_base_ic_back_black = 2131235209;
+    public static final int lib_base_ic_back_white = 2131235210;
+    public static final int menu_setting = 2131235454;
+    public static final int nfc_card_list_cancel_selector = 2131235503;
+    public static final int nfc_item_selector = 2131235504;
+    public static final int nfc_open_card_progress_blue = 2131235505;
+    public static final int nfc_problem = 2131235506;
+    public static final int no_connection = 2131235507;
+    public static final int no_content = 2131235508;
+    public static final int open_card_fail = 2131236273;
+    public static final int open_card_progress_bg = 2131236274;
+    public static final int radio_btn_blue1 = 2131236587;
+    public static final int radio_button_blue_normal = 2131236588;
+    public static final int radio_button_blue_selected = 2131236589;
+    public static final int red_dot = 2131236633;
+    public static final int right_arrow = 2131236636;
+    public static final int select_add_card = 2131236645;
+    public static final int shape_text_press = 2131236792;
+    public static final int shape_time_discounnt = 2131236793;
+    public static final int shift_card_progress_device_image = 2131236808;
+    public static final int switch_ind_arrow = 2131237354;
+    public static final int swith_ind_arrow_mirrored = 2131237361;
+    public static final int text_press_bg = 2131237365;
+    public static final int vector_no_content = 2131237390;
+    public static final int wallet_question_title_left_image = 2131237395;
+    public static final int wallet_question_title_right_image = 2131237396;
+    public static final int wallet_switch_item_image = 2131237397;
+
+    private R$drawable() {
+    }
+}

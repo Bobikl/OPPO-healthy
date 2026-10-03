@@ -1,0 +1,246 @@
+package io.netty.incubator.codec.quic.track.bean;
+
+import androidx.core.app.FrameMetricsAggregator;
+import io.netty.incubator.codec.quic.track.TrackHelperKt;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
+import p010kotlin.Metadata;
+import p010kotlin.jvm.internal.DefaultConstructorMarker;
+import p010kotlin.jvm.internal.Intrinsics;
+
+/* JADX INFO: loaded from: classes10.dex */
+@Metadata(d1 = {"\u0000(\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u000e\n\u0000\n\u0002\u0010\t\n\u0002\b\u0007\n\u0002\u0010\u000b\n\u0002\b&\n\u0002\u0010\b\n\u0002\b\u0002\b\u0086\b\u0018\u00002\u00020\u0001Bk\u0012\n\b\u0002\u0010\u0002\u001a\u0004\u0018\u00010\u0003\u0012\b\b\u0002\u0010\u0004\u001a\u00020\u0005\u0012\n\b\u0002\u0010\u0006\u001a\u0004\u0018\u00010\u0003\u0012\n\b\u0002\u0010\u0007\u001a\u0004\u0018\u00010\u0003\u0012\n\b\u0002\u0010\b\u001a\u0004\u0018\u00010\u0003\u0012\n\b\u0002\u0010\t\u001a\u0004\u0018\u00010\u0003\u0012\n\b\u0002\u0010\n\u001a\u0004\u0018\u00010\u0003\u0012\b\b\u0002\u0010\u000b\u001a\u00020\u0005\u0012\b\b\u0002\u0010\f\u001a\u00020\r¢\u0006\u0002\u0010\u000eJ\u000b\u0010'\u001a\u0004\u0018\u00010\u0003HÆ\u0003J\t\u0010(\u001a\u00020\u0005HÆ\u0003J\u000b\u0010)\u001a\u0004\u0018\u00010\u0003HÆ\u0003J\u000b\u0010*\u001a\u0004\u0018\u00010\u0003HÆ\u0003J\u000b\u0010+\u001a\u0004\u0018\u00010\u0003HÆ\u0003J\u000b\u0010,\u001a\u0004\u0018\u00010\u0003HÆ\u0003J\u000b\u0010-\u001a\u0004\u0018\u00010\u0003HÆ\u0003J\t\u0010.\u001a\u00020\u0005HÆ\u0003J\t\u0010/\u001a\u00020\rHÆ\u0003Jo\u00100\u001a\u00020\u00002\n\b\u0002\u0010\u0002\u001a\u0004\u0018\u00010\u00032\b\b\u0002\u0010\u0004\u001a\u00020\u00052\n\b\u0002\u0010\u0006\u001a\u0004\u0018\u00010\u00032\n\b\u0002\u0010\u0007\u001a\u0004\u0018\u00010\u00032\n\b\u0002\u0010\b\u001a\u0004\u0018\u00010\u00032\n\b\u0002\u0010\t\u001a\u0004\u0018\u00010\u00032\n\b\u0002\u0010\n\u001a\u0004\u0018\u00010\u00032\b\b\u0002\u0010\u000b\u001a\u00020\u00052\b\b\u0002\u0010\f\u001a\u00020\rHÆ\u0001J\u0013\u00101\u001a\u00020\r2\b\u00102\u001a\u0004\u0018\u00010\u0001HÖ\u0003J\t\u00103\u001a\u000204HÖ\u0001J\b\u00105\u001a\u00020\u0003H\u0016R\u001c\u0010\u0002\u001a\u0004\u0018\u00010\u0003X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\u000f\u0010\u0010\"\u0004\b\u0011\u0010\u0012R\u001c\u0010\t\u001a\u0004\u0018\u00010\u0003X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\u0013\u0010\u0010\"\u0004\b\u0014\u0010\u0012R\u001c\u0010\b\u001a\u0004\u0018\u00010\u0003X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\u0015\u0010\u0010\"\u0004\b\u0016\u0010\u0012R\u001c\u0010\u0007\u001a\u0004\u0018\u00010\u0003X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\u0017\u0010\u0010\"\u0004\b\u0018\u0010\u0012R\u001c\u0010\u0006\u001a\u0004\u0018\u00010\u0003X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\u0019\u0010\u0010\"\u0004\b\u001a\u0010\u0012R\u001c\u0010\n\u001a\u0004\u0018\u00010\u0003X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\u001b\u0010\u0010\"\u0004\b\u001c\u0010\u0012R\u001a\u0010\u0004\u001a\u00020\u0005X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\u001d\u0010\u001e\"\u0004\b\u001f\u0010 R\u001a\u0010\f\u001a\u00020\rX\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b!\u0010\"\"\u0004\b#\u0010$R\u001a\u0010\u000b\u001a\u00020\u0005X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b%\u0010\u001e\"\u0004\b&\u0010 ¨\u00066"}, d2 = {"Lio/netty/incubator/codec/quic/track/bean/SendInfo;", "", "dest_ip", "", "send_ex_time", "", "send_ex_name", "send_ex_message", "send_ex_cause_name", "send_ex_cause_message", "send_ex_stage", TrackHelperKt.SEND_TIME, "send_success", "", "(Ljava/lang/String;JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JZ)V", "getDest_ip", "()Ljava/lang/String;", "setDest_ip", "(Ljava/lang/String;)V", "getSend_ex_cause_message", "setSend_ex_cause_message", "getSend_ex_cause_name", "setSend_ex_cause_name", "getSend_ex_message", "setSend_ex_message", "getSend_ex_name", "setSend_ex_name", "getSend_ex_stage", "setSend_ex_stage", "getSend_ex_time", "()J", "setSend_ex_time", "(J)V", "getSend_success", "()Z", "setSend_success", "(Z)V", "getSend_time", "setSend_time", "component1", "component2", "component3", "component4", "component5", "component6", "component7", "component8", "component9", "copy", "equals", "other", "hashCode", "", "toString", "netty-quic_release"}, k = 1, mv = {1, 6, 0}, xi = 48)
+public final /* data */ class SendInfo {
+
+    @Nullable
+    private String dest_ip;
+
+    @Nullable
+    private String send_ex_cause_message;
+
+    @Nullable
+    private String send_ex_cause_name;
+
+    @Nullable
+    private String send_ex_message;
+
+    @Nullable
+    private String send_ex_name;
+
+    @Nullable
+    private String send_ex_stage;
+    private long send_ex_time;
+    private boolean send_success;
+    private long send_time;
+
+    public SendInfo() {
+        this(null, 0L, null, null, null, null, null, 0L, false, FrameMetricsAggregator.EVERY_DURATION, null);
+    }
+
+    @Nullable
+    /* JADX INFO: renamed from: component1, reason: from getter */
+    public final String getDest_ip() {
+        return this.dest_ip;
+    }
+
+    /* JADX INFO: renamed from: component2, reason: from getter */
+    public final long getSend_ex_time() {
+        return this.send_ex_time;
+    }
+
+    @Nullable
+    /* JADX INFO: renamed from: component3, reason: from getter */
+    public final String getSend_ex_name() {
+        return this.send_ex_name;
+    }
+
+    @Nullable
+    /* JADX INFO: renamed from: component4, reason: from getter */
+    public final String getSend_ex_message() {
+        return this.send_ex_message;
+    }
+
+    @Nullable
+    /* JADX INFO: renamed from: component5, reason: from getter */
+    public final String getSend_ex_cause_name() {
+        return this.send_ex_cause_name;
+    }
+
+    @Nullable
+    /* JADX INFO: renamed from: component6, reason: from getter */
+    public final String getSend_ex_cause_message() {
+        return this.send_ex_cause_message;
+    }
+
+    @Nullable
+    /* JADX INFO: renamed from: component7, reason: from getter */
+    public final String getSend_ex_stage() {
+        return this.send_ex_stage;
+    }
+
+    /* JADX INFO: renamed from: component8, reason: from getter */
+    public final long getSend_time() {
+        return this.send_time;
+    }
+
+    /* JADX INFO: renamed from: component9, reason: from getter */
+    public final boolean getSend_success() {
+        return this.send_success;
+    }
+
+    @NotNull
+    public final SendInfo copy(@Nullable String dest_ip, long send_ex_time, @Nullable String send_ex_name, @Nullable String send_ex_message, @Nullable String send_ex_cause_name, @Nullable String send_ex_cause_message, @Nullable String send_ex_stage, long send_time, boolean send_success) {
+        return new SendInfo(dest_ip, send_ex_time, send_ex_name, send_ex_message, send_ex_cause_name, send_ex_cause_message, send_ex_stage, send_time, send_success);
+    }
+
+    public boolean equals(@Nullable Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof SendInfo)) {
+            return false;
+        }
+        SendInfo sendInfo = (SendInfo) other;
+        return Intrinsics.areEqual(this.dest_ip, sendInfo.dest_ip) && this.send_ex_time == sendInfo.send_ex_time && Intrinsics.areEqual(this.send_ex_name, sendInfo.send_ex_name) && Intrinsics.areEqual(this.send_ex_message, sendInfo.send_ex_message) && Intrinsics.areEqual(this.send_ex_cause_name, sendInfo.send_ex_cause_name) && Intrinsics.areEqual(this.send_ex_cause_message, sendInfo.send_ex_cause_message) && Intrinsics.areEqual(this.send_ex_stage, sendInfo.send_ex_stage) && this.send_time == sendInfo.send_time && this.send_success == sendInfo.send_success;
+    }
+
+    @Nullable
+    public final String getDest_ip() {
+        return this.dest_ip;
+    }
+
+    @Nullable
+    public final String getSend_ex_cause_message() {
+        return this.send_ex_cause_message;
+    }
+
+    @Nullable
+    public final String getSend_ex_cause_name() {
+        return this.send_ex_cause_name;
+    }
+
+    @Nullable
+    public final String getSend_ex_message() {
+        return this.send_ex_message;
+    }
+
+    @Nullable
+    public final String getSend_ex_name() {
+        return this.send_ex_name;
+    }
+
+    @Nullable
+    public final String getSend_ex_stage() {
+        return this.send_ex_stage;
+    }
+
+    public final long getSend_ex_time() {
+        return this.send_ex_time;
+    }
+
+    public final boolean getSend_success() {
+        return this.send_success;
+    }
+
+    public final long getSend_time() {
+        return this.send_time;
+    }
+
+    /* JADX WARN: Multi-variable type inference failed */
+    /* JADX WARN: Type inference failed for: r0v18, types: [int] */
+    /* JADX WARN: Type inference failed for: r4v2, types: [int] */
+    /* JADX WARN: Type inference failed for: r4v3 */
+    /* JADX WARN: Type inference failed for: r4v4 */
+    public int hashCode() {
+        String str = this.dest_ip;
+        int iHashCode = (((str == null ? 0 : str.hashCode()) * 31) + Long.hashCode(this.send_ex_time)) * 31;
+        String str2 = this.send_ex_name;
+        int iHashCode2 = (iHashCode + (str2 == null ? 0 : str2.hashCode())) * 31;
+        String str3 = this.send_ex_message;
+        int iHashCode3 = (iHashCode2 + (str3 == null ? 0 : str3.hashCode())) * 31;
+        String str4 = this.send_ex_cause_name;
+        int iHashCode4 = (iHashCode3 + (str4 == null ? 0 : str4.hashCode())) * 31;
+        String str5 = this.send_ex_cause_message;
+        int iHashCode5 = (iHashCode4 + (str5 == null ? 0 : str5.hashCode())) * 31;
+        String str6 = this.send_ex_stage;
+        int iHashCode6 = (((iHashCode5 + (str6 != null ? str6.hashCode() : 0)) * 31) + Long.hashCode(this.send_time)) * 31;
+        boolean z = this.send_success;
+        ?? r4 = z;
+        if (z) {
+            r4 = 1;
+        }
+        return iHashCode6 + r4;
+    }
+
+    public final void setDest_ip(@Nullable String str) {
+        this.dest_ip = str;
+    }
+
+    public final void setSend_ex_cause_message(@Nullable String str) {
+        this.send_ex_cause_message = str;
+    }
+
+    public final void setSend_ex_cause_name(@Nullable String str) {
+        this.send_ex_cause_name = str;
+    }
+
+    public final void setSend_ex_message(@Nullable String str) {
+        this.send_ex_message = str;
+    }
+
+    public final void setSend_ex_name(@Nullable String str) {
+        this.send_ex_name = str;
+    }
+
+    public final void setSend_ex_stage(@Nullable String str) {
+        this.send_ex_stage = str;
+    }
+
+    public final void setSend_ex_time(long j2) {
+        this.send_ex_time = j2;
+    }
+
+    public final void setSend_success(boolean z) {
+        this.send_success = z;
+    }
+
+    public final void setSend_time(long j2) {
+        this.send_time = j2;
+    }
+
+    @NotNull
+    public String toString() throws JSONException {
+        JSONObject jSONObject = new JSONObject();
+        jSONObject.accumulate("send_success", String.valueOf(this.send_success));
+        jSONObject.accumulate(TrackHelperKt.SEND_TIME, String.valueOf(this.send_time));
+        if (!this.send_success) {
+            jSONObject.accumulate("send_ex_name", this.send_ex_name);
+            jSONObject.accumulate("send_ex_message", this.send_ex_message);
+            jSONObject.accumulate("send_ex_cause_name", this.send_ex_cause_name);
+            jSONObject.accumulate("send_ex_cause_message", this.send_ex_cause_message);
+            jSONObject.accumulate("send_ex_stage", this.send_ex_stage);
+            jSONObject.accumulate("send_ex_time", Long.valueOf(this.send_ex_time));
+        }
+        String string = jSONObject.toString();
+        Intrinsics.checkNotNullExpressionValue(string, "ob.toString()");
+        return string;
+    }
+
+    public SendInfo(@Nullable String str, long j2, @Nullable String str2, @Nullable String str3, @Nullable String str4, @Nullable String str5, @Nullable String str6, long j3, boolean z) {
+        this.dest_ip = str;
+        this.send_ex_time = j2;
+        this.send_ex_name = str2;
+        this.send_ex_message = str3;
+        this.send_ex_cause_name = str4;
+        this.send_ex_cause_message = str5;
+        this.send_ex_stage = str6;
+        this.send_time = j3;
+        this.send_success = z;
+    }
+
+    public /* synthetic */ SendInfo(String str, long j2, String str2, String str3, String str4, String str5, String str6, long j3, boolean z, int i, DefaultConstructorMarker defaultConstructorMarker) {
+        this((i & 1) != 0 ? "" : str, (i & 2) != 0 ? 0L : j2, (i & 4) != 0 ? "" : str2, (i & 8) != 0 ? "" : str3, (i & 16) != 0 ? "" : str4, (i & 32) != 0 ? "" : str5, (i & 64) == 0 ? str6 : "", (i & 128) == 0 ? j3 : 0L, (i & 256) != 0 ? false : z);
+    }
+}

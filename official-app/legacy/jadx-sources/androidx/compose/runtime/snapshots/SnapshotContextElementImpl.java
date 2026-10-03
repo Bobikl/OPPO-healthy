@@ -1,0 +1,67 @@
+package androidx.compose.runtime.snapshots;
+
+import androidx.compose.runtime.ExperimentalComposeApi;
+import kotlinx.coroutines.ThreadContextElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import p010kotlin.Metadata;
+import p010kotlin.coroutines.CoroutineContext;
+import p010kotlin.jvm.functions.Function2;
+import p010kotlin.jvm.internal.Intrinsics;
+
+/* JADX INFO: loaded from: classes.dex */
+@Metadata(d1 = {"\u0000*\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\b\u0003\u0018\u00002\u00020\u00012\n\u0012\u0006\u0012\u0004\u0018\u00010\u00030\u0002B\r\u0012\u0006\u0010\u0004\u001a\u00020\u0003¢\u0006\u0002\u0010\u0005J\u001a\u0010\n\u001a\u00020\u000b2\u0006\u0010\f\u001a\u00020\r2\b\u0010\u000e\u001a\u0004\u0018\u00010\u0003H\u0016J\u0012\u0010\u000f\u001a\u0004\u0018\u00010\u00032\u0006\u0010\f\u001a\u00020\rH\u0016R\u0018\u0010\u0006\u001a\u0006\u0012\u0002\b\u00030\u00078VX\u0096\u0004¢\u0006\u0006\u001a\u0004\b\b\u0010\tR\u000e\u0010\u0004\u001a\u00020\u0003X\u0082\u0004¢\u0006\u0002\n\u0000¨\u0006\u0010"}, d2 = {"Landroidx/compose/runtime/snapshots/SnapshotContextElementImpl;", "Landroidx/compose/runtime/snapshots/SnapshotContextElement;", "Lkotlinx/coroutines/ThreadContextElement;", "Landroidx/compose/runtime/snapshots/Snapshot;", "snapshot", "(Landroidx/compose/runtime/snapshots/Snapshot;)V", "key", "Lkotlin/coroutines/CoroutineContext$Key;", "getKey", "()Lkotlin/coroutines/CoroutineContext$Key;", "restoreThreadContext", "", "context", "Lkotlin/coroutines/CoroutineContext;", "oldState", "updateThreadContext", "runtime_release"}, k = 1, mv = {1, 8, 0}, xi = 48)
+@ExperimentalComposeApi
+final class SnapshotContextElementImpl implements SnapshotContextElement, ThreadContextElement<Snapshot> {
+
+    @NotNull
+    private final Snapshot snapshot;
+
+    public SnapshotContextElementImpl(@NotNull Snapshot snapshot) {
+        Intrinsics.checkNotNullParameter(snapshot, "snapshot");
+        this.snapshot = snapshot;
+    }
+
+    @Override // kotlin.coroutines.CoroutineContext.Element, p010kotlin.coroutines.CoroutineContext
+    public <R> R fold(R r, @NotNull Function2<? super R, ? super CoroutineContext.Element, ? extends R> function2) {
+        return (R) SnapshotContextElement.DefaultImpls.fold(this, r, function2);
+    }
+
+    @Override // kotlin.coroutines.CoroutineContext.Element, p010kotlin.coroutines.CoroutineContext
+    @Nullable
+    public <E extends CoroutineContext.Element> E get(@NotNull CoroutineContext.Key<E> key) {
+        return (E) SnapshotContextElement.DefaultImpls.get(this, key);
+    }
+
+    @Override // kotlin.coroutines.CoroutineContext.Element
+    @NotNull
+    public CoroutineContext.Key<?> getKey() {
+        return SnapshotContextElement.INSTANCE;
+    }
+
+    @Override // kotlin.coroutines.CoroutineContext.Element, p010kotlin.coroutines.CoroutineContext
+    @NotNull
+    public CoroutineContext minusKey(@NotNull CoroutineContext.Key<?> key) {
+        return SnapshotContextElement.DefaultImpls.minusKey(this, key);
+    }
+
+    @Override // p010kotlin.coroutines.CoroutineContext
+    @NotNull
+    public CoroutineContext plus(@NotNull CoroutineContext coroutineContext) {
+        return SnapshotContextElement.DefaultImpls.plus(this, coroutineContext);
+    }
+
+    @Override // kotlinx.coroutines.ThreadContextElement
+    public void restoreThreadContext(@NotNull CoroutineContext context, @Nullable Snapshot oldState) {
+        Intrinsics.checkNotNullParameter(context, "context");
+        this.snapshot.unsafeLeave(oldState);
+    }
+
+    /* JADX WARN: Can't rename method to resolve collision */
+    @Override // kotlinx.coroutines.ThreadContextElement
+    @Nullable
+    public Snapshot updateThreadContext(@NotNull CoroutineContext context) {
+        Intrinsics.checkNotNullParameter(context, "context");
+        return this.snapshot.unsafeEnter();
+    }
+}

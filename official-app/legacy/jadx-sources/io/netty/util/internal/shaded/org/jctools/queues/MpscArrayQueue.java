@@ -1,0 +1,257 @@
+package io.netty.util.internal.shaded.org.jctools.queues;
+
+import io.netty.util.internal.shaded.org.jctools.util.UnsafeRefArrayAccess;
+import java.util.Iterator;
+
+/* JADX INFO: loaded from: classes10.dex */
+public class MpscArrayQueue<E> extends MpscArrayQueueL3Pad<E> {
+    public MpscArrayQueue(int i) {
+        super(i);
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue, io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public /* bridge */ /* synthetic */ int capacity() {
+        return super.capacity();
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue, java.util.AbstractQueue, java.util.AbstractCollection, java.util.Collection, io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public /* bridge */ /* synthetic */ void clear() {
+        super.clear();
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue, io.netty.util.internal.shaded.org.jctools.queues.QueueProgressIndicators
+    public /* bridge */ /* synthetic */ long currentConsumerIndex() {
+        return super.currentConsumerIndex();
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue, io.netty.util.internal.shaded.org.jctools.queues.QueueProgressIndicators
+    public /* bridge */ /* synthetic */ long currentProducerIndex() {
+        return super.currentProducerIndex();
+    }
+
+    /* JADX WARN: Multi-variable type inference failed */
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public int drain(MessagePassingQueue.Consumer<E> consumer, int i) {
+        if (consumer == 0) {
+            throw new IllegalArgumentException("c is null");
+        }
+        if (i < 0) {
+            throw new IllegalArgumentException("limit is negative: " + i);
+        }
+        if (i == 0) {
+            return 0;
+        }
+        E[] eArr = this.buffer;
+        long j2 = this.mask;
+        long jLpConsumerIndex = lpConsumerIndex();
+        for (int i2 = 0; i2 < i; i2++) {
+            long j3 = ((long) i2) + jLpConsumerIndex;
+            long jCalcCircularRefElementOffset = UnsafeRefArrayAccess.calcCircularRefElementOffset(j3, j2);
+            Object objLvRefElement = UnsafeRefArrayAccess.lvRefElement(eArr, jCalcCircularRefElementOffset);
+            if (objLvRefElement == null) {
+                return i2;
+            }
+            UnsafeRefArrayAccess.spRefElement(eArr, jCalcCircularRefElementOffset, null);
+            soConsumerIndex(j3 + 1);
+            consumer.accept(objLvRefElement);
+        }
+        return i;
+    }
+
+    public final int failFastOffer(E e2) {
+        e2.getClass();
+        long j2 = this.mask;
+        long j3 = j2 + 1;
+        long jLvProducerIndex = lvProducerIndex();
+        if (jLvProducerIndex >= lvProducerLimit()) {
+            long jLvConsumerIndex = lvConsumerIndex() + j3;
+            if (jLvProducerIndex >= jLvConsumerIndex) {
+                return 1;
+            }
+            soProducerLimit(jLvConsumerIndex);
+        }
+        if (!casProducerIndex(jLvProducerIndex, 1 + jLvProducerIndex)) {
+            return -1;
+        }
+        UnsafeRefArrayAccess.soRefElement(this.buffer, UnsafeRefArrayAccess.calcCircularRefElementOffset(jLvProducerIndex, j2), e2);
+        return 0;
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public int fill(MessagePassingQueue.Supplier<E> supplier, int i) {
+        long jLvProducerIndex;
+        int iMin;
+        if (supplier == null) {
+            throw new IllegalArgumentException("supplier is null");
+        }
+        if (i < 0) {
+            throw new IllegalArgumentException("limit is negative:" + i);
+        }
+        if (i == 0) {
+            return 0;
+        }
+        long j2 = this.mask;
+        long j3 = 1 + j2;
+        long jLvProducerLimit = lvProducerLimit();
+        do {
+            jLvProducerIndex = lvProducerIndex();
+            long j4 = jLvProducerLimit - jLvProducerIndex;
+            if (j4 <= 0) {
+                jLvProducerLimit = lvConsumerIndex() + j3;
+                j4 = jLvProducerLimit - jLvProducerIndex;
+                if (j4 <= 0) {
+                    return 0;
+                }
+                soProducerLimit(jLvProducerLimit);
+            }
+            iMin = Math.min((int) j4, i);
+        } while (!casProducerIndex(jLvProducerIndex, ((long) iMin) + jLvProducerIndex));
+        E[] eArr = this.buffer;
+        for (int i2 = 0; i2 < iMin; i2++) {
+            UnsafeRefArrayAccess.soRefElement(eArr, UnsafeRefArrayAccess.calcCircularRefElementOffset(((long) i2) + jLvProducerIndex, j2), supplier.get());
+        }
+        return iMin;
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue, java.util.AbstractCollection, java.util.Collection, io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public /* bridge */ /* synthetic */ boolean isEmpty() {
+        return super.isEmpty();
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable
+    public /* bridge */ /* synthetic */ Iterator iterator() {
+        return super.iterator();
+    }
+
+    @Override // java.util.Queue, io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public boolean offer(E e2) {
+        long jLvProducerIndex;
+        e2.getClass();
+        long j2 = this.mask;
+        long jLvProducerLimit = lvProducerLimit();
+        do {
+            jLvProducerIndex = lvProducerIndex();
+            if (jLvProducerIndex >= jLvProducerLimit) {
+                jLvProducerLimit = lvConsumerIndex() + j2 + 1;
+                if (jLvProducerIndex >= jLvProducerLimit) {
+                    return false;
+                }
+                soProducerLimit(jLvProducerLimit);
+            }
+        } while (!casProducerIndex(jLvProducerIndex, 1 + jLvProducerIndex));
+        UnsafeRefArrayAccess.soRefElement(this.buffer, UnsafeRefArrayAccess.calcCircularRefElementOffset(jLvProducerIndex, j2), e2);
+        return true;
+    }
+
+    public boolean offerIfBelowThreshold(E e2, int i) {
+        long jLvProducerIndex;
+        e2.getClass();
+        long j2 = this.mask;
+        long j3 = j2 + 1;
+        long jLvProducerLimit = lvProducerLimit();
+        do {
+            jLvProducerIndex = lvProducerIndex();
+            long j4 = i;
+            if (j3 - (jLvProducerLimit - jLvProducerIndex) >= j4) {
+                long jLvConsumerIndex = lvConsumerIndex();
+                if (jLvProducerIndex - jLvConsumerIndex >= j4) {
+                    return false;
+                }
+                jLvProducerLimit = jLvConsumerIndex + j3;
+                soProducerLimit(jLvProducerLimit);
+            }
+        } while (!casProducerIndex(jLvProducerIndex, jLvProducerIndex + 1));
+        UnsafeRefArrayAccess.soRefElement(this.buffer, UnsafeRefArrayAccess.calcCircularRefElementOffset(jLvProducerIndex, j2), e2);
+        return true;
+    }
+
+    @Override // java.util.Queue, io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public E peek() {
+        E[] eArr = this.buffer;
+        long jLpConsumerIndex = lpConsumerIndex();
+        long jCalcCircularRefElementOffset = UnsafeRefArrayAccess.calcCircularRefElementOffset(jLpConsumerIndex, this.mask);
+        E e2 = (E) UnsafeRefArrayAccess.lvRefElement(eArr, jCalcCircularRefElementOffset);
+        if (e2 == null) {
+            if (jLpConsumerIndex == lvProducerIndex()) {
+                return null;
+            }
+            do {
+                e2 = (E) UnsafeRefArrayAccess.lvRefElement(eArr, jCalcCircularRefElementOffset);
+            } while (e2 == null);
+        }
+        return e2;
+    }
+
+    @Override // java.util.Queue, io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public E poll() {
+        long jLpConsumerIndex = lpConsumerIndex();
+        long jCalcCircularRefElementOffset = UnsafeRefArrayAccess.calcCircularRefElementOffset(jLpConsumerIndex, this.mask);
+        E[] eArr = this.buffer;
+        E e2 = (E) UnsafeRefArrayAccess.lvRefElement(eArr, jCalcCircularRefElementOffset);
+        if (e2 == null) {
+            if (jLpConsumerIndex == lvProducerIndex()) {
+                return null;
+            }
+            do {
+                e2 = (E) UnsafeRefArrayAccess.lvRefElement(eArr, jCalcCircularRefElementOffset);
+            } while (e2 == null);
+        }
+        UnsafeRefArrayAccess.spRefElement(eArr, jCalcCircularRefElementOffset, null);
+        soConsumerIndex(jLpConsumerIndex + 1);
+        return e2;
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public boolean relaxedOffer(E e2) {
+        return offer(e2);
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public E relaxedPeek() {
+        return (E) UnsafeRefArrayAccess.lvRefElement(this.buffer, UnsafeRefArrayAccess.calcCircularRefElementOffset(lpConsumerIndex(), this.mask));
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public E relaxedPoll() {
+        E[] eArr = this.buffer;
+        long jLpConsumerIndex = lpConsumerIndex();
+        long jCalcCircularRefElementOffset = UnsafeRefArrayAccess.calcCircularRefElementOffset(jLpConsumerIndex, this.mask);
+        E e2 = (E) UnsafeRefArrayAccess.lvRefElement(eArr, jCalcCircularRefElementOffset);
+        if (e2 == null) {
+            return null;
+        }
+        UnsafeRefArrayAccess.spRefElement(eArr, jCalcCircularRefElementOffset, null);
+        soConsumerIndex(jLpConsumerIndex + 1);
+        return e2;
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue, java.util.AbstractCollection, java.util.Collection, io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public /* bridge */ /* synthetic */ int size() {
+        return super.size();
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue, java.util.AbstractCollection
+    public /* bridge */ /* synthetic */ String toString() {
+        return super.toString();
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public int drain(MessagePassingQueue.Consumer<E> consumer) {
+        return drain(consumer, capacity());
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public void drain(MessagePassingQueue.Consumer<E> consumer, MessagePassingQueue.WaitStrategy waitStrategy, MessagePassingQueue.ExitCondition exitCondition) {
+        MessagePassingQueueUtil.drain(this, consumer, waitStrategy, exitCondition);
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public int fill(MessagePassingQueue.Supplier<E> supplier) {
+        return MessagePassingQueueUtil.fillBounded(this, supplier);
+    }
+
+    @Override // io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue
+    public void fill(MessagePassingQueue.Supplier<E> supplier, MessagePassingQueue.WaitStrategy waitStrategy, MessagePassingQueue.ExitCondition exitCondition) {
+        MessagePassingQueueUtil.fill(this, supplier, waitStrategy, exitCondition);
+    }
+}

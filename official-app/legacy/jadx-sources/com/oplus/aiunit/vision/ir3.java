@@ -1,0 +1,16 @@
+package com.oplus.aiunit.vision;
+
+import android.annotation.TargetApi;
+import android.view.View;
+
+/* JADX INFO: loaded from: classes13.dex */
+public class ir3 {
+    public static void a(View view, Runnable runnable) {
+        b(view, runnable);
+    }
+
+    @TargetApi(16)
+    public static void b(View view, Runnable runnable) {
+        view.postOnAnimation(runnable);
+    }
+}

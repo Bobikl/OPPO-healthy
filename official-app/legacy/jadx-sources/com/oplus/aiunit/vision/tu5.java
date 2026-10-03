@@ -1,0 +1,40 @@
+package com.oplus.aiunit.vision;
+
+import android.content.Context;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.WindowManager;
+import org.jetbrains.annotations.NotNull;
+
+/* JADX INFO: loaded from: classes8.dex */
+public final class tu5 {
+    public static int a(@NotNull Context context) {
+        Object systemService = context.getSystemService("window");
+        if (!(systemService instanceof WindowManager)) {
+            return 0;
+        }
+        Display defaultDisplay = ((WindowManager) systemService).getDefaultDisplay();
+        try {
+            Point point = new Point();
+            defaultDisplay.getRealSize(point);
+            return point.y;
+        } catch (Exception unused) {
+            return defaultDisplay.getHeight();
+        }
+    }
+
+    public static int b(@NotNull Context context) {
+        Object systemService = context.getSystemService("window");
+        if (!(systemService instanceof WindowManager)) {
+            return 0;
+        }
+        Display defaultDisplay = ((WindowManager) systemService).getDefaultDisplay();
+        try {
+            Point point = new Point();
+            defaultDisplay.getRealSize(point);
+            return point.x;
+        } catch (Exception unused) {
+            return defaultDisplay.getWidth();
+        }
+    }
+}

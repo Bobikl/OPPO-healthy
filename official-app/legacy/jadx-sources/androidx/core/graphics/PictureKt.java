@@ -1,0 +1,27 @@
+package androidx.core.graphics;
+
+import android.graphics.Canvas;
+import android.graphics.Picture;
+import com.heytap.nearx.tangramconfig.strategy.Fields;
+import org.jetbrains.annotations.NotNull;
+import p010kotlin.Metadata;
+import p010kotlin.Unit;
+import p010kotlin.jvm.functions.Function1;
+import p010kotlin.jvm.internal.InlineMarker;
+
+/* JADX INFO: loaded from: classes.dex */
+@Metadata(d1 = {"\u0000\"\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\b\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0010\u0002\n\u0002\u0018\u0002\n\u0000\u001a6\u0010\u0000\u001a\u00020\u0001*\u00020\u00012\u0006\u0010\u0002\u001a\u00020\u00032\u0006\u0010\u0004\u001a\u00020\u00032\u0017\u0010\u0005\u001a\u0013\u0012\u0004\u0012\u00020\u0007\u0012\u0004\u0012\u00020\b0\u0006¢\u0006\u0002\b\tH\u0086\b¨\u0006\n"}, d2 = {"record", "Landroid/graphics/Picture;", Fields.WIDTH_FIELD, "", Fields.HEIGHT_FIELD, "block", "Lkotlin/Function1;", "Landroid/graphics/Canvas;", "", "Lkotlin/ExtensionFunctionType;", "core-ktx_release"}, k = 2, mv = {1, 8, 0}, xi = 48)
+public final class PictureKt {
+    @NotNull
+    public static final Picture record(@NotNull Picture picture, int i, int i2, @NotNull Function1<? super Canvas, Unit> function1) {
+        Canvas canvasBeginRecording = picture.beginRecording(i, i2);
+        try {
+            function1.invoke(canvasBeginRecording);
+            return picture;
+        } finally {
+            InlineMarker.finallyStart(1);
+            picture.endRecording();
+            InlineMarker.finallyEnd(1);
+        }
+    }
+}

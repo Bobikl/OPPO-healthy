@@ -1,0 +1,79 @@
+package com.heytap.sports;
+
+/* JADX INFO: loaded from: classes2.dex */
+public final class R$plurals {
+    public static final int sports_badminton_card_times_unit = 2131951824;
+    public static final int sports_badminton_card_tribble_unit = 2131951825;
+    public static final int sports_badminton_swing_unit = 2131951826;
+    public static final int sports_calendar_all_days = 2131951827;
+    public static final int sports_calendar_continue_days = 2131951828;
+    public static final int sports_calorie1 = 2131951829;
+    public static final int sports_climbing_floors_show_name_unit = 2131951830;
+    public static final int sports_climbing_floors_unit = 2131951831;
+    public static final int sports_compare_lastmonth_down_time = 2131951832;
+    public static final int sports_compare_lastmonth_up_time = 2131951833;
+    public static final int sports_compare_lastweek_down_time = 2131951834;
+    public static final int sports_compare_lastweek_up_time = 2131951835;
+    public static final int sports_compare_lastyear_down_time = 2131951836;
+    public static final int sports_compare_lastyear_up_time = 2131951837;
+    public static final int sports_detail_elevation_chart_Y_description_foot = 2131951838;
+    public static final int sports_distance_unit_yard = 2131951839;
+    public static final int sports_exercise_load_evaluate_card_nodata_content_gt22days_surplus = 2131951840;
+    public static final int sports_exercise_load_evaluate_card_nodata_content_within22days_surplus = 2131951841;
+    public static final int sports_health_record_speed_mile_unit = 2131951842;
+    public static final int sports_mini_app_walk_step = 2131951843;
+    public static final int sports_open_water_swim_avg_stroke_dis_unit = 2131951844;
+    public static final int sports_open_water_swim_avg_stroke_dis_unit_yard = 2131951845;
+    public static final int sports_playground_run_laps = 2131951846;
+    public static final int sports_rate1 = 2131951847;
+    public static final int sports_reach_goal_day_continue = 2131951848;
+    public static final int sports_record_burn_fat_speed = 2131951849;
+    public static final int sports_record_detail_merge_list_selected_title = 2131951850;
+    public static final int sports_record_details_summary_imperial_unit_pool_length = 2131951851;
+    public static final int sports_record_details_summary_metric_unit_pool_length = 2131951852;
+    public static final int sports_record_details_summary_unit_avg_swim_stroke = 2131951853;
+    public static final int sports_record_details_summary_unit_avg_swim_stroke_rate = 2131951854;
+    public static final int sports_record_name_value_chp = 2131951855;
+    public static final int sports_record_name_value_count_format = 2131951856;
+    public static final int sports_record_name_value_jiang = 2131951857;
+    public static final int sports_record_name_value_min_format = 2131951858;
+    public static final int sports_record_name_value_step = 2131951859;
+    public static final int sports_record_name_value_tennis_count_format = 2131951860;
+    public static final int sports_record_recovery_time_unit_day = 2131951861;
+    public static final int sports_record_swim_detail_stroke_count_avg_format = 2131951862;
+    public static final int sports_record_swim_detail_stroke_count_min_format = 2131951863;
+    public static final int sports_record_swim_detail_stroke_speed_avg_format = 2131951864;
+    public static final int sports_record_swim_detail_stroke_speed_best_format = 2131951865;
+    public static final int sports_record_value_badminton_count_format = 2131951866;
+    public static final int sports_record_value_elliptical_machine_count_format = 2131951867;
+    public static final int sports_record_value_km_format = 2131951868;
+    public static final int sports_record_value_min_format = 2131951869;
+    public static final int sports_record_value_rope_skipping_count_format = 2131951870;
+    public static final int sports_record_value_rowing_machine_count_format = 2131951871;
+    public static final int sports_record_value_tennis_count_format = 2131951872;
+    public static final int sports_record_weight_g = 2131951873;
+    public static final int sports_running_power_unit = 2131951874;
+    public static final int sports_segment_card_table_imperial_swim_distance_unit = 2131951875;
+    public static final int sports_segment_card_table_metric_swim_distance_unit = 2131951876;
+    public static final int sports_stat_kj_unit = 2131951877;
+    public static final int sports_submode_calories_target_unit_format = 2131951878;
+    public static final int sports_submode_distance_target_unit_format_s = 2131951879;
+    public static final int sports_submode_laps_target_count_unit_format = 2131951880;
+    public static final int sports_submode_lead_runner_s = 2131951881;
+    public static final int sports_submode_ropeskipping_target_count_unit_format = 2131951882;
+    public static final int sports_submode_swim_distance_target_unit_format = 2131951883;
+    public static final int sports_submode_trips_target_count_unit_format = 2131951884;
+    public static final int sports_swim_stroke_count_card_unit = 2131951885;
+    public static final int sports_swim_stroke_speed_card_unit = 2131951886;
+    public static final int sports_times = 2131951887;
+    public static final int sports_transfer_import_confirm_pending_value = 2131951888;
+    public static final int sports_transfer_import_confirm_total = 2131951889;
+    public static final int sports_transfer_import_save_duplicate = 2131951890;
+    public static final int sports_transfer_import_save_failed_count = 2131951891;
+    public static final int sports_transfer_import_save_success = 2131951892;
+    public static final int sports_unit_cm = 2131951893;
+    public static final int sports_unit_ms = 2131951894;
+
+    private R$plurals() {
+    }
+}

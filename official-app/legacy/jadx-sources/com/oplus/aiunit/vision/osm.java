@@ -1,0 +1,24 @@
+package com.oplus.aiunit.vision;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+
+/* JADX INFO: loaded from: classes12.dex */
+public class osm implements jim {
+    public static final String a = "content://cn.nubia.provider.deviceid.dataid/oaid";
+
+    @Override // com.oplus.aiunit.vision.jim
+    public String a(Context context) {
+        String string = null;
+        if (context == null) {
+            return null;
+        }
+        Cursor cursorQuery = context.getContentResolver().query(Uri.parse(a), null, null, null, null);
+        if (cursorQuery != null) {
+            string = cursorQuery.moveToNext() ? cursorQuery.getString(cursorQuery.getColumnIndex("device_ids_grndid")) : null;
+            cursorQuery.close();
+        }
+        return string;
+    }
+}

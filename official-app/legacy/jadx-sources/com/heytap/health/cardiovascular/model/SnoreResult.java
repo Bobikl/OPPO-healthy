@@ -1,0 +1,97 @@
+package com.heytap.health.cardiovascular.model;
+
+import androidx.annotation.Keep;
+import androidx.compose.runtime.internal.StabilityInferred;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import p010kotlin.Metadata;
+import p010kotlin.jvm.internal.DefaultConstructorMarker;
+import p010kotlin.jvm.internal.Intrinsics;
+
+/* JADX INFO: loaded from: classes15.dex */
+@StabilityInferred(parameters = 0)
+@Keep
+@Metadata(d1 = {"\u0000&\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\t\n\u0000\n\u0002\u0010\b\n\u0002\b\f\n\u0002\u0010\u000b\n\u0002\b\u0003\n\u0002\u0010\u000e\n\u0000\b\u0087\b\u0018\u00002\u00020\u0001B\u001d\u0012\n\b\u0002\u0010\u0002\u001a\u0004\u0018\u00010\u0003\u0012\n\b\u0002\u0010\u0004\u001a\u0004\u0018\u00010\u0005¢\u0006\u0002\u0010\u0006J\u0010\u0010\r\u001a\u0004\u0018\u00010\u0003HÆ\u0003¢\u0006\u0002\u0010\u000bJ\u0010\u0010\u000e\u001a\u0004\u0018\u00010\u0005HÆ\u0003¢\u0006\u0002\u0010\bJ&\u0010\u000f\u001a\u00020\u00002\n\b\u0002\u0010\u0002\u001a\u0004\u0018\u00010\u00032\n\b\u0002\u0010\u0004\u001a\u0004\u0018\u00010\u0005HÆ\u0001¢\u0006\u0002\u0010\u0010J\u0013\u0010\u0011\u001a\u00020\u00122\b\u0010\u0013\u001a\u0004\u0018\u00010\u0001HÖ\u0003J\t\u0010\u0014\u001a\u00020\u0005HÖ\u0001J\t\u0010\u0015\u001a\u00020\u0016HÖ\u0001R\u0015\u0010\u0004\u001a\u0004\u0018\u00010\u0005¢\u0006\n\n\u0002\u0010\t\u001a\u0004\b\u0007\u0010\bR\u0015\u0010\u0002\u001a\u0004\u0018\u00010\u0003¢\u0006\n\n\u0002\u0010\f\u001a\u0004\b\n\u0010\u000b¨\u0006\u0017"}, d2 = {"Lcom/heytap/health/cardiovascular/model/SnoreResult;", "", "timestamp", "", "level", "", "(Ljava/lang/Long;Ljava/lang/Integer;)V", "getLevel", "()Ljava/lang/Integer;", "Ljava/lang/Integer;", "getTimestamp", "()Ljava/lang/Long;", "Ljava/lang/Long;", "component1", "component2", "copy", "(Ljava/lang/Long;Ljava/lang/Integer;)Lcom/heytap/health/cardiovascular/model/SnoreResult;", "equals", "", "other", "hashCode", "toString", "", "cardiovascular_release"}, k = 1, mv = {1, 8, 0}, xi = 48)
+public final /* data */ class SnoreResult {
+    public static final int $stable = 0;
+
+    @Nullable
+    private final Integer level;
+
+    @Nullable
+    private final Long timestamp;
+
+    /* JADX WARN: Multi-variable type inference failed */
+    public SnoreResult() {
+        this(null, 0 == true ? 1 : 0, 3, 0 == true ? 1 : 0);
+    }
+
+    public static /* synthetic */ SnoreResult copy$default(SnoreResult snoreResult, Long l2, Integer num, int i, Object obj) {
+        if ((i & 1) != 0) {
+            l2 = snoreResult.timestamp;
+        }
+        if ((i & 2) != 0) {
+            num = snoreResult.level;
+        }
+        return snoreResult.copy(l2, num);
+    }
+
+    @Nullable
+    /* JADX INFO: renamed from: component1, reason: from getter */
+    public final Long getTimestamp() {
+        return this.timestamp;
+    }
+
+    @Nullable
+    /* JADX INFO: renamed from: component2, reason: from getter */
+    public final Integer getLevel() {
+        return this.level;
+    }
+
+    @NotNull
+    public final SnoreResult copy(@Nullable Long timestamp, @Nullable Integer level) {
+        return new SnoreResult(timestamp, level);
+    }
+
+    public boolean equals(@Nullable Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof SnoreResult)) {
+            return false;
+        }
+        SnoreResult snoreResult = (SnoreResult) other;
+        return Intrinsics.areEqual(this.timestamp, snoreResult.timestamp) && Intrinsics.areEqual(this.level, snoreResult.level);
+    }
+
+    @Nullable
+    public final Integer getLevel() {
+        return this.level;
+    }
+
+    @Nullable
+    public final Long getTimestamp() {
+        return this.timestamp;
+    }
+
+    public int hashCode() {
+        Long l2 = this.timestamp;
+        int iHashCode = (l2 == null ? 0 : l2.hashCode()) * 31;
+        Integer num = this.level;
+        return iHashCode + (num != null ? num.hashCode() : 0);
+    }
+
+    @NotNull
+    public String toString() {
+        return "SnoreResult(timestamp=" + this.timestamp + ", level=" + this.level + ")";
+    }
+
+    public SnoreResult(@Nullable Long l2, @Nullable Integer num) {
+        this.timestamp = l2;
+        this.level = num;
+    }
+
+    public /* synthetic */ SnoreResult(Long l2, Integer num, int i, DefaultConstructorMarker defaultConstructorMarker) {
+        this((i & 1) != 0 ? null : l2, (i & 2) != 0 ? null : num);
+    }
+}

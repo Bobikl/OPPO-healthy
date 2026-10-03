@@ -1,0 +1,45 @@
+package com.google.crypto.tink.signature;
+
+import com.google.crypto.tink.PrimitiveSet;
+import com.google.crypto.tink.PrimitiveWrapper;
+import com.google.crypto.tink.PublicKeySign;
+import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.subtle.Bytes;
+import java.security.GeneralSecurityException;
+
+/* JADX INFO: loaded from: D:\项目\oppo通知转发\analysis\health667-dex\classes14.dex */
+public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, PublicKeySign> {
+
+    public static class WrappedPublicKeySign implements PublicKeySign {
+        private final PrimitiveSet<PublicKeySign> primitives;
+
+        public WrappedPublicKeySign(PrimitiveSet<PublicKeySign> primitiveSet) {
+            this.primitives = primitiveSet;
+        }
+
+        @Override // com.google.crypto.tink.PublicKeySign
+        public byte[] sign(byte[] bArr) throws GeneralSecurityException {
+            return this.primitives.getPrimary().getOutputPrefixType().equals(OutputPrefixType.LEGACY) ? Bytes.concat(this.primitives.getPrimary().getIdentifier(), this.primitives.getPrimary().getPrimitive().sign(Bytes.concat(bArr, new byte[]{0}))) : Bytes.concat(this.primitives.getPrimary().getIdentifier(), this.primitives.getPrimary().getPrimitive().sign(bArr));
+        }
+    }
+
+    public static void register() throws GeneralSecurityException {
+        Registry.registerPrimitiveWrapper(new PublicKeySignWrapper());
+    }
+
+    @Override // com.google.crypto.tink.PrimitiveWrapper
+    public Class<PublicKeySign> getInputPrimitiveClass() {
+        return PublicKeySign.class;
+    }
+
+    @Override // com.google.crypto.tink.PrimitiveWrapper
+    public Class<PublicKeySign> getPrimitiveClass() {
+        return PublicKeySign.class;
+    }
+
+    @Override // com.google.crypto.tink.PrimitiveWrapper
+    public PublicKeySign wrap(PrimitiveSet<PublicKeySign> primitiveSet) {
+        return new WrappedPublicKeySign(primitiveSet);
+    }
+}

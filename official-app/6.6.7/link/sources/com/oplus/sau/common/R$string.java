@@ -1,0 +1,51 @@
+package com.oplus.sau.common;
+
+/* JADX INFO: loaded from: D:\项目\oppo通知转发\analysis\health667-dex\classes8.dex */
+public final class R$string {
+    public static final int abc_action_bar_home_description = 2132082732;
+    public static final int abc_action_bar_up_description = 2132082733;
+    public static final int abc_action_menu_overflow_description = 2132082734;
+    public static final int abc_action_mode_done = 2132082735;
+    public static final int abc_activity_chooser_view_see_all = 2132082736;
+    public static final int abc_activitychooserview_choose_application = 2132082737;
+    public static final int abc_capital_off = 2132082738;
+    public static final int abc_capital_on = 2132082739;
+    public static final int abc_menu_alt_shortcut_label = 2132082740;
+    public static final int abc_menu_ctrl_shortcut_label = 2132082741;
+    public static final int abc_menu_delete_shortcut_label = 2132082742;
+    public static final int abc_menu_enter_shortcut_label = 2132082743;
+    public static final int abc_menu_function_shortcut_label = 2132082744;
+    public static final int abc_menu_meta_shortcut_label = 2132082745;
+    public static final int abc_menu_shift_shortcut_label = 2132082746;
+    public static final int abc_menu_space_shortcut_label = 2132082747;
+    public static final int abc_menu_sym_shortcut_label = 2132082748;
+    public static final int abc_prepend_shortcut_label = 2132082749;
+    public static final int abc_search_hint = 2132082750;
+    public static final int abc_searchview_description_clear = 2132082751;
+    public static final int abc_searchview_description_query = 2132082752;
+    public static final int abc_searchview_description_search = 2132082753;
+    public static final int abc_searchview_description_submit = 2132082754;
+    public static final int abc_searchview_description_voice = 2132082755;
+    public static final int abc_shareactionprovider_share_with = 2132082756;
+    public static final int abc_shareactionprovider_share_with_application = 2132082757;
+    public static final int abc_toolbar_collapse_description = 2132082758;
+    public static final int sau_dialog_description_head = 2132091973;
+    public static final int sau_dialog_download_install = 2132091974;
+    public static final int sau_dialog_downloaded_prompt = 2132091975;
+    public static final int sau_dialog_install_later = 2132091976;
+    public static final int sau_dialog_install_now = 2132091977;
+    public static final int sau_dialog_mobile_propmt = 2132091978;
+    public static final int sau_dialog_new_version = 2132091979;
+    public static final int sau_dialog_size = 2132091980;
+    public static final int sau_dialog_upgrade_exit = 2132091981;
+    public static final int sau_dialog_upgrade_installing = 2132091982;
+    public static final int sau_dialog_upgrade_later = 2132091983;
+    public static final int sau_dialog_upgrade_now = 2132091984;
+    public static final int sau_dialog_upgrade_running = 2132091985;
+    public static final int sau_dialog_vername = 2132091986;
+    public static final int search_menu_title = 2132092004;
+    public static final int status_bar_notification_info_overflow = 2132095867;
+
+    private R$string() {
+    }
+}

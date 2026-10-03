@@ -1,0 +1,31 @@
+package com.heytap.sports.partner.model;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import p010kotlin.Metadata;
+import p010kotlin.coroutines.Continuation;
+import p010kotlin.coroutines.jvm.internal.ContinuationImpl;
+import p010kotlin.coroutines.jvm.internal.DebugMetadata;
+
+/* JADX INFO: loaded from: classes2.dex */
+@Metadata(k = 3, mv = {1, 8, 0}, xi = 48)
+@DebugMetadata(c = "com.heytap.sports.partner.model.MainRepo", f = "MainRepo.kt", i = {}, l = {90}, m = "commentAchievement", n = {}, s = {})
+public final class MainRepo$commentAchievement$1 extends ContinuationImpl {
+    int label;
+    /* synthetic */ Object result;
+    final /* synthetic */ MainRepo this$0;
+
+    /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+    public MainRepo$commentAchievement$1(MainRepo mainRepo, Continuation<? super MainRepo$commentAchievement$1> continuation) {
+        super(continuation);
+        this.this$0 = mainRepo;
+    }
+
+    @Override // p010kotlin.coroutines.jvm.internal.BaseContinuationImpl
+    @Nullable
+    public final Object invokeSuspend(@NotNull Object obj) {
+        this.result = obj;
+        this.label |= Integer.MIN_VALUE;
+        return this.this$0.b(this);
+    }
+}

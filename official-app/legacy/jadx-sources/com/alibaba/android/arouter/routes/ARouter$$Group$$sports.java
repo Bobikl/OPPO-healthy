@@ -1,0 +1,147 @@
+package com.alibaba.android.arouter.routes;
+
+import androidx.compose.runtime.internal.StabilityInferred;
+import com.alibaba.android.arouter.facade.enums.RouteType;
+import com.alibaba.android.arouter.facade.model.RouteMeta;
+import com.alibaba.android.arouter.facade.template.IRouteGroup;
+import com.heytap.sports.coach.tips.CoachTipsActivity;
+import com.heytap.sports.coach.tips.CoachTipsHelpPageActivity;
+import com.heytap.sports.course.AerobicsCoursesBSUActivity;
+import com.heytap.sports.course.RunningCourseListActivity;
+import com.heytap.sports.export.SportServiceImpl;
+import com.heytap.sports.export.StepServiceImpl;
+import com.heytap.sports.home.KeepCourseCollectActivity;
+import com.heytap.sports.media.MediaDownloadService;
+import com.heytap.sports.move.moving.MovingActivity;
+import com.heytap.sports.move.treadmill.ui.device.NoFindTreadmillDeviceActivity;
+import com.heytap.sports.move.treadmill.ui.treadmill.SportDeviceConnectionActivity;
+import com.heytap.sports.move.treadmill.ui.treadmill.TreadmillGuideActivity;
+import com.heytap.sports.move.treadmill.ui.treadmill.TreadmillRunningActivity;
+import com.heytap.sports.moving.MovingPermissionActivity;
+import com.heytap.sports.record.details.RecordDetailsActivity;
+import com.heytap.sports.record.details.RecordDetailsInstructionActivity;
+import com.heytap.sports.record.details.running.RunningAdvancedActivity;
+import com.heytap.sports.record.details.running.RunningPostureActivity;
+import com.heytap.sports.record.details.running.RunningPostureVideoActivity;
+import com.heytap.sports.record.list.SportRecordListActivity;
+import com.heytap.sports.record.stat.SportRecordsStatisticsActivity;
+import com.heytap.sports.service.SportNotifyServiceImpl;
+import com.heytap.sports.service.SportRecordQueryServiceImpl;
+import com.heytap.sports.service.SportTrackDataServiceImpl;
+import com.heytap.sports.service.StartVo2MaxServiceImpl;
+import com.heytap.sports.share.ui.SportShareActivity;
+import com.heytap.sports.stat.SportHighOrderActivity;
+import com.heytap.sports.tabEdit.SportsTabSortActivity;
+import com.heytap.sports.transfer.ui.SportImportActivity;
+import com.heytap.sports.transfer.ui.SportImportQAActivity;
+import com.heytap.store.platform.htrouter.compiler.utils.Consts;
+import java.util.Map;
+import org.jetbrains.annotations.Nullable;
+import p010kotlin.Metadata;
+import p010kotlin.jvm.internal.Intrinsics;
+
+/* JADX INFO: loaded from: classes12.dex */
+@StabilityInferred(parameters = 0)
+@Metadata(d1 = {"\u0000\u001e\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0000\n\u0002\u0010%\n\u0002\u0010\u000e\n\u0002\u0018\u0002\n\u0000\b\u0007\u0018\u00002\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0002J\u001e\u0010\u0003\u001a\u00020\u00042\u0014\u0010\u0005\u001a\u0010\u0012\u0004\u0012\u00020\u0007\u0012\u0004\u0012\u00020\b\u0018\u00010\u0006H\u0016¨\u0006\t"}, d2 = {"com/alibaba/android/arouter/routes/ARouter$$Group$$sports", "Lcom/alibaba/android/arouter/facade/template/IRouteGroup;", "()V", Consts.METHOD_LOAD_INTO, "", "atlas", "", "", "Lcom/alibaba/android/arouter/facade/model/RouteMeta;", "sport_impl_release"}, k = 1, mv = {1, 8, 0}, xi = 48)
+public final class ARouter$$Group$$sports implements IRouteGroup {
+    public static final int $stable = 0;
+
+    @Override // com.alibaba.android.arouter.facade.template.IRouteGroup
+    public void loadInto(@Nullable Map<String, RouteMeta> atlas) {
+        if (atlas == null) {
+            return;
+        }
+        RouteType routeType = RouteType.ACTIVITY;
+        RouteMeta routeMetaBuild = RouteMeta.build(routeType, AerobicsCoursesBSUActivity.class, "/sports/aerobicscoursesactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/AerobicsCoursesActivity", routeMetaBuild);
+        RouteMeta routeMetaBuild2 = RouteMeta.build(routeType, CoachTipsActivity.class, "/sports/coachtipsactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild2, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/CoachTipsActivity", routeMetaBuild2);
+        RouteMeta routeMetaBuild3 = RouteMeta.build(routeType, CoachTipsHelpPageActivity.class, "/sports/coachtipshelppageactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild3, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/CoachTipsHelpPageActivity", routeMetaBuild3);
+        RouteMeta routeMetaBuild4 = RouteMeta.build(routeType, KeepCourseCollectActivity.class, "/sports/keepcoursecollectactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild4, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/KeepCourseCollectActivity", routeMetaBuild4);
+        RouteMeta routeMetaBuild5 = RouteMeta.build(routeType, MovingActivity.class, "/sports/movingactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild5, "build(RouteType.ACTIVITY…\", null, -1, -2147483648)");
+        atlas.put("/sports/MovingActivity", routeMetaBuild5);
+        RouteMeta routeMetaBuild6 = RouteMeta.build(routeType, MovingPermissionActivity.class, "/sports/movingpermissionactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild6, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/MovingPermissionActivity", routeMetaBuild6);
+        RouteMeta routeMetaBuild7 = RouteMeta.build(routeType, NoFindTreadmillDeviceActivity.class, "/sports/nofindtreadmilldeviceactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild7, "build(RouteType.ACTIVITY…\", null, -1, -2147483648)");
+        atlas.put("/sports/NoFindTreadmillDeviceActivity", routeMetaBuild7);
+        RouteType routeType2 = RouteType.PROVIDER;
+        RouteMeta routeMetaBuild8 = RouteMeta.build(routeType2, SportNotifyServiceImpl.class, "/sports/notifyservicehelper", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild8, "build(RouteType.PROVIDER…   null, -1, -2147483648)");
+        atlas.put("/sports/NotifyServiceHelper", routeMetaBuild8);
+        RouteMeta routeMetaBuild9 = RouteMeta.build(routeType, RecordDetailsInstructionActivity.class, "/sports/recorddetailinstructionactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild9, "build(RouteType.ACTIVITY…\", null, -1, -2147483648)");
+        atlas.put("/sports/RecordDetailInstructionActivity", routeMetaBuild9);
+        RouteMeta routeMetaBuild10 = RouteMeta.build(routeType, RecordDetailsActivity.class, "/sports/recorddetailsactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild10, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/RecordDetailsActivity", routeMetaBuild10);
+        RouteMeta routeMetaBuild11 = RouteMeta.build(routeType, SportRecordListActivity.class, "/sports/recordlistpage", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild11, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/RecordListPage", routeMetaBuild11);
+        RouteMeta routeMetaBuild12 = RouteMeta.build(routeType, SportRecordsStatisticsActivity.class, "/sports/recordstatisticslistpage", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild12, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/RecordStatisticsListPage", routeMetaBuild12);
+        RouteMeta routeMetaBuild13 = RouteMeta.build(routeType, RunningAdvancedActivity.class, "/sports/runningadvancedactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild13, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/RunningAdvancedActivity", routeMetaBuild13);
+        RouteMeta routeMetaBuild14 = RouteMeta.build(routeType, RunningCourseListActivity.class, "/sports/runningcourselistactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild14, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/RunningCourseListActivity", routeMetaBuild14);
+        RouteMeta routeMetaBuild15 = RouteMeta.build(routeType, RunningPostureActivity.class, "/sports/runningpostureactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild15, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/RunningPostureActivity", routeMetaBuild15);
+        RouteMeta routeMetaBuild16 = RouteMeta.build(routeType, RunningPostureVideoActivity.class, "/sports/runningposturevideoactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild16, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/RunningPostureVideoActivity", routeMetaBuild16);
+        RouteMeta routeMetaBuild17 = RouteMeta.build(routeType, SportDeviceConnectionActivity.class, "/sports/sportdeviceconnectionactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild17, "build(RouteType.ACTIVITY…\", null, -1, -2147483648)");
+        atlas.put("/sports/SportDeviceConnectionActivity", routeMetaBuild17);
+        RouteMeta routeMetaBuild18 = RouteMeta.build(routeType, SportHighOrderActivity.class, "/sports/sporthighorderactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild18, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/SportHighOrderActivity", routeMetaBuild18);
+        RouteMeta routeMetaBuild19 = RouteMeta.build(routeType, SportImportActivity.class, "/sports/sportimportactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild19, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/SportImportActivity", routeMetaBuild19);
+        RouteMeta routeMetaBuild20 = RouteMeta.build(routeType, SportImportQAActivity.class, "/sports/sportimportqaactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild20, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/SportImportQAActivity", routeMetaBuild20);
+        RouteMeta routeMetaBuild21 = RouteMeta.build(routeType2, SportRecordQueryServiceImpl.class, "/sports/sportrecordqueryservice", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild21, "build(RouteType.PROVIDER…   null, -1, -2147483648)");
+        atlas.put("/sports/SportRecordQueryService", routeMetaBuild21);
+        RouteMeta routeMetaBuild22 = RouteMeta.build(routeType2, SportServiceImpl.class, "/sports/sportrecordservice", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild22, "build(RouteType.PROVIDER…   null, -1, -2147483648)");
+        atlas.put("/sports/SportRecordService", routeMetaBuild22);
+        RouteMeta routeMetaBuild23 = RouteMeta.build(routeType, SportShareActivity.class, "/sports/sportshareactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild23, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/SportShareActivity", routeMetaBuild23);
+        RouteMeta routeMetaBuild24 = RouteMeta.build(routeType2, SportTrackDataServiceImpl.class, "/sports/sporttrackdataservice", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild24, "build(RouteType.PROVIDER…   null, -1, -2147483648)");
+        atlas.put("/sports/SportTrackDataService", routeMetaBuild24);
+        RouteMeta routeMetaBuild25 = RouteMeta.build(routeType, SportsTabSortActivity.class, "/sports/sportstabsortactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild25, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/SportsTabSortActivity", routeMetaBuild25);
+        RouteMeta routeMetaBuild26 = RouteMeta.build(routeType, TreadmillGuideActivity.class, "/sports/treadmillguideactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild26, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/TreadmillGuideActivity", routeMetaBuild26);
+        RouteMeta routeMetaBuild27 = RouteMeta.build(routeType, TreadmillRunningActivity.class, "/sports/treadmillrunningactivity", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild27, "build(RouteType.ACTIVITY…   null, -1, -2147483648)");
+        atlas.put("/sports/TreadmillRunningActivity", routeMetaBuild27);
+        RouteMeta routeMetaBuild28 = RouteMeta.build(routeType2, MediaDownloadService.class, "/sports/media/download/service", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild28, "build(RouteType.PROVIDER…   null, -1, -2147483648)");
+        atlas.put("/sports/media/download/service", routeMetaBuild28);
+        RouteMeta routeMetaBuild29 = RouteMeta.build(routeType2, StepServiceImpl.class, "/sports/step", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild29, "build(RouteType.PROVIDER…\", null, -1, -2147483648)");
+        atlas.put("/sports/step", routeMetaBuild29);
+        RouteMeta routeMetaBuild30 = RouteMeta.build(routeType2, StartVo2MaxServiceImpl.class, "/sports/vo2max", "sports", null, -1, Integer.MIN_VALUE);
+        Intrinsics.checkNotNullExpressionValue(routeMetaBuild30, "build(RouteType.PROVIDER…\", null, -1, -2147483648)");
+        atlas.put("/sports/vo2Max", routeMetaBuild30);
+    }
+}

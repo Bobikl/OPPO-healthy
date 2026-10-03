@@ -1,0 +1,37 @@
+package com.oplus.pantaconnect.sdk.connection;
+
+import org.jetbrains.annotations.NotNull;
+import p010kotlin.Metadata;
+import p010kotlin.enums.EnumEntries;
+import p010kotlin.enums.EnumEntriesKt;
+
+/* JADX INFO: loaded from: classes8.dex */
+@Metadata(d1 = {"\u0000\u0012\n\u0002\u0018\u0002\n\u0002\u0010\u0010\n\u0000\n\u0002\u0010\b\n\u0002\b\u000e\b\u0086\u0081\u0002\u0018\u00002\b\u0012\u0004\u0012\u00020\u00000\u0001B\u000f\b\u0002\u0012\u0006\u0010\u0002\u001a\u00020\u0003¢\u0006\u0002\u0010\u0004R\u0011\u0010\u0002\u001a\u00020\u0003¢\u0006\b\n\u0000\u001a\u0004\b\u0005\u0010\u0006j\u0002\b\u0007j\u0002\b\bj\u0002\b\tj\u0002\b\nj\u0002\b\u000bj\u0002\b\fj\u0002\b\rj\u0002\b\u000ej\u0002\b\u000fj\u0002\b\u0010¨\u0006\u0011"}, d2 = {"Lcom/oplus/pantaconnect/sdk/connection/ConnectionType;", "", "type", "", "(Ljava/lang/String;II)V", "getType", "()I", "GATT", "SPP", "SPP_INSECURE", "P2P", "WLAN", "USB", "RTC_CONNECT", "NONE", "NETWORK_SETUP", "TV_WLAN_P2P", "core_release"}, k = 1, mv = {1, 9, 0}, xi = 48)
+public enum ConnectionType {
+    GATT(4),
+    SPP(1),
+    SPP_INSECURE(32),
+    P2P(2),
+    WLAN(16),
+    USB(128),
+    RTC_CONNECT(64),
+    NONE(0),
+    NETWORK_SETUP(8),
+    TV_WLAN_P2P(18);
+
+    private static final /* synthetic */ EnumEntries $ENTRIES = EnumEntriesKt.enumEntries(values());
+    private final int type;
+
+    ConnectionType(int i) {
+        this.type = i;
+    }
+
+    @NotNull
+    public static EnumEntries<ConnectionType> getEntries() {
+        return $ENTRIES;
+    }
+
+    public final int getType() {
+        return this.type;
+    }
+}

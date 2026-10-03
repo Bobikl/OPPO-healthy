@@ -1,0 +1,84 @@
+package com.heytap.health.health_base;
+
+/* JADX INFO: loaded from: classes16.dex */
+public final class R$color {
+    public static final int health_FF4D4D4D = 2131102646;
+    public static final int health_FFEC3E50 = 2131102657;
+    public static final int health_base_0A000000 = 2131102774;
+    public static final int health_base_19000000 = 2131102775;
+    public static final int health_base_19191A = 2131102776;
+    public static final int health_base_263263ED = 2131102777;
+    public static final int health_base_2AD181 = 2131102778;
+    public static final int health_base_40FFFFFF = 2131102779;
+    public static final int health_base_4C000000 = 2131102780;
+    public static final int health_base_4D000000 = 2131102781;
+    public static final int health_base_7366FF = 2131102782;
+    public static final int health_base_8A000000 = 2131102783;
+    public static final int health_base_A000000 = 2131102784;
+    public static final int health_base_BBC0CB = 2131102785;
+    public static final int health_base_CECECE = 2131102786;
+    public static final int health_base_D9000000 = 2131102787;
+    public static final int health_base_F27141 = 2131102788;
+    public static final int health_base_F5F6F7 = 2131102789;
+    public static final int health_base_F67960 = 2131102790;
+    public static final int health_base_ai_color = 2131102791;
+    public static final int health_base_black = 2131102792;
+    public static final int health_base_black_10alpha = 2131102793;
+    public static final int health_base_black_12alpha = 2131102794;
+    public static final int health_base_black_15alpha = 2131102795;
+    public static final int health_base_black_1A000 = 2131102796;
+    public static final int health_base_black_1a00 = 2131102797;
+    public static final int health_base_black_20alpha = 2131102798;
+    public static final int health_base_black_26alpha = 2131102799;
+    public static final int health_base_black_30alpha = 2131102800;
+    public static final int health_base_black_3alpha = 2131102801;
+    public static final int health_base_black_40alpha = 2131102802;
+    public static final int health_base_black_50alpha = 2131102803;
+    public static final int health_base_black_55alpha = 2131102804;
+    public static final int health_base_black_60alpha = 2131102805;
+    public static final int health_base_black_7f000 = 2131102806;
+    public static final int health_base_black_85alpha = 2131102807;
+    public static final int health_base_black_8alpha = 2131102808;
+    public static final int health_base_black_8c00 = 2131102809;
+    public static final int health_base_black_90alpha = 2131102810;
+    public static final int health_base_blacka = 2131102811;
+    public static final int health_base_bubble_bg = 2131102812;
+    public static final int health_base_button_bg_color = 2131102813;
+    public static final int health_base_daily_activity_activity_frequency_OPlus = 2131102814;
+    public static final int health_base_daily_activity_calories_OPlus = 2131102815;
+    public static final int health_base_daily_activity_exercise_duration_OPlus = 2131102816;
+    public static final int health_base_daily_activity_step_OPlus = 2131102817;
+    public static final int health_base_green_d181 = 2131102818;
+    public static final int health_base_green_d181_night = 2131102819;
+    public static final int health_base_grey_8000 = 2131102820;
+    public static final int health_base_red_3447 = 2131102821;
+    public static final int health_base_selected_color = 2131102822;
+    public static final int health_base_space_black_4d_color = 2131102823;
+    public static final int health_base_white = 2131102824;
+    public static final int health_base_white_12alpha = 2131102825;
+    public static final int health_base_white_20alpha = 2131102826;
+    public static final int health_base_white_26alpha = 2131102827;
+    public static final int health_base_white_30alpha = 2131102828;
+    public static final int health_base_white_50alpha = 2131102829;
+    public static final int health_base_white_55alpha = 2131102830;
+    public static final int health_base_white_70alpha = 2131102831;
+    public static final int health_base_white_85alpha = 2131102832;
+    public static final int health_color_cursor_black = 2131102929;
+    public static final int health_color_cursor_white = 2131102930;
+    public static final int health_daily_activity_activity_frequency_In = 2131102972;
+    public static final int health_daily_activity_activity_frequency_OPlus = 2131102973;
+    public static final int health_daily_activity_activity_frequency_calender = 2131102974;
+    public static final int health_daily_activity_calories_In = 2131102981;
+    public static final int health_daily_activity_calories_OPlus = 2131102982;
+    public static final int health_daily_activity_calories_OPlus_back = 2131102983;
+    public static final int health_daily_activity_calories_calender = 2131102984;
+    public static final int health_daily_activity_exercise_duration_In = 2131102992;
+    public static final int health_daily_activity_exercise_duration_OPlus = 2131102993;
+    public static final int health_daily_activity_exercise_duration_calender = 2131102994;
+    public static final int health_daily_activity_step_In = 2131103001;
+    public static final int health_daily_activity_step_OPlus = 2131103002;
+    public static final int health_daily_activity_step_calender = 2131103003;
+
+    private R$color() {
+    }
+}

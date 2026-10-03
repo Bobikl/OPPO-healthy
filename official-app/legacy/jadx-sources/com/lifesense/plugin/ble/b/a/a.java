@@ -1,0 +1,87 @@
+package com.lifesense.plugin.ble.b.a;
+
+/* JADX INFO: loaded from: classes5.dex */
+public enum a {
+    Enable_Character(61440),
+    Discover_Service(61441),
+    Abnormal_Disconnect(61442),
+    Enable_Bluetooth(61443),
+    Call_State_Changed(61444),
+    Cancel_Connection(61445),
+    Connect_State_Change(61446),
+    Broadcast_Message(61447),
+    Reconnect_Message(61448),
+    Upgrade_Progress(61449),
+    Request_Disconnect(61450),
+    Write_No_Response(61451),
+    Restart_Bluetooth(61452),
+    Bluetooth_Status(61453),
+    Ble_Event_Change(61454),
+    Set_Measure_Device(61455),
+    Program_Exception(61456),
+    Connection_Queue(61457),
+    Check_Permission(61459),
+    Release_Resources(61460),
+    Update_Gps_Status(61461),
+    Notification_Service(61462),
+    Cancel_Reconnect(61463),
+    Close_Gatt_Request(61464),
+    Callback_Message(61465),
+    Start_SDK(0),
+    Start_Service(1),
+    Start_Scan(2),
+    Stop_Scan(3),
+    Connect_Device(4),
+    Gatt_Services(7),
+    Receive_Data(9),
+    Write_Response(10),
+    Close_Bluetooth(14),
+    Close_Gatt(19),
+    App_Message(20),
+    Stop_Service(21),
+    Stop_SDK(22),
+    Data_Parse(23),
+    Warning_Message(24),
+    Close_Character(25),
+    Scan_Results(26),
+    Scan_Message(28),
+    Scan_Timeout(29),
+    Connect_Timeout(30),
+    Check_Connected(32),
+    Read_Character(36),
+    Delete_Device(37),
+    Add_Device(38),
+    Connect_Failure(39),
+    Restart_Service(41),
+    Add_Action(44),
+    Check_Action(45),
+    Update_Event(46),
+    Scan_Caching(50),
+    Reset_Protocol(51),
+    Message_Remind(54),
+    Read_Response(55),
+    Pair_Results(58),
+    Access_Service(61),
+    Message_Filter(62),
+    Device_Filter(63),
+    Measure_Devices(64),
+    Upgrade_Message(65),
+    Write_Call_Msg(66),
+    Write_Push_Msg(67),
+    Refresh_Service(68),
+    Operating_Msg(69),
+    Push_Message(70),
+    Write_Timeout(71),
+    Gatt_Message(72),
+    Player_Service(73);
+
+    private int a;
+
+    a(int i) {
+        this.a = i;
+    }
+
+    public int a() {
+        return this.a;
+    }
+}
