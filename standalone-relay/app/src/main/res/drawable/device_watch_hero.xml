@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="240dp" android:height="272dp" android:viewportWidth="240" android:viewportHeight="272">
+    <path android:fillColor="#46629A" android:pathData="M88,8 Q120,0 152,8 L160,78 L80,78 Z M80,194 L160,194 L152,264 Q120,272 88,264 Z"/>
+    <path android:fillColor="#7290C0" android:pathData="M88,8 L99,5 L93,70 L83,75 Z M83,195 L93,201 L99,267 L88,264 Z"/>
+    <path android:fillColor="#314B78" android:pathData="M107,18 L133,18 L133,25 L107,25 Z M109,239 L131,239 L131,245 L109,245 Z M108,253 L132,253 L132,259 L108,259 Z"/>
+    <path android:fillColor="#708198" android:pathData="M191,116 L204,116 Q208,128 204,140 L191,140 Z"/>
+    <path android:fillColor="#A5B2C3" android:pathData="M120,57 A79,79 0,1 1,120,215 A79,79 0,1 1,120,57"/>
+    <path android:fillColor="#4C5C74" android:pathData="M120,61 A75,75 0,1 1,120,211 A75,75 0,1 1,120,61"/>
+    <path android:fillColor="#090F19" android:pathData="M120,66 A70,70 0,1 1,120,206 A70,70 0,1 1,120,66"/>
+    <path android:fillColor="#132132" android:pathData="M120,74 A62,62 0,1 1,120,198 A62,62 0,1 1,120,74"/>
+    <path android:strokeColor="#25415C" android:strokeWidth="7" android:fillColor="#00000000" android:pathData="M120,87 A49,49 0,1 1,119.9,87"/>
+    <path android:strokeColor="#6ECFF1" android:strokeWidth="7" android:strokeLineCap="round" android:fillColor="#00000000" android:pathData="M120,87 A49,49 0,1 1,71,136"/>
+    <path android:strokeColor="#34476D" android:strokeWidth="5" android:fillColor="#00000000" android:pathData="M120,100 A36,36 0,1 1,119.9,100"/>
+    <path android:strokeColor="#A2B5FF" android:strokeWidth="5" android:strokeLineCap="round" android:fillColor="#00000000" android:pathData="M120,100 A36,36 0,1 1,85,145"/>
+    <path android:strokeColor="#E9F4FF" android:strokeWidth="4" android:strokeLineCap="round" android:fillColor="#00000000" android:pathData="M99,118 L120,136 L142,110"/>
+    <path android:fillColor="#E9F4FF" android:pathData="M120,132 A4,4 0,1 1,120,140 A4,4 0,1 1,120,132"/>
+</vector>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Extracted from official health 6.6.7; values in resource provenance. -->
+    <dimen name="official_health_sleep_progress_circle_stroke_width">10dp</dimen>
+    <dimen name="official_health_sleep_progress_shadow_offset_radius">2dp</dimen>
+    <dimen name="official_health_sleep_progress_text_size">36dp</dimen>
+    <dimen name="official_health_sleep_progress_no_data_text_size">16dp</dimen>
+    <dimen name="official_health_sleep_progress_sub_text_size">14dp</dimen>
+    <dimen name="official_health_sleep_progress_text_y_offset">4dp</dimen>
+    <dimen name="official_health_sleep_progress_sub_text_top">2dp</dimen>
+    <dimen name="official_health_sleep_progress_sub_text_padding">2dp</dimen>
+    <color name="official_health_sleep_progress_circle_bg">#14000000</color>
+    <color name="official_health_sleep_7366FF">#FF7366FF</color>
+    <color name="official_lib_base_card_white_bg_3">#19FFFFFF</color>
+    <color name="official_health_base_black">#FFFFFFFF</color>
+    <color name="official_health_base_black_55alpha">#8CFFFFFF</color>
+    <color name="official_health_sleep_color_b462f4">#FFB462F4</color>
+    <color name="official_health_sleep_color_7366ff">#FF7366FF</color>
+</resources>

@@ -1,0 +1,37 @@
+{
+  "sourceApkSha256": "d8163ec849de6ee121171d1d1312b05f1500c8d4ec225c19f949042ae185aeaf",
+  "resourceSha256": "7be105bf95fac6f86b203626284e62dee419542f1903b1c7a12a611cdcd89246",
+  "classes": 20636,
+  "compatibilityOverrides": [
+    "com.oplus.aiunit.vision.m8b (no official logger startup)",
+    "com.heytap.health.base.track.a and a$b (no telemetry)"
+  ],
+  "javaResources": {
+    "META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory": "a1ea77ea8f93f419256b6e66f29713f950d8d6e90442b608d880a48003b5eb72",
+    "META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler": "3129b8edf6db07de6f8ff47695e2177c8bba4eed2962d3085c719e5acbb58a33"
+  },
+  "resourceTimestampGroups": [
+    [
+      0,
+      [
+        2026,
+        10,
+        3,
+        10,
+        21,
+        58
+      ]
+    ],
+    [
+      7732,
+      [
+        2026,
+        10,
+        3,
+        10,
+        22,
+        0
+      ]
+    ]
+  ]
+}

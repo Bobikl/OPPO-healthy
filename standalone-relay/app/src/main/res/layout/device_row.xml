@@ -1,0 +1,12 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="78dp"
+    android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="18dp" android:paddingEnd="18dp"
+    android:paddingTop="15dp" android:paddingBottom="15dp" android:background="@drawable/device_row_press"
+    android:clickable="true" android:focusable="true">
+    <ImageView android:id="@+id/row_icon" android:layout_width="36dp" android:layout_height="36dp" android:padding="8dp" android:importantForAccessibility="no"/>
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="14dp" android:layout_marginEnd="10dp" android:orientation="vertical">
+        <TextView android:id="@+id/row_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/device_text" android:textSize="17sp"/>
+        <TextView android:id="@+id/row_subtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/device_secondary" android:textSize="12sp"/>
+    </LinearLayout>
+    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/device_chevron" android:alpha="0.45" android:importantForAccessibility="no"/>
+</LinearLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 应用真实图标：蓝色表盘内的通知铃；供桌面和转发图标共同使用。 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp" android:height="48dp"
+    android:viewportWidth="48" android:viewportHeight="48">
+    <path android:fillColor="#2563EB" android:pathData="M0,0 H48 V48 H0 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M18,4 H30 V11 H18 Z M18,37 H30 V44 H18 Z" />
+    <path android:fillColor="#2563EB" android:strokeColor="#FFFFFF"
+        android:strokeWidth="3" android:pathData="M15,11 H33 Q36,11 36,14 V34 Q36,37 33,37 H15 Q12,37 12,34 V14 Q12,11 15,11 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M24,16 C20,16 18,19 18,23 V27 L16,29 H32 L30,27 V23 C30,19 28,16 24,16 Z M21,31 H27 C27,35 21,35 21,31 Z" />
+</vector>

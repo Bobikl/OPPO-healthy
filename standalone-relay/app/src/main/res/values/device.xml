@@ -1,0 +1,27 @@
+<resources>
+    <color name="device_background">#191919</color>
+    <color name="device_card">#262626</color>
+    <color name="device_text">#F5F5F5</color>
+    <color name="device_secondary">#AAAAAA</color>
+    <color name="device_accent">#81ACFF</color>
+    <dimen name="device_page_margin">20dp</dimen>
+    <dimen name="device_card_radius">22dp</dimen>
+    <string name="device_page_title">设备</string>
+    <string name="device_manage">设备管理</string>
+    <string name="device_illustration">手表示意图</string>
+    <string name="device_unknown_metrics">电量 —　｜　运行模式 —</string>
+    <style name="DeviceTheme" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">@color/device_accent</item>
+        <item name="android:windowBackground">@color/device_background</item>
+        <item name="android:colorBackground">@color/device_background</item>
+        <item name="android:statusBarColor">@color/device_background</item>
+        <item name="android:navigationBarColor">@color/device_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:textColorPrimary">@color/device_text</item>
+        <item name="android:textColorSecondary">@color/device_secondary</item>
+    </style>
+</resources>

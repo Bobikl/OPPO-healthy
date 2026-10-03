@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.opponotificationrelay">
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 本地应用白名单选择器，不采集或上传应用列表。 -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <queries>
+        <package android:name="com.heytap.health" />
+        <package android:name="com.coloros.health" />
+    </queries>
+
+    <application
+        android:name=".RecentsVisibility"
+        android:allowBackup="false"
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_relay"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity" android:screenOrientation="portrait"
+            android:theme="@style/DeviceTheme"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".RelayForegroundService" android:exported="false" android:stopWithTask="false" android:foregroundServiceType="connectedDevice" />
+        <activity android:name=".SleepTimelineActivity" android:exported="false" android:screenOrientation="sensorLandscape" android:theme="@style/DeviceTheme" />
+        <activity android:name=".SleepDetailActivity" android:exported="false" android:screenOrientation="portrait" android:theme="@style/DeviceTheme" />
+        <activity android:name=".DailyActivityDetailActivity" android:exported="false" android:screenOrientation="portrait" android:theme="@style/DeviceTheme" />
+        <activity android:name=".HeartDetailActivity" android:screenOrientation="portrait" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".HealthTrendActivity" android:screenOrientation="portrait" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".AdditionalHealthActivity" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".WellnessDetailActivity" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".VitalsDetailActivity" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".TrendMetricActivity" android:screenOrientation="portrait" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".HealthSyncProbeActivity" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".SleepHabitsActivity" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".NapSettingsActivity" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".HealthSettingsActivity" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".NotificationsActivity" android:exported="false" android:theme="@style/DeviceTheme" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".SettingsActivity" android:exported="false" android:theme="@style/DeviceTheme" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".AppSelectionActivity" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".OfficialSettingsActivity" android:exported="false" />
+        <receiver android:name=".RelayBootReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".RelayNotificationListenerService"
+            android:label="@string/service_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="true">
+            <meta-data android:name="android.service.notification.default_autobind_listenerservice" android:value="true" />
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>
