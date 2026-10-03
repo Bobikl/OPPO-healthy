@@ -10,6 +10,8 @@ final class HealthMetricsData {
     static final int HEART=0,REST=1,WALK=2,SLEEP_HEART=3,STEPS=4,CALORIES=5,SLEEP_SCORE=6;
     static final int RED=0xfff43b3b,PINK=0xffff0067,GREEN=0xff00c853,ORANGE=0xffff5722,PURPLE=0xff7965ff;
     static final ZoneId ZONE=ZoneId.systemDefault();
+    final List<Knowledge> knowledge=new ArrayList<>();
+    static final class Knowledge {String page,card,title,description,url;long start,end;}
     final TreeMap<LocalDate,Day> days=new TreeMap<>();final TreeMap<Long,Bin> bins=new TreeMap<>();
     final TreeMap<Long,int[]> activityHours=new TreeMap<>(),activityHalves=new TreeMap<>();
     final TreeMap<Long,Integer> moveHours=new TreeMap<>();
@@ -22,7 +24,7 @@ final class HealthMetricsData {
     List<Glucose> glucose(LocalDate day){return new ArrayList<>(glucose.subMap(time(day),true,time(day.plusDays(1)),false).values());}
     final TreeMap<Long,Mental> mental=new TreeMap<>();final TreeMap<Long,Relax> relax=new TreeMap<>();
     static final class Mental {final long time;final int value,state,type,hrv;Mental(long time,int value,int state,int type,int hrv){this.time=time;this.value=value;this.state=state;this.type=type;this.hrv=hrv;}}
-    static final class Relax {final long time;final int seconds,type,subtype;Relax(long time,int seconds,int type,int subtype){this.time=time;this.seconds=seconds;this.type=type;this.subtype=subtype;}}
+    static final class Relax {final long time;final int seconds,type,subtype;int minHeart,maxHeart,mental,stress;Relax(long time,int seconds,int type,int subtype){this.time=time;this.seconds=seconds;this.type=type;this.subtype=subtype;}}
     List<Mental> mental(LocalDate day){return new ArrayList<>(mental.subMap(time(day),true,time(day.plusDays(1)),false).values());}
     List<Relax> relax(LocalDate day){return new ArrayList<>(relax.subMap(time(day),true,time(day.plusDays(1)),false).values());}
     final TreeMap<Long,Integer> raw=new TreeMap<>(),oxygen=new TreeMap<>();final List<Warning> warnings=new ArrayList<>();
@@ -31,6 +33,7 @@ final class HealthMetricsData {
         final LocalDate date;int min,max,rest,walk,sleepHeart,sleepScore,sleepMinutes,deep,light,rem,awake,steps=-1,calories=-1;long latestTime;int latest;
         int oxygenMin,oxygenMax,oxygenMean,oxygenLatest,oxygenCount;long oxygenTime;
         int weightGrams,glucoseMin,glucoseMax,glucoseMean,glucoseLatest,glucoseTrend,glucoseLow=3900,glucoseHigh=7800,apneaLevel=-2,apneaAhi=-1,apneaVersion;long weightTime,glucoseTime;
+        int mentalSleepHrv,mentalRestHeart,mentalReminders=-1;
         int mentalAverage,mentalState,mentalHrv,mentalBaseLow,mentalBaseMiddle,mentalBaseHigh,mentalLatest,mentalLatestState,sunshineMinutes=-1,sunshineTarget,sunshineType,relaxSeconds,relaxCount;long mentalTime;
         long sleepIn,sleepOut;int wakes,spo2,sleepHrLow,sleepHrHigh,breathLow,breathHigh,hrv,hrvLow,hrvHigh,wristBase,wristValue,wristConfidence;
         Day(LocalDate d){date=d;}

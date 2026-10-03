@@ -29,10 +29,10 @@ final class RootHealthDataReader {
         int firstDate=Integer.parseInt(Instant.ofEpochMilli(start).atZone(ZoneId.systemDefault()).toLocalDate().toString().replace("-",""));
         int lastDate=Integer.parseInt(Instant.ofEpochMilli(end).atZone(ZoneId.systemDefault()).toLocalDate().toString().replace("-",""));
         String first=Integer.toString(firstDate),last=Integer.toString(lastDate);
-        result.put("mentalDays",rows(db,"SELECT date,avg_stress,stress_state,avg_hrv,baseline_low,baseline_middle,baseline_high FROM DBPhysicalMentalStat WHERE ssoid=? AND upper(data_client)=? AND display=1 AND avg_stress>0 AND avg_stress<=100 AND stress_state BETWEEN 1 AND 4 AND date>=? AND date<? ORDER BY date LIMIT 5001",5000,account,device,first,last));
+        result.put("mentalDays",rows(db,"SELECT date,avg_stress,stress_state,avg_hrv,baseline_low,baseline_middle,baseline_high,avg_sleep_hrv,avg_resting_heart_rate,stress_reminder FROM DBPhysicalMentalStat WHERE ssoid=? AND upper(data_client)=? AND display=1 AND avg_stress>0 AND avg_stress<=100 AND stress_state BETWEEN 1 AND 4 AND date>=? AND date<? ORDER BY date LIMIT 5001",5000,account,device,first,last));
         result.put("mentalRaw",rows(db,"SELECT start_timestamp,stress,stress_state,type,value FROM DBPhysicalMentalStatus WHERE ssoid=? AND upper(data_client)=? AND display=1 AND stress>0 AND stress<=100 AND stress_state BETWEEN 1 AND 4 AND start_timestamp>=? AND start_timestamp<? ORDER BY start_timestamp,modified_timestamp DESC LIMIT 20001",20000,account,device,from,to));
         result.put("sunshineDays",rows(db,"SELECT date,total_duration,target_duration,sunshine_type FROM DBSunshineStat WHERE ssoid=? AND upper(data_client)=? AND date>=? AND date<? ORDER BY date LIMIT 5001",5000,account,device,first,last));
-        result.put("relaxRows",rows(db,"SELECT start_timestamp,relax_duration,type,sub_type FROM DBRelax WHERE ssoid=? AND upper(device_unique_id)=? AND display=1 AND relax_duration>0 AND start_timestamp>=? AND start_timestamp<? ORDER BY start_timestamp LIMIT 5001",5000,account,device,from,to));
+        result.put("relaxRows",rows(db,"SELECT start_timestamp,relax_duration,type,sub_type,min_hr,max_hr,physical_mental,stress_value FROM DBRelax WHERE ssoid=? AND upper(device_unique_id)=? AND display=1 AND relax_duration>0 AND start_timestamp>=? AND start_timestamp<? ORDER BY start_timestamp LIMIT 5001",5000,account,device,from,to));
     }
     static JSONArray glucoseRows(Object db,String account,long start,long end)throws Exception {
         JSONArray out=new JSONArray();long previous=-1;int scanned=0;
@@ -116,6 +116,7 @@ final class RootHealthDataReader {
         result.put("sleepWrist",rows(db,"SELECT date,day_baseline_value,confidence,value FROM DBWristTemperatureStat WHERE ssoid=? ORDER BY date LIMIT 5001",5000,account));
         readWellness(db,account,device,start,end,result);
         readAdditionalCards(db,account,start,end,result);
+        result.put("knowledge",RootKnowledgeReader.read(db));
         result.put("activity",RootActivityBridge.read(db,account,device,key));
         if(result.toString().length()>1100000)throw new IOException("HEALTH_OUTPUT_LIMIT");return result;
     }

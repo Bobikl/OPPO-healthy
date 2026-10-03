@@ -32,12 +32,12 @@ final class HealthDataManager {
         synchronized(this){Long last=attempted.get(key);if(!force&&last!=null&&SystemClock.elapsedRealtime()-last<60000)return;if(!pending.add(key))return;attempted.put(key,SystemClock.elapsedRealtime());}
         worker.execute(()->{try{
             load(mac,false);HealthMetricsStore store=HealthMetricsStore.get(context);
-            if(!force&&store.fresh(mac,start,end,raw,15*60000L)&&context.getSharedPreferences("health_ui",0).getInt("detail_projection",0)==6)return;
+            if(!force&&store.fresh(mac,start,end,raw,15*60000L)&&context.getSharedPreferences("health_ui",0).getInt("detail_projection",0)==9)return;
             busy=true;message=data==null||!data.officialLoaded?"正在读取历史记录…":"";publish();
             JSONObject result=new OfficialSettingsClient(context).health(mac,start,end,raw);
             if(!mac.equalsIgnoreCase(RelayConfig.getTargetMac(context)))return;
             if(!raw)HealthArchive.get(context).importOfficialActivity(mac,result.getJSONObject("activity"));
-            store.save(mac,result,raw);if(!raw)context.getSharedPreferences("health_ui",0).edit().putInt("detail_projection",6).apply();message="";load(mac,true);
+            store.save(mac,result,raw);if(!raw)context.getSharedPreferences("health_ui",0).edit().putInt("detail_projection",9).apply();message="";load(mac,true);
         }catch(Exception e){String code=e.getMessage();message="BUSY".equals(code)?"历史记录稍后重试":"历史记录读取未完成 · 已保存的数据仍可查看";FileLogger.w("HealthDetails",code!=null&&code.matches("[A-Z_]{1,64}")?code:"READ_FAILED");}
         finally{busy=false;synchronized(this){pending.remove(key);}publish();}});
     }

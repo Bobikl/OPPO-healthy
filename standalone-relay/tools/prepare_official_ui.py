@@ -63,6 +63,10 @@ def main():
         actual = (runtime / "classes.txt").read_text(encoding="utf-8").splitlines()
         if actual != expected:
             raise SystemExit("Unexpected runtime closure: dependency pin needs review.")
+        for item in runtime.glob("*.dex"):
+            with item.open("rb") as stream:
+                if stream.read(8) != b"dex\n039\x00":
+                    raise SystemExit("DEX 039 is required for the original Compose interface methods.")
         resource = work / "official-ui-resources.apk"
         groups = meta["resourceTimestampGroups"]
         group_index = 0

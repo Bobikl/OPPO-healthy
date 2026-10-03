@@ -87,8 +87,8 @@
     {
       "source": "*-667.java and analysis/**/*-667.java",
       "directory": "6.6.7/targeted",
-      "files": 391,
-      "bytes": 9989382
+      "files": 469,
+      "bytes": 14649519
     },
     {
       "source": "standalone-relay/official-ui/assets/official-ui-resources.apk",
