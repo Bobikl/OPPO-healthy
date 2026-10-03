@@ -6,11 +6,11 @@ import android.view.Gravity;
 import android.widget.*;
 
 /** Existing local nap quiet policy, now under Sleep > Habits and reminders. */
-public final class NapSettingsActivity extends Activity {
+public final class NapSettingsActivity extends OfficialUiActivity {
     private TextView start,end,status;private OfficialStyleSwitch toggle;private boolean rendering;
     private int dp(int n){return DeviceStyle.dp(this,n);}
     private TextView text(String s,int size){TextView v=new TextView(this);v.setText(s);v.setTextSize(size);v.setTextColor(DeviceStyle.TEXT);v.setPadding(dp(18),dp(18),dp(18),dp(18));return v;}
-    @Override protected void onCreate(Bundle saved){super.onCreate(saved);ScrollView scroll=new ScrollView(this);LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);content.setPadding(dp(18),dp(18),dp(18),dp(30));scroll.addView(content);
+    @Override protected void onUiCreate(Bundle saved){super.onUiCreate(saved);ScrollView scroll=new ScrollView(this);LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);content.setPadding(dp(18),dp(18),dp(18),dp(30));scroll.addView(content);
         LinearLayout card=new LinearLayout(this);card.setOrientation(LinearLayout.VERTICAL);card.setBackground(DeviceStyle.shape(0xff303030,16,this));content.addView(card);
         LinearLayout row=new LinearLayout(this);row.setGravity(Gravity.CENTER_VERTICAL);row.addView(text("午休时静默手机通知",18),new LinearLayout.LayoutParams(0,-2,1));toggle=new OfficialStyleSwitch(this);toggle.setContentDescription("午休时静默手机通知");LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,dp(48));lp.rightMargin=dp(18);row.addView(toggle,lp);card.addView(row);
         toggle.setOnCheckedChangeListener((b,on)->{if(rendering)return;if(on && RelayConfig.getProtocolCid(this)!=RelayPayloadEncoder.COMMAND_POST_PARSED){Toast.makeText(this,"当前通知协议不支持午休静默",Toast.LENGTH_LONG).show();render();return;}NapQuietSettings.setEnabled(this,on);render();});

@@ -9,13 +9,29 @@ import java.io.*;
 import java.security.MessageDigest;
 /** Original compiled UI resources stay isolated from the independent application's R IDs. */
 final class OfficialUiResources {
-    private static final String HASH="7be105bf95fac6f86b203626284e62dee419542f1903b1c7a12a611cdcd89246";
-    private static File archive;private static Context global;
+    private static final String HASH="65b370e0cf7e86ed4d22ddc09847476c91cd656152d82b7504ed9ca537c73fab";
+    private static volatile File archive;private static volatile boolean prepared;
+    private static final java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
+    private static final Handler main=new Handler(Looper.getMainLooper());private static Context global;
     // APK parsing is process-wide; Resources, themes and window contexts remain per wrapper.
     private static ResourcesLoader sharedLoader;
-    static synchronized Context wrap(Context base){
+    static boolean ready(){return prepared;}
+    static void prepare(Context context,Runnable callback){
+        Context app=context.getApplicationContext();
+        worker.execute(()->{
+            try{
+                if(!prepared){
+                    File file=extract(app,false);
+                    try{loader(file);}catch(Exception first){file=extract(app,true);loader(file);}
+                    archive=file;prepared=true;
+                }
+            }catch(Exception e){android.util.Log.e("OfficialUiResources","Resource preparation failed",e);}
+            main.post(callback);
+        });
+    }
+    static Context wrap(Context base){
         try{
-            if(archive==null)archive=extract(base.getApplicationContext());
+            if(!prepared)throw new IllegalStateException("Official UI resources are not ready");
             if(global==null){global=new UiContext(base.getApplicationContext(),archive);com.oplus.aiunit.vision.e88.d(global);}
             return new UiContext(base,archive);
         }catch(Exception e){throw new IllegalStateException("Official UI resources could not be loaded",e);}
@@ -27,13 +43,20 @@ final class OfficialUiResources {
         PanelContext(Context host,File file)throws Exception{super(host,file);}
         @Override public Context getBaseContext(){return global;}
     }
-    private static File extract(Context c)throws Exception{
+    private static File extract(Context c,boolean force)throws Exception{
         File dir=new File(c.getFilesDir(),"official-ui");if(!dir.isDirectory()&&!dir.mkdirs())throw new IOException("UI_DIRECTORY");
-        File target=new File(dir,HASH+".apk");if(target.isFile()&&hash(target).equals(HASH))return target;
+        File target=new File(dir,HASH+".apk");SharedPreferences verified=c.getSharedPreferences("official_ui_verified",Context.MODE_PRIVATE);
+        if(!force&&target.isFile()){
+            if(HASH.equals(verified.getString("hash",""))&&target.length()==verified.getLong("size",-1)&&target.lastModified()==verified.getLong("modified",-1))return target;
+            if(hash(target).equals(HASH)){remember(verified,target);return target;}
+        }
         File pending=new File(dir,HASH+".pending");try(InputStream in=c.getAssets().open("official-ui-resources.apk");OutputStream out=new BufferedOutputStream(new FileOutputStream(pending))){byte[] buffer=new byte[65536];int n;while((n=in.read(buffer))>0)out.write(buffer,0,n);}
         if(!hash(pending).equals(HASH))throw new IOException("UI_RESOURCE_HASH");
-        if(target.exists()&&!target.delete())throw new IOException("UI_RESOURCE_REPLACE");if(!pending.renameTo(target))throw new IOException("UI_RESOURCE_RENAME");target.setReadOnly();return target;
+        if(target.exists()&&!target.delete())throw new IOException("UI_RESOURCE_REPLACE");if(!pending.renameTo(target))throw new IOException("UI_RESOURCE_RENAME");if(!target.setReadOnly())throw new IOException("UI_RESOURCE_READ_ONLY");remember(verified,target);
+        File[] old=dir.listFiles();if(old!=null)for(File file:old)if(!file.equals(target)&&file.getName().matches("[0-9a-f]{64}\\.(apk|pending)")&&file.getCanonicalFile().equals(file.getAbsoluteFile()))file.delete();
+        return target;
     }
+    private static void remember(SharedPreferences prefs,File file){prefs.edit().putString("hash",HASH).putLong("size",file.length()).putLong("modified",file.lastModified()).commit();}
     private static String hash(File f)throws Exception{MessageDigest digest=MessageDigest.getInstance("SHA-256");try(InputStream in=new FileInputStream(f)){byte[] b=new byte[65536];int n;while((n=in.read(b))>0)digest.update(b,0,n);}StringBuilder s=new StringBuilder();for(byte b:digest.digest())s.append(String.format(java.util.Locale.ROOT,"%02x",b&255));return s.toString();}
     private static synchronized ResourcesLoader loader(File file)throws IOException{
         if(sharedLoader==null){

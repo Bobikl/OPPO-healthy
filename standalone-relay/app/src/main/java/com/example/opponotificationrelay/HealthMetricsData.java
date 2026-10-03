@@ -9,7 +9,7 @@ import java.util.*;
 final class HealthMetricsData {
     static final int HEART=0,REST=1,WALK=2,SLEEP_HEART=3,STEPS=4,CALORIES=5,SLEEP_SCORE=6;
     static final int RED=0xfff43b3b,PINK=0xffff0067,GREEN=0xff00c853,ORANGE=0xffff5722,PURPLE=0xff7965ff;
-    static final ZoneId ZONE=ZoneId.systemDefault();
+    static ZoneId zone(){return ZoneId.systemDefault();}
     final List<Knowledge> knowledge=new ArrayList<>();
     static final class Knowledge {String page,card,title,description,url;long start,end;}
     final TreeMap<LocalDate,Day> days=new TreeMap<>();final TreeMap<Long,Bin> bins=new TreeMap<>();
@@ -27,12 +27,14 @@ final class HealthMetricsData {
     static final class Relax {final long time;final int seconds,type,subtype;int minHeart,maxHeart,mental,stress;Relax(long time,int seconds,int type,int subtype){this.time=time;this.seconds=seconds;this.type=type;this.subtype=subtype;}}
     List<Mental> mental(LocalDate day){return new ArrayList<>(mental.subMap(time(day),true,time(day.plusDays(1)),false).values());}
     List<Relax> relax(LocalDate day){return new ArrayList<>(relax.subMap(time(day),true,time(day.plusDays(1)),false).values());}
-    final TreeMap<Long,Integer> raw=new TreeMap<>(),oxygen=new TreeMap<>();final List<Warning> warnings=new ArrayList<>();
+    final TreeMap<Long,Integer> raw=new TreeMap<>(),oxygen=new TreeMap<>();final List<Warning> warnings=new LinkedList<>();
+    HealthSnapshotWindow window;
     long loadedAt,officialAt;String device="";boolean officialLoaded;
     static final class Day {
         final LocalDate date;int min,max,rest,walk,sleepHeart,sleepScore,sleepMinutes,deep,light,rem,awake,steps=-1,calories=-1;long latestTime;int latest;
         int oxygenMin,oxygenMax,oxygenMean,oxygenLatest,oxygenCount;long oxygenTime;
         int weightGrams,glucoseMin,glucoseMax,glucoseMean,glucoseLatest,glucoseTrend,glucoseLow=3900,glucoseHigh=7800,apneaLevel=-2,apneaAhi=-1,apneaVersion;long weightTime,glucoseTime;
+        Mental mentalMin,mentalMax;int warningCount;
         int mentalSleepHrv,mentalRestHeart,mentalReminders=-1;
         int mentalAverage,mentalState,mentalHrv,mentalBaseLow,mentalBaseMiddle,mentalBaseHigh,mentalLatest,mentalLatestState,sunshineMinutes=-1,sunshineTarget,sunshineType,relaxSeconds,relaxCount;long mentalTime;
         long sleepIn,sleepOut;int wakes,spo2,sleepHrLow,sleepHrHigh,breathLow,breathHigh,hrv,hrvLow,hrvHigh,wristBase,wristValue,wristConfidence;
@@ -49,13 +51,13 @@ final class HealthMetricsData {
     static final class Warning {long start,end;int type,heartType,min,max;}
     Day day(LocalDate date){Day d=days.get(date);if(d==null){d=new Day(date);days.put(date,d);}return d;}
     Day find(LocalDate date){return days.get(date);}
-    static long time(LocalDate d){return d.atStartOfDay(ZONE).toInstant().toEpochMilli();}
-    static LocalDate date(long millis){return Instant.ofEpochMilli(millis).atZone(ZONE).toLocalDate();}
+    static long time(LocalDate d){return d.atStartOfDay(zone()).toInstant().toEpochMilli();}
+    static LocalDate date(long millis){return Instant.ofEpochMilli(millis).atZone(zone()).toLocalDate();}
     static LocalDate dateCode(int code){return LocalDate.of(code/10000,(code/100)%100,code%100);}
     static String dayLabel(LocalDate date){return date.format(DateTimeFormatter.ofPattern("MM月dd日，EEE",Locale.CHINA)).replace("星期","周");}
     static String shortDate(LocalDate d){return d.getMonthValue()+"月"+String.format(Locale.ROOT,"%02d",d.getDayOfMonth())+"日";}
     static String rangeLabel(LocalDate start,LocalDate end){return shortDate(start)+"-"+shortDate(end);}
-    static String timeLabel(long t){return t>0?Instant.ofEpochMilli(t).atZone(ZONE).format(DateTimeFormatter.ofPattern("HH:mm")):"—";}
+    static String timeLabel(long t){return t>0?Instant.ofEpochMilli(t).atZone(zone()).format(DateTimeFormatter.ofPattern("HH:mm")):"—";}
     static final class Period {
         final LocalDate start,end;final int mode;
         Period(LocalDate date,int mode){this.mode=mode;switch(mode){case 1:start=date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));end=start.plusDays(6);break;case 2:start=date.withDayOfMonth(1);end=start.plusMonths(1).minusDays(1);break;case 3:start=date.withDayOfYear(1);end=start.plusYears(1).minusDays(1);break;default:start=date;end=date;}}
@@ -87,7 +89,8 @@ final class HealthMetricsData {
     int average(LocalDate start,LocalDate end,int metric){long sum=0;int count=0;for(Day d:days.subMap(start,true,end,true).values()){int v=d.value(metric);if(v>0){sum+=v;count++;}}return count==0?0:(int)(sum/count);}
     int sum(LocalDate start,LocalDate end,int metric){int sum=0;for(Day d:days.subMap(start,true,end,true).values())sum+=Math.max(0,d.value(metric));return sum;}
     int validDays(LocalDate start,LocalDate end,int metric){int n=0;for(Day d:days.subMap(start,true,end,true).values())if(d.value(metric)>(metric==CALORIES?50:0))n++;return n;}
-    int warningCount(Period p){int n=0;for(Warning w:warnings)if(p.contains(date(w.start)))n++;return n;}
+    int warningCount(Period p){if(window==null){int n=0;for(Warning w:warnings)if(p.contains(date(w.start)))n++;return n;}int n=0;for(Day d:days.subMap(p.start,true,p.end,true).values())n+=d.warningCount;return n;}
+    List<Mental> mentalExtrema(Period p){List<Mental> out=new ArrayList<>();for(Day d:days.subMap(p.start,true,p.end,true).values()){if(d.mentalMin!=null)out.add(d.mentalMin);if(d.mentalMax!=null)out.add(d.mentalMax);}if(window==null)out.addAll(mental.subMap(time(p.start),true,time(p.end.plusDays(1)),false).values());out.sort(Comparator.comparingLong(q->q.time));return out;}
     static final class Trend {
         final int metric,before,after;final LocalDate beforeStart,beforeEnd,start,end;final List<Point> previous,current;final boolean monthly;
         Trend(HealthMetricsData d,LocalDate anchor,int metric,boolean monthly){this.metric=metric;this.monthly=monthly;

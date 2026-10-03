@@ -12,16 +12,16 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 /** Local records adapter using the original chart renderer and shared native date panel. */
-public final class VitalsDetailActivity extends Activity implements HealthDataManager.Listener {
+public final class VitalsDetailActivity extends OfficialUiActivity implements HealthDataManager.Listener {
     private int kind=OfficialHomeSmallCard.OXYGEN,mode;private LocalDate date=LocalDate.now();private HealthMetricsData data;private TextView status;private ScrollView scroll;private int visible=30;
     boolean oxygen(){return kind==OfficialHomeSmallCard.OXYGEN;}
     private String title(){return oxygen()?"血氧":"手腕温度";}
-    @Override public void onCreate(Bundle saved){super.onCreate(saved);kind=getIntent().getIntExtra("vital",OfficialHomeSmallCard.OXYGEN);if(kind!=OfficialHomeSmallCard.WRIST)kind=OfficialHomeSmallCard.OXYGEN;
+    @Override public void onUiCreate(Bundle saved){super.onUiCreate(saved);kind=getIntent().getIntExtra("vital",OfficialHomeSmallCard.OXYGEN);if(kind!=OfficialHomeSmallCard.WRIST)kind=OfficialHomeSmallCard.OXYGEN;
         try{date=LocalDate.parse(saved!=null?saved.getString("date"):getIntent().getStringExtra("date"));}catch(Exception ignored){}if(saved!=null)mode=saved.getInt("mode");if(!oxygen()&&mode==0)mode=1;build(false);}
-    @Override protected void onStart(){super.onStart();HealthDataManager.get(this).add(this);request();}
-    @Override protected void onStop(){HealthDataManager.get(this).remove(this);super.onStop();}
-    @Override protected void onSaveInstanceState(Bundle saved){saved.putString("date",date.toString());saved.putInt("mode",mode);super.onSaveInstanceState(saved);}
-    private void request(){HealthDataManager.get(this).request(date,false,false);if(oxygen()&&mode==0)HealthDataManager.get(this).request(date,true,false);}
+    @Override protected void onUiStart(){super.onUiStart();HealthDataManager.get(this).add(this);request();}
+    @Override protected void onUiStop(){HealthDataManager.get(this).remove(this);data=null;super.onUiStop();}
+    @Override protected void onUiSaveInstanceState(Bundle saved){saved.putString("date",date.toString());saved.putInt("mode",mode);super.onUiSaveInstanceState(saved);}
+    private void request(){HealthDataManager.get(this).request(new HealthMetricsData.Period(date,mode),date,false);if(oxygen()&&mode==0)HealthDataManager.get(this).request(date,true,false);}
     private void change(LocalDate day,int selectedMode){if(day.isBefore(LocalDate.of(2019,1,1)))return;date=day.isAfter(LocalDate.now())?LocalDate.now():day;mode=oxygen()?selectedMode:Math.max(1,selectedMode);visible=30;build(false);request();}
     @Override public void changed(HealthMetricsData value,String message,boolean busy){if(data!=value){data=value;build(true);}status.setText(message);status.setVisibility(message.isEmpty()?View.GONE:View.VISIBLE);}
     private List<HealthMetricsData.Point> points(HealthMetricsData.Period p){List<HealthMetricsData.Point> out=new ArrayList<>();if(data==null)return out;

@@ -1,6 +1,6 @@
 {
   "sourceApkSha256": "d8163ec849de6ee121171d1d1312b05f1500c8d4ec225c19f949042ae185aeaf",
-  "resourceSha256": "7be105bf95fac6f86b203626284e62dee419542f1903b1c7a12a611cdcd89246",
+  "resourceSha256": "65b370e0cf7e86ed4d22ddc09847476c91cd656152d82b7504ed9ca537c73fab",
   "classes": 48893,
   "compatibilityOverrides": [
     "com.oplus.aiunit.vision.m8b (no official logger startup)",

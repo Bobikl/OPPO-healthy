@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 
 /** First health home card. No sample values: empty dates remain explicitly empty. */
 final class HealthPage implements HealthDataManager.Listener {
-    private final OfficialHomeSmallCard sleepCard,trendCard,heartCard,oxygenCard,wristCard,mentalCard,relaxCard,sunshineCard,weightCard,glucoseCard,apneaCard;private HealthMetricsData detail;
+    private final OfficialHomeSmallCard sleepCard,trendCard,heartCard,oxygenCard,wristCard,mentalCard,relaxCard,sunshineCard,weightCard,glucoseCard,apneaCard;private HealthMetricsData detail,boundDetail;private String boundDate;
     private final Activity activity;private final DailyActivityCard card;private final TextView date,status,updated;private final Button refresh;private final Button officialSync;private final TextView officialStatus;
     private final Handler main=new Handler(Looper.getMainLooper());private final ExecutorService reader=Executors.newSingleThreadExecutor(r->new Thread(r,"health-home-read"));
     private boolean active,loading,closed;private String selected=LocalDate.now().toString();private boolean followToday=true;
@@ -44,11 +44,11 @@ final class HealthPage implements HealthDataManager.Listener {
     private int dp(int n){return DeviceStyle.dp(activity,n);}
     private TextView text(String s,int size,int color){TextView t=new TextView(activity);t.setText(s);t.setTextSize(size);t.setTextColor(color);return t;}
     void start(){active=true;HealthDataManager.get(activity).add(this);HealthDataManager.get(activity).request(LocalDate.parse(selected),false,false);HealthDataManager.get(activity).request(LocalDate.parse(selected),true,false);HealthSyncManager.get(activity).request(false);main.removeCallbacks(tick);main.post(tick);}
-    void stop(){active=false;HealthDataManager.get(activity).remove(this);main.removeCallbacks(tick);}
+    void stop(){active=false;detail=null;boundDetail=null;boundDate=null;HealthDataManager.get(activity).remove(this);main.removeCallbacks(tick);}
     void close(){closed=true;stop();reader.shutdown();}
     private void chooseDate(){HealthUi.pick(activity,LocalDate.parse(selected),day->{selected=day.toString();followToday=day.equals(LocalDate.now());HealthDataManager.get(activity).request(day,false,false);HealthDataManager.get(activity).request(day,true,false);bindDetails();load();});}
     @Override public void changed(HealthMetricsData data,String message,boolean busy){if(closed)return;detail=data;bindDetails();}
-    private void bindDetails(){LocalDate day=LocalDate.parse(selected);trendCard.bind(detail,day);heartCard.bind(detail,day);sleepCard.bind(detail,day);oxygenCard.bind(detail,day);wristCard.bind(detail,day);mentalCard.bind(detail,day);relaxCard.bind(detail,day);sunshineCard.bind(detail,day);weightCard.bind(detail,day);glucoseCard.bind(detail,day);apneaCard.bind(detail,day);}
+    private void bindDetails(){if(detail==boundDetail&&selected.equals(boundDate))return;boundDetail=detail;boundDate=selected;LocalDate day=LocalDate.parse(selected);trendCard.bind(detail,day);heartCard.bind(detail,day);sleepCard.bind(detail,day);oxygenCard.bind(detail,day);wristCard.bind(detail,day);mentalCard.bind(detail,day);relaxCard.bind(detail,day);sunshineCard.bind(detail,day);weightCard.bind(detail,day);glucoseCard.bind(detail,day);apneaCard.bind(detail,day);}
     private void load(){
         if(!active||closed)return;if(followToday)selected=LocalDate.now().toString();
         HealthSyncManager manager=HealthSyncManager.get(activity);status.setText(manager.message());refresh.setEnabled(!manager.running());refresh.setText(manager.running()?"同步中":"同步");

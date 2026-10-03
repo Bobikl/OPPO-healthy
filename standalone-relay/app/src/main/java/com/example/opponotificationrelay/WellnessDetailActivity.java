@@ -12,18 +12,18 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 /** Local record binding for the original wellness controls. */
-public final class WellnessDetailActivity extends Activity implements HealthDataManager.Listener {
+public final class WellnessDetailActivity extends OfficialUiActivity implements HealthDataManager.Listener {
  private OfficialComposeOwner composeOwner;
  private int kind=5,mode,visible=30;private LocalDate date=LocalDate.now();private HealthMetricsData data;private TextView status;private ScrollView scroll;
  private String title(){return kind==5?"身心状态":kind==6?"放松":"日照";}
- @Override public void onCreate(Bundle saved){super.onCreate(saved);composeOwner=new OfficialComposeOwner(this);kind=getIntent().getIntExtra("vital",5);if(kind<5||kind>7)kind=5;try{date=LocalDate.parse(saved!=null?saved.getString("date"):getIntent().getStringExtra("date"));}catch(Exception ignored){}if(saved!=null)mode=saved.getInt("mode");build(false);}
- @Override protected void onStart(){super.onStart();HealthDataManager.get(this).add(this);request();}
- @Override protected void onResume(){super.onResume();composeOwner.state("RESUMED");}
- @Override protected void onPause(){composeOwner.state("STARTED");super.onPause();}
- @Override protected void onDestroy(){composeOwner.state("DESTROYED");super.onDestroy();}
- @Override protected void onStop(){composeOwner.state("CREATED");HealthDataManager.get(this).remove(this);super.onStop();}
- @Override protected void onSaveInstanceState(Bundle saved){saved.putString("date",date.toString());saved.putInt("mode",mode);super.onSaveInstanceState(saved);}
- private void request(){HealthDataManager.get(this).request(date,false,false);}
+ @Override public void onUiCreate(Bundle saved){super.onUiCreate(saved);composeOwner=new OfficialComposeOwner(this);kind=getIntent().getIntExtra("vital",5);if(kind<5||kind>7)kind=5;try{date=LocalDate.parse(saved!=null?saved.getString("date"):getIntent().getStringExtra("date"));}catch(Exception ignored){}if(saved!=null)mode=saved.getInt("mode");build(false);}
+ @Override protected void onUiStart(){super.onUiStart();HealthDataManager.get(this).add(this);request();}
+ @Override protected void onUiResume(){super.onUiResume();composeOwner.state("RESUMED");}
+ @Override protected void onUiPause(){composeOwner.state("STARTED");super.onUiPause();}
+ @Override protected void onUiDestroy(){composeOwner.state("DESTROYED");super.onUiDestroy();}
+ @Override protected void onUiStop(){composeOwner.state("CREATED");HealthDataManager.get(this).remove(this);data=null;super.onUiStop();}
+ @Override protected void onUiSaveInstanceState(Bundle saved){saved.putString("date",date.toString());saved.putInt("mode",mode);super.onUiSaveInstanceState(saved);}
+ private void request(){HealthDataManager.get(this).request(new HealthMetricsData.Period(date,mode),date,false);}
  private void change(LocalDate day,int selectedMode){if(day.isBefore(LocalDate.of(2019,1,1)))return;date=day.isAfter(LocalDate.now())?LocalDate.now():day;mode=selectedMode;visible=30;build(false);request();}
  @Override public void changed(HealthMetricsData value,String message,boolean busy){if(data!=value){data=value;build(true);}status.setText(message);status.setVisibility(message.isEmpty()?View.GONE:View.VISIBLE);}
  boolean has(HealthMetricsData.Day d){return kind==5?d.mentalAverage>0:kind==6?d.relaxCount>0:d.sunshineMinutes>=0;}

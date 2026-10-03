@@ -44,7 +44,7 @@ public final class RelayNotificationListenerService extends NotificationListener
     private void receive(StatusBarNotification sbn,boolean removed) {
         if(sbn==null || getPackageName().equals(sbn.getPackageName()))return;
         Notification n=sbn.getNotification();
-        if(n!=null && (n.flags&(Notification.FLAG_ONGOING_EVENT|Notification.FLAG_GROUP_SUMMARY))!=0)return;
+        if(NotificationContent.skip(removed,n==null?0:n.flags))return;
         long revision=NotificationPreferences.revision();
         if(!eligible(sbn.getPackageName(),removed))return;
         try {
@@ -74,9 +74,7 @@ public final class RelayNotificationListenerService extends NotificationListener
     }
     private RelayEvent extract(StatusBarNotification sbn) {
         Notification n=sbn.getNotification();Bundle extras=n==null?null:n.extras;
-        String title=text(extras,Notification.EXTRA_TITLE,MessageBudget.MAX_TITLE_BYTES);
-        String body=text(extras,Notification.EXTRA_TEXT,MessageBudget.MAX_BODY_BYTES);
-        String sub=text(extras,Notification.EXTRA_SUB_TEXT,MessageBudget.MAX_SUB_BYTES);
+        String[] content=NotificationContent.read(extras);String title=content[0],body=content[1],sub=content[2];
         long posted=sbn.getPostTime(),when=n==null || n.when==0?posted:n.when;
         int flags=n==null?0:n.flags;
         return RelayEvent.posted(sbn.getId(),sbn.getTag(),sbn.getKey(),sbn.getPackageName(),"",title,body,sub,posted,when,flags,
@@ -84,7 +82,6 @@ public final class RelayNotificationListenerService extends NotificationListener
             (flags&Notification.FLAG_ONGOING_EVENT)==0,(flags&Notification.FLAG_ONLY_ALERT_ONCE)!=0,
             n!=null && Build.VERSION.SDK_INT>=26?n.getGroupAlertBehavior():0,hasRemoteInput(n));
     }
-    private static String text(Bundle extras,String key,int max) {return MessageBudget.text(extras==null?null:extras.getCharSequence(key),max);}
     private static boolean hasRemoteInput(Notification n) {
         if(n==null || n.actions==null)return false;
         for(Notification.Action a:n.actions)if(a!=null && a.getRemoteInputs()!=null && a.getRemoteInputs().length>0)return true;

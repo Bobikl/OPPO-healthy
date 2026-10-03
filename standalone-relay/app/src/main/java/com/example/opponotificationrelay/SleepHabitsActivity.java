@@ -9,7 +9,7 @@ import org.json.*;
 import java.util.*;
 
 /** Sleep habits, time pickers and reminders in the official device-page hierarchy. */
-public final class SleepHabitsActivity extends Activity {
+public final class SleepHabitsActivity extends OfficialUiActivity {
     private SleepHabitsRepository repo;private SleepHabitsRepository.Snapshot snapshot;
     private ScrollView scroll;private LinearLayout content;private TextView refresh;private final Handler ui=new Handler(Looper.getMainLooper());
     private String rendered="";
@@ -27,16 +27,23 @@ public final class SleepHabitsActivity extends Activity {
         else {TextView right=text(value==null?"›":value+"  ›",15,enabled?DeviceStyle.ACCENT:DeviceStyle.MUTED);right.setPadding(dp(8),0,0,0);row.addView(right,new LinearLayout.LayoutParams(-2,-2));}
         row.setEnabled(enabled);row.setOnClickListener(v->action.run());card.addView(row,new LinearLayout.LayoutParams(-1,-2));
     }
-    @Override protected void onCreate(Bundle saved){super.onCreate(saved);HealthSyncManager.get(this).interactive(true);repo=SleepHabitsRepository.get(this);
+    @Override protected void onUiCreate(Bundle saved){super.onUiCreate(saved);HealthSyncManager.get(this).interactive(true);repo=SleepHabitsRepository.get(this);
         scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setVerticalScrollBarEnabled(false);content=vertical();content.setFocusableInTouchMode(true);content.setDescendantFocusability(android.view.ViewGroup.FOCUS_BEFORE_DESCENDANTS);content.setPadding(dp(18),0,dp(18),dp(30));scroll.addView(content);
         LinearLayout shell=DeviceStyle.shell(this,"作息习惯与提醒",scroll);LinearLayout bar=(LinearLayout)shell.getChildAt(0);refresh=text("刷新",15,DeviceStyle.ACCENT);refresh.setGravity(Gravity.CENTER);bar.addView(refresh,new LinearLayout.LayoutParams(-2,dp(48)));refresh.setOnClickListener(v->repo.load());repo.load();render();}
-    @Override protected void onResume(){super.onResume();HealthSyncManager.get(this).interactive(true);rendered="";ui.post(tick);}
-    @Override protected void onPause(){ui.removeCallbacks(tick);HealthSyncManager.get(this).interactive(false);super.onPause();}
+    @Override protected void onUiResume(){super.onUiResume();HealthSyncManager.get(this).interactive(true);rendered="";ui.post(tick);}
+    @Override protected void onUiPause(){ui.removeCallbacks(tick);HealthSyncManager.get(this).interactive(false);super.onUiPause();}
     private void render(){
-        snapshot=repo.snapshot();String identity=snapshot.revision+":"+snapshot.busy+":"+snapshot.modeKnown+":"+snapshot.message;
+        snapshot=repo.snapshot();String identity=snapshot.revision+":"+snapshot.busy+":"+snapshot.modeKnown+":"+snapshot.pending+":"+snapshot.message;
         if(identity.equals(rendered))return;rendered=identity;refresh.setEnabled(!snapshot.busy);refresh.setAlpha(snapshot.busy?.4f:1f);int savedY=scroll.getScrollY();content.removeAllViews();content.requestFocus();
         TextView status=text(snapshot.message,14,DeviceStyle.MUTED);status.setPadding(dp(4),dp(16),dp(4),dp(8));content.addView(status);
-        JSONObject v=snapshot.values();boolean ready=snapshot.loaded&&!snapshot.busy;long revision=snapshot.revision;
+        JSONObject v=snapshot.values();boolean ready=snapshot.loaded&&!snapshot.busy&&!snapshot.pending;long revision=snapshot.revision;
+        if(snapshot.pending){
+            boolean canSync=v.optInt("accord",-1)>=0&&v.optInt("sync",-1)>=0;
+            LinearLayout recovery=card();
+            row(recovery,canSync?"恢复睡眠模式":"解除未确认状态",canSync?"核对并重新同步当前显示的模式开关":"先核对手表上的设置，再解除未确认标记",null,null,snapshot.loaded&&!snapshot.busy,()->new AlertDialog.Builder(this)
+                .setTitle(canSync?"恢复睡眠模式？":"解除未确认状态？").setMessage(canSync?"将按当前显示的开关重新同步睡眠模式，并清除上次未确认标记。上次的提醒、目标或作息修改不会自动重发，请在手表上核对。":"缺少睡眠模式记录。此操作只清除未确认标记，不向手表发送设置。请先核对手表上的提醒、目标和作息；解除后可以逐项重新保存。")
+                .setNegativeButton("取消",null).setPositiveButton(canSync?"恢复":"已核对，解除",(d,w)->{if(!repo.recoverPending(revision))Toast.makeText(this,"设置已更新，请刷新后重试",Toast.LENGTH_SHORT).show();rendered="";render();}).show());
+        }
         heading("自动开启睡眠模式");LinearLayout modes=card();
         row(modes,"按照作息习惯",snapshot.modeKnown?"按所设时间自动进入或退出睡眠模式":(snapshot.accord>=0?"上次确认的状态；请刷新更新":"等待从手表读取当前状态"),null,snapshot.accord==1,ready&&snapshot.modeKnown,()->save("accord",snapshot.accord==1?0:1,revision));
         JSONArray rests=v.optJSONArray("rests");int count=rests==null?0:rests.length();

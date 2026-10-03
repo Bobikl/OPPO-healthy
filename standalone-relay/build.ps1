@@ -120,7 +120,7 @@ $settingsPackage = Join-Path $settingsClasses 'com\example\opponotificationrelay
 $settingsDex = Join-Path $workBuild 'settings-dex'
 New-Item -ItemType Directory -Force -Path $settingsPackage, $settingsDex | Out-Null
 Get-ChildItem -LiteralPath (Join-Path $classes 'com\example\opponotificationrelay') -Filter '*.class' |
-    Where-Object { $_.Name -match '^(RootOfficialSettingsReader|RootHealthDataReader|RootKnowledgeReader|RootActivityBridge|ActivityBridgePolicy|RootSleepSettingsReader|RootNapWriter|OfficialNapBridge|NapWritePolicy|SettingsImportPlan|MmkvSnapshot|OfficialSettingsPreview|SettingsPreviewProtocol)(\$.*)?\.class$' } |
+    Where-Object { $_.Name -match '^(RootOfficialSettingsReader|RootHealthDataReader|HealthTime|RootKnowledgeReader|RootActivityBridge|ActivityBackupStore|ActivityBridgePolicy|RootSleepSettingsReader|RootNapWriter|OfficialNapBridge|NapWritePolicy|SettingsImportPlan|MmkvSnapshot|OfficialSettingsPreview|SettingsPreviewProtocol)(\$.*)?\.class$' } |
     ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $settingsPackage }
 $settingsJar = Join-Path $workBuild 'settings-classes.jar'
 & $jar cf $settingsJar -C $settingsClasses .

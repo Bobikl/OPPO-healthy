@@ -19,7 +19,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public final class SettingsActivity extends Activity {
+public final class SettingsActivity extends OfficialUiActivity {
     public static final String EXTRA_SECTION="section", NOTIFICATIONS="notifications", PROTECTION="protection", DEVICE="device", DIAGNOSTICS="diagnostics";
     private String section;
     private boolean rendering;
@@ -49,8 +49,8 @@ public final class SettingsActivity extends Activity {
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onUiCreate(Bundle savedInstanceState) {
+        super.onUiCreate(savedInstanceState);
         FileLogger.init(this);
         FileLogger.i("SettingsActivity", "设置页打开");
         mTransport = RfcommWearTransport.getInstance(this);
@@ -60,8 +60,8 @@ public final class SettingsActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onUiResume() {
+        super.onUiResume();
         refreshUi();
         uiHandler.postDelayed(uiRefresh, 2000);
         mTransport.setOnStatusChangeListener(new RfcommWearTransport.OnStatusChangeListener() {
@@ -88,10 +88,10 @@ public final class SettingsActivity extends Activity {
         });
     }
 
-    @Override protected void onPause() {
+    @Override protected void onUiPause() {
         uiHandler.removeCallbacks(uiRefresh);
         mTransport.setOnStatusChangeListener(null);
-        super.onPause();
+        super.onUiPause();
     }
 
     private void buildUi() {
@@ -434,7 +434,7 @@ public final class SettingsActivity extends Activity {
     private static void text(TextView view,CharSequence value) {
         if(view!=null && !android.text.TextUtils.equals(view.getText(),value))view.setText(value);
     }
-    @Override protected void onDestroy() {uiHandler.removeCallbacksAndMessages(null);mPendingAction=null;super.onDestroy();}
+    @Override protected void onUiDestroy() {uiHandler.removeCallbacksAndMessages(null);mPendingAction=null;super.onUiDestroy();}
     private void refreshUi() {
         if(tvCredentials!=null) text(tvCredentials,RelayConfig.credentialStatus(this));
         if(tvStartup!=null) text(tvStartup,"应用自动恢复："+(RelayConfig.autoRestore(this)?"开启":"关闭")

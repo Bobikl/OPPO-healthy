@@ -7,7 +7,7 @@ import android.widget.*;
 import java.util.*;
 
 /** Device monitoring controls. Values come from the connected watch, never guessed defaults. */
-public final class HealthSettingsActivity extends Activity {
+public final class HealthSettingsActivity extends OfficialUiActivity {
     public static final String CATEGORY="health_category";
     private final Handler ui=new Handler(Looper.getMainLooper());
     private final Map<HealthSetting,Row> rows=new EnumMap<>(HealthSetting.class);
@@ -18,8 +18,8 @@ public final class HealthSettingsActivity extends Activity {
     private int dp(int n){return DeviceStyle.dp(this,n);}
     private TextView label(String text,int size,int color){TextView v=new TextView(this);v.setText(text);v.setTextSize(size);v.setTextColor(color);v.setLineSpacing(dp(3),1);return v;}
     private LinearLayout vertical(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
-    @Override protected void onCreate(Bundle saved){
-        super.onCreate(saved);HealthSyncManager.get(this).interactive(true);transport=RfcommWearTransport.getInstance(this);
+    @Override protected void onUiCreate(Bundle saved){
+        super.onUiCreate(saved);HealthSyncManager.get(this).interactive(true);transport=RfcommWearTransport.getInstance(this);
         int category=getIntent().getIntExtra(CATEGORY,0);if(category<0 || category>=HealthSetting.CATEGORIES.length)category=0;
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setVerticalScrollBarEnabled(false);
         LinearLayout content=vertical();content.setPadding(dp(18),dp(4),dp(18),dp(30));scroll.addView(content);
@@ -48,9 +48,9 @@ public final class HealthSettingsActivity extends Activity {
         refresh=label("刷新",15,DeviceStyle.ACCENT);refresh.setGravity(Gravity.CENTER);refresh.setPadding(dp(10),0,0,0);bar.addView(refresh,new LinearLayout.LayoutParams(-2,dp(48)));
         refresh.setOnClickListener(v->{attempted=transport.requestHealthSettings();render();});render();
     }
-    @Override protected void onResume(){super.onResume();HealthSyncManager.get(this).interactive(true);attempted=false;render();ui.postDelayed(tick,1000);}
-    @Override protected void onPause(){ui.removeCallbacks(tick);HealthSyncManager.get(this).interactive(false);super.onPause();}
-    @Override protected void onDestroy(){ui.removeCallbacksAndMessages(null);super.onDestroy();}
+    @Override protected void onUiResume(){super.onUiResume();HealthSyncManager.get(this).interactive(true);attempted=false;render();ui.postDelayed(tick,1000);}
+    @Override protected void onUiPause(){ui.removeCallbacks(tick);HealthSyncManager.get(this).interactive(false);super.onUiPause();}
+    @Override protected void onUiDestroy(){ui.removeCallbacksAndMessages(null);super.onUiDestroy();}
     private void render(){
         if(!attempted && transport.getState()==RfcommWearTransport.STATE_READY)attempted=transport.requestHealthSettings();
         snapshot=transport.healthSettings();state.setText(snapshot.message);progress.setVisibility(snapshot.busy?View.VISIBLE:View.GONE);refresh.setEnabled(!snapshot.busy);refresh.setAlpha(snapshot.busy?0.4f:1f);

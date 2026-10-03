@@ -19,6 +19,29 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def build_resource(apk, resource, meta, zipalign):
+    """Preserve every resource byte while making the compiled table mmap-compatible."""
+    groups = meta["resourceTimestampGroups"]
+    group_index = 0
+    index = 0
+    with zipfile.ZipFile(apk) as src, zipfile.ZipFile(resource, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as dst:
+        for source in src.infolist():
+            name = source.filename
+            if name not in ("AndroidManifest.xml", "resources.arsc") and not name.startswith(("res/", "assets/fonts/", "assets/coui_")):
+                continue
+            if group_index + 1 < len(groups) and index >= groups[group_index + 1][0]:
+                group_index += 1
+            info = zipfile.ZipInfo(name, tuple(groups[group_index][1]))
+            info.create_system = 0
+            method = zipfile.ZIP_STORED if name == "resources.arsc" or name.endswith((".ogg", ".wav", ".mp3", ".ttf", ".otf")) else zipfile.ZIP_DEFLATED
+            dst.writestr(info, src.read(source), compress_type=method, compresslevel=6)
+            index += 1
+    aligned = resource.with_name(resource.stem + "-aligned.apk")
+    subprocess.run([str(zipalign), "-f", "4", str(resource), str(aligned)], check=True)
+    aligned.replace(resource)
+    subprocess.run([str(zipalign), "-c", "4", str(resource)], check=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", type=Path, required=True)
@@ -68,21 +91,7 @@ def main():
                 if stream.read(8) != b"dex\n039\x00":
                     raise SystemExit("DEX 039 is required for the original Compose interface methods.")
         resource = work / "official-ui-resources.apk"
-        groups = meta["resourceTimestampGroups"]
-        group_index = 0
-        index = 0
-        with zipfile.ZipFile(apk) as src, zipfile.ZipFile(resource, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as dst:
-            for source in src.infolist():
-                name = source.filename
-                if name not in ("AndroidManifest.xml", "resources.arsc") and not name.startswith(("res/", "assets/fonts/", "assets/coui_")):
-                    continue
-                if group_index + 1 < len(groups) and index >= groups[group_index + 1][0]:
-                    group_index += 1
-                info = zipfile.ZipInfo(name, tuple(groups[group_index][1]))
-                info.create_system = 0
-                method = zipfile.ZIP_STORED if name.endswith((".ogg", ".wav", ".mp3", ".ttf", ".otf")) else zipfile.ZIP_DEFLATED
-                dst.writestr(info, src.read(source), compress_type=method, compresslevel=6)
-                index += 1
+        build_resource(apk, resource, meta, sdk / "build-tools/36.0.0/zipalign.exe")
         if sha(resource) != meta["resourceSha256"]:
             raise SystemExit("Resource archive does not match the pinned hash; no outputs were replaced.")
         with zipfile.ZipFile(apk) as src:

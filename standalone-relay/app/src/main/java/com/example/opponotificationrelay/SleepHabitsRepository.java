@@ -12,8 +12,8 @@ public final class SleepHabitsRepository {
     private static SleepHabitsRepository instance;
     public static synchronized SleepHabitsRepository get(Context c){if(instance==null)instance=new SleepHabitsRepository(c);return instance;}
     public static final class Snapshot {
-        public final String json,message,mac;public final long revision;public final boolean busy,loaded,modeKnown;public final int accord;
-        Snapshot(String json,String message,String mac,long revision,boolean busy,boolean loaded,boolean modeKnown,int accord){this.json=json;this.message=message;this.mac=mac;this.revision=revision;this.busy=busy;this.loaded=loaded;this.modeKnown=modeKnown;this.accord=accord;}
+        public final String json,message,mac;public final long revision;public final boolean busy,loaded,modeKnown,pending;public final int accord;
+        Snapshot(String json,String message,String mac,long revision,boolean busy,boolean loaded,boolean modeKnown,boolean pending,int accord){this.json=json;this.message=message;this.mac=mac;this.revision=revision;this.busy=busy;this.loaded=loaded;this.modeKnown=modeKnown;this.pending=pending;this.accord=accord;}
         public JSONObject values(){try{return new JSONObject(json);}catch(JSONException e){return new JSONObject();}}
     }
     private final Context context;private final RfcommWearTransport transport;private final ExecutorService worker=Executors.newSingleThreadExecutor();
@@ -21,7 +21,7 @@ public final class SleepHabitsRepository {
     private JSONObject values=new JSONObject();private byte[] mode;private long modeAt,modeGeneration=-1,revision;private boolean busy,loaded;
     private String mac="",scope="",message="尚未读取作息设置";
     private SleepHabitsRepository(Context c){context=c.getApplicationContext();transport=RfcommWearTransport.getInstance(c);prefs=context.getSharedPreferences("sleep_habits_v1",Context.MODE_PRIVATE);}
-    public synchronized Snapshot snapshot(){int accord=values.optInt("accord",-1);try{if(mode!=null)accord=HealthProto.parse(mode).number(2,0);}catch(IOException ignored){}return new Snapshot(values.toString(),message,mac,revision,busy,loaded,mode!=null && accord>=0 && modeGeneration==transport.healthGeneration(),accord);}
+    public synchronized Snapshot snapshot(){int accord=values.optInt("accord",-1);try{if(mode!=null)accord=HealthProto.parse(mode).number(2,0);}catch(IOException ignored){}return new Snapshot(values.toString(),message,mac,revision,busy,loaded,mode!=null && accord>=0 && modeGeneration==transport.healthGeneration(),prefs.contains(key()+":pending"),accord);}
     private String target(){return RelayConfig.getTargetMac(context).toUpperCase(Locale.ROOT);}
     private String key(){return mac+":"+scope;}
     private void current(String expected)throws IOException{if(!expected.equals(target()))throw new IOException("SLEEP_TARGET_CHANGED");}
@@ -37,7 +37,7 @@ public final class SleepHabitsRepository {
                 JSONObject initial=baseline(result.getJSONObject("values"));
                 synchronized(this){scope=next;String saved=prefs.getString(key(),null);values=saved==null?initial:new JSONObject(saved);for(java.util.Iterator<String> keys=initial.keys();keys.hasNext();){String k=keys.next();if(!values.has(k))values.put(k,initial.get(k));}validate(values);loaded=true;mode=null;revision++;message="已读取本机作息记录，正在连接手表…";}
                 try{if(!prefs.contains(key()+":pending")){readMode(owner,values);status("已读取作息记录，并同步睡眠模式");}}catch(Exception e){status("作息记录已读取；手表模式暂未读取，可刷新重试");}
-                if(prefs.contains(key()+":pending"))status("上次保存结果未确认，请核对后重新保存；当前显示最近已知设置");
+                if(prefs.contains(key()+":pending"))status("上次保存结果未确认；请先恢复睡眠模式，再核对手表上的提醒与目标");
             }catch(Exception e){status("作息读取失败："+safe(e)+"，请稍后刷新");}
             finally{synchronized(this){busy=false;}}
         });
@@ -84,10 +84,34 @@ public final class SleepHabitsRepository {
         if(accord<0 || sync<0)throw new IOException("SLEEP_MODE_BASELINE_REQUIRED");
         byte[] response=SleepSettingsProtocol.mode(exchange(owner,SleepSettingsProtocol.syncMode(accord,sync,source.optInt("syncAt",0))));
         HealthProto.Node state=HealthProto.parse(response);
-        synchronized(this){mode=response;modeAt=SystemClock.elapsedRealtime();modeGeneration=transport.healthGeneration();source.put("sync",state.number(4,0));source.put("syncAt",state.number(5,0));revision++;}
+        synchronized(this){mode=response;modeAt=SystemClock.elapsedRealtime();modeGeneration=transport.healthGeneration();source.put("accord",state.number(2,0));source.put("sync",state.number(4,0));source.put("syncAt",state.number(5,0));revision++;}
+    }
+    /** CID 204 merges phone-owned mode fields: recovery must be an explicit user action. */
+    public synchronized boolean recoverPending(long expected){
+        if(busy || !loaded || revision!=expected || !mac.equals(target()))return false;
+        final String owner=mac,savedKey=key(),journal=prefs.getString(savedKey+":pending",null);
+        if(journal==null)return false;
+        final JSONObject baseline;
+        try{baseline=new JSONObject(values.toString());validate(baseline);}catch(Exception e){message="设置记录无效，请刷新后重试";return false;}
+        busy=true;mode=null;message="正在恢复睡眠模式…";
+        worker.execute(()->{
+            try{
+                current(owner);
+                if(!journal.equals(prefs.getString(savedKey+":pending",null)))throw new IOException("SLEEP_JOURNAL_CHANGED");
+                boolean canSync=baseline.optInt("accord",-1)>=0&&baseline.optInt("sync",-1)>=0;
+                if(canSync)readMode(owner,baseline);
+                synchronized(this){
+                    current(owner);
+                    if(!savedKey.equals(key()) || !journal.equals(prefs.getString(savedKey+":pending",null)))throw new IOException("SLEEP_JOURNAL_CHANGED");
+                    if(!prefs.edit().putString(savedKey,baseline.toString()).remove(savedKey+":pending").commit())throw new IOException("SLEEP_LOCAL_SAVE");
+                    values=baseline;revision++;message=canSync?"睡眠模式已确认；上次未确认的提醒、目标或作息未重发，请在手表上核对":"已解除未确认状态；缺少睡眠模式记录，未向手表发送任何设置，请核对手表";
+                }
+            }catch(Exception e){synchronized(this){mode=null;message="恢复未完成："+safe(e)+"，可稍后重试";}}
+            finally{synchronized(this){busy=false;}}
+        });return true;
     }
     public synchronized boolean save(String field,Object value,long expected){
-        if(busy || !loaded || revision!=expected || !mac.equals(target()))return false;
+        if(busy || !loaded || prefs.contains(key()+":pending") || revision!=expected || !mac.equals(target()))return false;
         final JSONObject proposed;
         try{proposed=new JSONObject(values.toString());proposed.put(field,value);if("rests".equals(field))proposed.put("restKnown",true);validate(proposed);}catch(Exception e){message="时间或作息格式不正确";return false;}
         final String owner=mac;busy=true;message="正在保存作息设置…";

@@ -17,12 +17,24 @@ final class RootHealthDataReader {
         java.util.TreeMap<Long,long[]> bins=new java.util.TreeMap<>();int count=0;
         // One indexed range scan avoids a correlated join against the entire heart table.
         try(Cursor c=RootOfficialSettingsReader.query(db,"SELECT data_created_timestamp,heart_rate_value FROM DBHeartRate WHERE ssoid=? AND display=1 AND heart_rate_type NOT IN(1,4,5) AND heart_rate_value>0 AND data_created_timestamp>=? AND data_created_timestamp<? ORDER BY data_created_timestamp",new String[]{account,from,to})){
-            long previous=-1;while(c.moveToNext()){if(++count>3000000)throw new IOException("HEALTH_RECORD_LIMIT");long time=c.getLong(0);int value=c.getInt(1);if(value>300||time==previous)continue;previous=time;long bucket=(time/1800000)*1800000;long[] b=bins.get(bucket);
+            long previous=-1;while(c.moveToNext()){if(++count>3000000)throw new IOException("HEALTH_RECORD_LIMIT");long time=c.getLong(0);int value=c.getInt(1);if(value>300||time==previous)continue;previous=time;long bucket=HealthTime.bucket(time,30,ZoneId.systemDefault());long[] b=bins.get(bucket);
                 if(b==null){if(bins.size()>=18000)throw new IOException("HEALTH_ROW_LIMIT");b=new long[]{bucket,value,value,0,0,time,value};bins.put(bucket,b);}
                 b[1]=Math.min(b[1],value);b[2]=Math.max(b[2],value);b[3]+=value;b[4]++;if(time>=b[5]){b[5]=time;b[6]=value;}
             }
         }
         JSONArray out=new JSONArray();for(long[] b:bins.values())out.put(new JSONArray(b));return out;
+    }
+    static void activityBins(Object db,String account,String device,long start,long end,JSONObject result)throws Exception {
+        java.util.TreeMap<Long,long[]> hours=new java.util.TreeMap<>(),halves=new java.util.TreeMap<>();int scanned=0;ZoneId zone=ZoneId.systemDefault();
+        try(Cursor c=RootOfficialSettingsReader.query(db,"SELECT start_time,end_time,steps,calories,workout,device_category FROM DBSportDataDetail WHERE ssoid=? AND upper(device_unique_id)=? AND display=1 AND start_time>=? AND start_time<? ORDER BY start_time",new String[]{account,device,Long.toString(start),Long.toString(end)})){
+            while(c.moveToNext()){if(++scanned>3000000)throw new IOException("HEALTH_RECORD_LIMIT");long stamp=c.getLong(0),hour=HealthTime.bucket(stamp,60,zone),half=HealthTime.bucket(stamp,30,zone),steps=c.getLong(2),calories=c.getLong(3);String category=c.getString(5);
+                long[] h=hours.get(hour);if(h==null){if(hours.size()>=9000)throw new IOException("HEALTH_ROW_LIMIT");h=new long[]{hour,0,0,0,0};hours.put(hour,h);}h[1]=Math.addExact(h[1],steps);h[2]=Math.addExact(h[2],calories);h[3]=Math.max(h[3],c.getLong(1));
+                if("Watch".equals(category)?steps>0:category!=null&&!category.isEmpty()&&!"Phone".equals(category)&&!"mobile".equals(category)&&steps>30)h[4]=1;
+                long[] m=halves.get(half);if(m==null){if(halves.size()>=18000)throw new IOException("HEALTH_ROW_LIMIT");m=new long[]{half,0,0,0,0};halves.put(half,m);}m[1]=Math.addExact(m[1],steps);m[2]=Math.addExact(m[2],calories);m[3]=Math.addExact(m[3],c.getLong(4));m[4]=Math.max(m[4],c.getLong(1));
+            }
+        }
+        JSONArray hourRows=new JSONArray(),halfRows=new JSONArray(),moveRows=new JSONArray();for(long[] h:hours.values()){hourRows.put(new JSONArray(new long[]{h[0],h[1],h[2],h[3]}));moveRows.put(new JSONArray(new long[]{h[0],h[4]}));}for(long[] m:halves.values())halfRows.put(new JSONArray(m));
+        result.put("activityBins",hourRows).put("activityHalves",halfRows).put("moveHours",moveRows);
     }
     static void readWellness(Object db,String account,String device,long start,long end,JSONObject result)throws Exception {
         String from=Long.toString(start),to=Long.toString(end);
@@ -79,8 +91,9 @@ final class RootHealthDataReader {
         String operation=request.getString("operation"),device=request.getString("device");
         if(!device.matches("(?i)[0-9a-f]{2}(:[0-9a-f]{2}){5}"))throw new IOException("HEALTH_DEVICE");device=device.toUpperCase(java.util.Locale.ROOT);
         long start=request.getLong("start"),end=request.getLong("end");
-        if(request.length()!=4||start<1546272000000L||end<=start||end-start>367L*86400000L||end>System.currentTimeMillis()+86400000L)throw new IOException("HEALTH_RANGE");
-        JSONObject result=new JSONObject().put("status","OK").put("scope",RootActivityBridge.scope(account,key)).put("start",start).put("end",end).put("readAt",System.currentTimeMillis());
+        if(request.length()!=(request.has("zone")?5:4)||start<1546272000000L||end<=start||end-start>367L*86400000L||end>System.currentTimeMillis()+86400000L)throw new IOException("HEALTH_RANGE");
+        ZoneId zone=ZoneId.of(request.optString("zone",ZoneId.systemDefault().getId()));java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone(zone));
+        JSONObject result=new JSONObject().put("zone",zone.getId()).put("status","OK").put("scope",RootActivityBridge.scope(account,key)).put("start",start).put("end",end).put("readAt",System.currentTimeMillis());
         String from=Long.toString(start),to=Long.toString(end);
         if("readHeartRaw".equals(operation)){
             if(end-start>26*3600000L)throw new IOException("HEALTH_RANGE");
@@ -90,9 +103,10 @@ final class RootHealthDataReader {
             if(result.toString().length()>1100000)throw new IOException("HEALTH_OUTPUT_LIMIT");return result;
         }
         if(!"readHealth".equals(operation))throw new IOException("HEALTH_ARGUMENT");
+        String first=Instant.ofEpochMilli(start).atZone(ZoneId.systemDefault()).toLocalDate().toString().replace("-",""),last=Instant.ofEpochMilli(end).atZone(ZoneId.systemDefault()).toLocalDate().toString().replace("-","");
         RootOfficialSettingsReader.stage="HEALTH_STATS";
-        result.put("heart",rows(db,"SELECT date,min_hr,max_hr,average_hr,rest_hr,walk_avg_hr,sleep_base_hr FROM DBHeartRateDataStatTable WHERE ssoid=? ORDER BY date LIMIT 5001",5000,account));
-        result.put("sleep",rows(db,"SELECT date,sleep_score,checked_sleep_score,total_sleep_time,total_deep_sleep_time,total_lightly_sleep_time,total_rem_time,total_wake_up_time FROM DBSleepDataStatTable WHERE ssoid=? ORDER BY date LIMIT 5001",5000,account));
+        result.put("heart",rows(db,"SELECT date,min_hr,max_hr,average_hr,rest_hr,walk_avg_hr,sleep_base_hr FROM DBHeartRateDataStatTable WHERE ssoid=? AND date>=? AND date<? ORDER BY date LIMIT 5001",5000,account,first,last));
+        result.put("sleep",rows(db,"SELECT date,sleep_score,checked_sleep_score,total_sleep_time,total_deep_sleep_time,total_lightly_sleep_time,total_rem_time,total_wake_up_time FROM DBSleepDataStatTable WHERE ssoid=? AND date>=? AND date<? ORDER BY date LIMIT 5001",5000,account,first,last));
         // Same visibility/type filtering as the official detail card. Reliability is not a visibility filter.
         RootOfficialSettingsReader.stage="HEALTH_BINS";
         result.put("bins",heartBins(db,account,from,to));
@@ -100,24 +114,22 @@ final class RootHealthDataReader {
         result.put("latest",rows(db,"SELECT data_created_timestamp,heart_rate_value FROM DBHeartRate WHERE ssoid=? AND display=1 AND heart_rate_type NOT IN(1,4,5) AND heart_rate_value>0 AND data_created_timestamp>=? AND data_created_timestamp<? ORDER BY data_created_timestamp DESC LIMIT 1",1,account,from,to));
         result.put("warnings",rows(db,"SELECT start_timestamp,end_timestamp,warning_type,warning_heart_rate_type,min_heart_rate,max_heart_rate FROM DBHeartRateWarning WHERE ssoid=? AND start_timestamp>=? AND start_timestamp<? ORDER BY start_timestamp LIMIT 2001",2000,account,from,to));
         RootOfficialSettingsReader.stage="HEALTH_ACTIVITY_BINS";
-        result.put("activityBins",rows(db,"SELECT (start_time/3600000)*3600000,sum(steps),sum(calories),max(end_time) FROM DBSportDataDetail WHERE ssoid=? AND upper(device_unique_id)=? AND display=1 AND start_time>=? AND start_time<? GROUP BY start_time/3600000 ORDER BY start_time/3600000 LIMIT 9001",9000,account,device,from,to));
-        result.put("activityHalves",rows(db,"SELECT (start_time/1800000)*1800000,sum(steps),sum(calories),sum(workout),max(end_time) FROM DBSportDataDetail WHERE ssoid=? AND upper(device_unique_id)=? AND display=1 AND start_time>=? AND start_time<? GROUP BY start_time/1800000 ORDER BY start_time/1800000 LIMIT 18001",18000,account,device,from,to));
-        result.put("moveHours",rows(db,"SELECT (start_time/3600000)*3600000,max(case when device_category='Watch' then steps>0 when device_category not in ('Phone','mobile','') then steps>30 else 0 end) FROM DBSportDataDetail WHERE ssoid=? AND upper(device_unique_id)=? AND display=1 AND start_time>=? AND start_time<? GROUP BY start_time/3600000 ORDER BY start_time/3600000 LIMIT 9001",9000,account,device,from,to));
+        activityBins(db,account,device,start,end,result);
         RootOfficialSettingsReader.stage="HEALTH_SLEEP_DETAIL";
-        result.put("sleepNight",rows(db,"SELECT date,sleep_in_timestamp,sleep_out_timestamp,total_sleep_time,total_deep_sleep_time,total_lightly_sleep_time,total_rem_time,total_wake_up_time,wake_count FROM DBSleepDayStat WHERE ssoid=? AND upper(device_unique_id)=? ORDER BY date LIMIT 5001",5000,account,device));
+        result.put("sleepNight",rows(db,"SELECT date,sleep_in_timestamp,sleep_out_timestamp,total_sleep_time,total_deep_sleep_time,total_lightly_sleep_time,total_rem_time,total_wake_up_time,wake_count FROM DBSleepDayStat WHERE ssoid=? AND upper(device_unique_id)=? AND date>=? AND date<? ORDER BY date LIMIT 5001",5000,account,device,first,last));
         // Date comes from the assembled day, including overnight and fragmented sleep.
         JSONArray segments=new JSONArray();java.util.TreeMap<Long,JSONArray> unique=new java.util.TreeMap<>();
-        try(Cursor c=RootOfficialSettingsReader.query(db,"SELECT date,sleep_main_data,sleep_frg_data FROM DBSleepDayStat WHERE ssoid=? AND upper(device_unique_id)=? ORDER BY date LIMIT 5001",new String[]{account,device})){
+        try(Cursor c=RootOfficialSettingsReader.query(db,"SELECT date,sleep_main_data,sleep_frg_data FROM DBSleepDayStat WHERE ssoid=? AND upper(device_unique_id)=? AND date>=? AND date<? ORDER BY date LIMIT 5001",new String[]{account,device,first,last})){
             while(c.moveToNext()){int date=c.getInt(0);if(!c.isNull(1)&&!c.getString(1).isEmpty())sleepSegments(unique,date,new JSONObject(c.getString(1)));
                 if(!c.isNull(2)&&!c.getString(2).isEmpty()){JSONArray fragments=new JSONArray(c.getString(2));for(int i=0;i<fragments.length();i++)sleepSegments(unique,date,fragments.getJSONObject(i));}}
         }
         for(JSONArray row:unique.values())segments.put(row);result.put("sleepSegments",segments);
-        result.put("sleepIndex",rows(db,"SELECT data_created_timestamp,avg_sleep_spo2,avg_sleep_heart_rate,sleep_heart_rate_range_low,sleep_heart_rate_range_high,avg_sleep_breath_range_low,avg_sleep_breath_range_high,basal_hrv,min_hrv,max_hrv FROM DBSleepIndex WHERE ssoid=? AND upper(device_unique_id)=? ORDER BY data_created_timestamp LIMIT 5001",5000,account,device));
-        result.put("sleepWrist",rows(db,"SELECT date,day_baseline_value,confidence,value FROM DBWristTemperatureStat WHERE ssoid=? ORDER BY date LIMIT 5001",5000,account));
+        result.put("sleepIndex",rows(db,"SELECT data_created_timestamp,avg_sleep_spo2,avg_sleep_heart_rate,sleep_heart_rate_range_low,sleep_heart_rate_range_high,avg_sleep_breath_range_low,avg_sleep_breath_range_high,basal_hrv,min_hrv,max_hrv FROM DBSleepIndex WHERE ssoid=? AND upper(device_unique_id)=? AND data_created_timestamp>=? AND data_created_timestamp<? ORDER BY data_created_timestamp LIMIT 5001",5000,account,device,from,to));
+        result.put("sleepWrist",rows(db,"SELECT date,day_baseline_value,confidence,value FROM DBWristTemperatureStat WHERE ssoid=? AND date>=? AND date<? ORDER BY date LIMIT 5001",5000,account,first,last));
         readWellness(db,account,device,start,end,result);
         readAdditionalCards(db,account,start,end,result);
         result.put("knowledge",RootKnowledgeReader.read(db));
-        result.put("activity",RootActivityBridge.read(db,account,device,key));
+        result.put("activity",RootActivityBridge.read(db,account,device,key,first,last));
         if(result.toString().length()>1100000)throw new IOException("HEALTH_OUTPUT_LIMIT");return result;
     }
 }

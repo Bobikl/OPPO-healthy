@@ -12,14 +12,14 @@ import org.json.*;
 final class HealthArchive extends SQLiteOpenHelper {
     private static HealthArchive instance;
     static synchronized HealthArchive get(Context c){if(instance==null)instance=new HealthArchive(c.getApplicationContext());return instance;}
-    private HealthArchive(Context c){super(c,"health-archive.db",null,3);setWriteAheadLoggingEnabled(true);}
+    private HealthArchive(Context c){super(c,"health-archive.db",null,4);setWriteAheadLoggingEnabled(true);}
     @Override public void onConfigure(SQLiteDatabase db){super.onConfigure(db);db.execSQL("PRAGMA synchronous=FULL");}
     @Override public void onCreate(SQLiteDatabase db){
         db.execSQL("CREATE TABLE packets(device TEXT NOT NULL,kind TEXT NOT NULL,hash TEXT NOT NULL,request_start INTEGER,request_end INTEGER,response_start INTEGER,response_end INTEGER,received_at INTEGER NOT NULL,body BLOB NOT NULL,PRIMARY KEY(device,kind,hash))");
         db.execSQL("CREATE TABLE records(device TEXT NOT NULL,kind TEXT NOT NULL,stamp INTEGER NOT NULL,received_at INTEGER NOT NULL,origin_start INTEGER NOT NULL,source_end INTEGER NOT NULL,body BLOB NOT NULL,PRIMARY KEY(device,kind,stamp))");
         db.execSQL("CREATE TABLE daily(device TEXT NOT NULL,day TEXT NOT NULL,stamp INTEGER,steps INTEGER,kcal INTEGER,minutes INTEGER,moves INTEGER,step_goal INTEGER,kcal_goal INTEGER,minute_goal INTEGER,move_goal INTEGER,source_end INTEGER NOT NULL,saved_at INTEGER NOT NULL,PRIMARY KEY(device,day))");
         db.execSQL("CREATE TABLE cursors(device TEXT NOT NULL,kind TEXT NOT NULL,through INTEGER NOT NULL,PRIMARY KEY(device,kind))");
-        createGoalSchema(db);createOfficialActivity(db);
+        createGoalSchema(db);createOfficialActivity(db);createRevision(db);
         db.execSQL("CREATE INDEX packets_time ON packets(device,received_at)");
     }
     private static void createGoalSchema(SQLiteDatabase db){db.execSQL("CREATE TABLE IF NOT EXISTS goal_schema(device TEXT PRIMARY KEY,verified_at INTEGER NOT NULL)");}
@@ -27,7 +27,12 @@ final class HealthArchive extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS official_activity(scope TEXT NOT NULL,device TEXT NOT NULL,day TEXT NOT NULL,body TEXT NOT NULL,saved_at INTEGER NOT NULL,PRIMARY KEY(scope,device,day))");
         db.execSQL("CREATE TABLE IF NOT EXISTS official_activity_scope(device TEXT PRIMARY KEY,scope TEXT NOT NULL)");
     }
-    @Override public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){if(oldVersion>=1&&oldVersion<3&&newVersion==3){if(oldVersion<2)createGoalSchema(db);createOfficialActivity(db);}else throw new IllegalStateException("Archive migration required");}
+    private static void createRevision(SQLiteDatabase db){db.execSQL("CREATE TABLE IF NOT EXISTS revisions(device TEXT PRIMARY KEY,value INTEGER NOT NULL)");}
+    @Override public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){
+        if(oldVersion<2)createGoalSchema(db);if(oldVersion<3)createOfficialActivity(db);if(oldVersion<4)createRevision(db);
+    }
+    long revision(String mac)throws IOException{try(Cursor c=getReadableDatabase().rawQuery("SELECT value FROM revisions WHERE device=?",new String[]{device(mac)})){return c.moveToFirst()?c.getLong(0):0;}}
+    private static void changed(SQLiteDatabase db,String device){db.execSQL("INSERT OR IGNORE INTO revisions(device,value) VALUES(?,0)",new Object[]{device});db.execSQL("UPDATE revisions SET value=value+1 WHERE device=?",new Object[]{device});}
     private boolean goalSchema(SQLiteDatabase db,String device){try(Cursor c=db.rawQuery("SELECT 1 FROM goal_schema WHERE device=?",new String[]{device})){return c.moveToFirst();}}
     private void repairGoals(SQLiteDatabase db,String device)throws IOException{
         try(Cursor c=db.rawQuery("SELECT stamp,body FROM records WHERE device=? AND kind='ACTIVITY_SUMMARY'",new String[]{device})){
@@ -40,15 +45,18 @@ final class HealthArchive extends SQLiteOpenHelper {
     }
     static String device(String mac)throws IOException{if(mac==null||!mac.matches("(?i)[0-9a-f]{2}(:[0-9a-f]{2}){5}"))throw new IOException("SYNC_NO_DEVICE");return mac.toUpperCase(Locale.ROOT);}
     static String hash(byte[] bytes){try{byte[] d=MessageDigest.getInstance("SHA-256").digest(bytes);StringBuilder s=new StringBuilder();for(byte b:d)s.append(String.format(Locale.ROOT,"%02x",b&255));return s.toString();}catch(Exception e){throw new IllegalStateException(e);}}
+    private static boolean sameRecord(byte[] prior,HealthProto.Node row)throws IOException{
+        return Arrays.equals(prior,row.encode())||Arrays.equals(HealthProto.parse(prior).withNumber(1,0).encode(),row.withNumber(1,0).encode());
+    }
     /** Archive and projections commit together. A cursor is only advanced after the entire window succeeds. */
     void save(String mac,HealthSyncProtocol.Request request,byte[] bytes,Map<HealthSetting,Integer> goals)throws IOException{
         String device=device(mac);HealthSyncProtocol.Summary summary=HealthSyncProtocol.parse(request,bytes);
         List<HealthProto.Node> rows=HealthProto.parse(bytes).messages(4);long now=System.currentTimeMillis();SQLiteDatabase db=getWritableDatabase();db.beginTransaction();
         try{
-            boolean verifiedGoals=goalSchema(db,device);
+            boolean contentChanged=false;boolean verifiedGoals=goalSchema(db,device);
             if(!verifiedGoals && request.kind==HealthSyncProtocol.Kind.ACTIVITY_SUMMARY){
                 for(HealthProto.Node row:rows)if(DailyActivityData.day(row.number(1,0)).equals(java.time.LocalDate.now().toString()) && DailyActivityData.wireGoalsMatch(row,goals)){
-                    ContentValues schema=new ContentValues();schema.put("device",device);schema.put("verified_at",now);db.insertOrThrow("goal_schema",null,schema);verifiedGoals=true;repairGoals(db,device);break;
+                    ContentValues schema=new ContentValues();schema.put("device",device);schema.put("verified_at",now);db.insertOrThrow("goal_schema",null,schema);verifiedGoals=true;repairGoals(db,device);contentChanged=true;break;
                 }
             }
             ContentValues p=new ContentValues();p.put("device",device);p.put("kind",request.kind.name());p.put("hash",hash(bytes));p.put("request_start",request.start);p.put("request_end",request.end);p.put("response_start",summary.start);p.put("response_end",summary.end);p.put("received_at",now);p.put("body",bytes);
@@ -56,8 +64,12 @@ final class HealthArchive extends SQLiteOpenHelper {
             for(HealthProto.Node row:rows){
                 int stamp=request.kind.daily()?row.number(1,0):summary.start+row.number(1,0)*(request.kind==HealthSyncProtocol.Kind.HEART?1:60);
                 ContentValues r=new ContentValues();r.put("device",device);r.put("kind",request.kind.name());r.put("stamp",stamp);r.put("received_at",now);r.put("origin_start",summary.start);r.put("source_end",summary.end);r.put("body",row.encode());
-                try(Cursor previous=db.rawQuery("SELECT source_end FROM records WHERE device=? AND kind=? AND stamp=?",new String[]{device,request.kind.name(),String.valueOf(stamp)})){
-                    if(!previous.moveToFirst() || previous.getInt(0)<=summary.end)db.insertWithOnConflict("records",null,r,SQLiteDatabase.CONFLICT_REPLACE);
+                try(Cursor previous=db.rawQuery("SELECT source_end,body FROM records WHERE device=? AND kind=? AND stamp=?",new String[]{device,request.kind.name(),String.valueOf(stamp)})){
+                    boolean exists=previous.moveToFirst();
+                    if(!exists||previous.getInt(0)<=summary.end){
+                        if(!exists||!sameRecord(previous.getBlob(1),row)){db.insertWithOnConflict("records",null,r,SQLiteDatabase.CONFLICT_REPLACE);contentChanged=true;}
+                        else if(previous.getInt(0)<summary.end){ContentValues newer=new ContentValues();newer.put("source_end",summary.end);db.update("records",newer,"device=? AND kind=? AND stamp=?",new String[]{device,request.kind.name(),String.valueOf(stamp)});}
+                    }
                 }
                 if(request.kind==HealthSyncProtocol.Kind.ACTIVITY_SUMMARY){
                     DailyActivityData d=DailyActivityData.parse(row,goals,now,verifiedGoals);String day=DailyActivityData.day(d.timestamp);
@@ -69,10 +81,12 @@ final class HealthArchive extends SQLiteOpenHelper {
                     DailyActivityData old=daily(db,device,day);
                     ContentValues v=new ContentValues();v.put("device",device);v.put("day",day);v.put("stamp",d.timestamp);v.put("steps",d.steps);v.put("kcal",d.calories);v.put("minutes",d.minutes);v.put("moves",d.moves);
                     v.put("step_goal",today&&d.stepGoal>0?d.stepGoal:old==null?-1:old.stepGoal);v.put("kcal_goal",today&&d.calorieGoal>0?d.calorieGoal:old==null?-1:old.calorieGoal);v.put("minute_goal",today&&d.minuteGoal>0?d.minuteGoal:old==null?-1:old.minuteGoal);v.put("move_goal",today&&d.moveGoal>0?d.moveGoal:old==null?-1:old.moveGoal);v.put("source_end",summary.end);v.put("saved_at",now);
-                    db.insertWithOnConflict("daily",null,v,SQLiteDatabase.CONFLICT_REPLACE);
+                    boolean same=old!=null&&old.steps==d.steps&&old.calories==d.calories&&old.minutes==d.minutes&&old.moves==d.moves&&old.stepGoal==v.getAsInteger("step_goal")&&old.calorieGoal==v.getAsInteger("kcal_goal")&&old.minuteGoal==v.getAsInteger("minute_goal")&&old.moveGoal==v.getAsInteger("move_goal");
+                    if(!same){db.insertWithOnConflict("daily",null,v,SQLiteDatabase.CONFLICT_REPLACE);contentChanged=true;}
+                    else {ContentValues newer=new ContentValues();newer.put("source_end",summary.end);db.update("daily",newer,"device=? AND day=?",new String[]{device,day});}
                 }
             }
-            db.setTransactionSuccessful();
+            if(contentChanged)changed(db,device);db.setTransactionSuccessful();
         }finally{db.endTransaction();}
     }
     private DailyActivityData daily(SQLiteDatabase db,String device,String day){
@@ -98,10 +112,11 @@ final class HealthArchive extends SQLiteOpenHelper {
     }
     int importOfficialActivity(String mac,JSONObject result)throws Exception {
         String device=device(mac),scope=result.getString("scope");if(!scope.matches("[a-f0-9]{64}"))throw new IOException("ACTIVITY_SCOPE");JSONArray rows=result.getJSONArray("rows");if(rows.length()>5000)throw new IOException("ACTIVITY_LIMIT");
-        SQLiteDatabase db=getWritableDatabase();Set<String> seen=new HashSet<>();db.beginTransaction();try{
+        SQLiteDatabase db=getWritableDatabase();Set<String> seen=new HashSet<>();db.beginTransaction();try{boolean contentChanged=false;
             for(int i=0;i<rows.length();i++){JSONObject row=rows.getJSONObject(i);int date=row.getInt("date");JSONArray values=row.getJSONArray("values");long[] v=new long[8];if(values.length()!=8)throw new IOException("ACTIVITY_VALUES");for(int j=0;j<8;j++)v[j]=values.getLong(j);ActivityBridgePolicy.valid(date,v);
-                String day=java.time.LocalDate.of(date/10000,(date/100)%100,date%100).toString();if(!seen.add(day))throw new IOException("ACTIVITY_DUPLICATE");ContentValues value=new ContentValues();value.put("scope",scope);value.put("device",device);value.put("day",day);value.put("body",row.toString());value.put("saved_at",System.currentTimeMillis());db.insertWithOnConflict("official_activity",null,value,SQLiteDatabase.CONFLICT_REPLACE);
+                String day=java.time.LocalDate.of(date/10000,(date/100)%100,date%100).toString();if(!seen.add(day))throw new IOException("ACTIVITY_DUPLICATE");ContentValues value=new ContentValues();value.put("scope",scope);value.put("device",device);value.put("day",day);value.put("body",row.toString());value.put("saved_at",System.currentTimeMillis());try(Cursor prior=db.rawQuery("SELECT body FROM official_activity WHERE scope=? AND device=? AND day=?",new String[]{scope,device,day})){if(!prior.moveToFirst()||!prior.getString(0).equals(row.toString())){db.insertWithOnConflict("official_activity",null,value,SQLiteDatabase.CONFLICT_REPLACE);contentChanged=true;}}
             }
+            try(Cursor prior=db.rawQuery("SELECT scope FROM official_activity_scope WHERE device=?",new String[]{device})){if(!prior.moveToFirst()||!scope.equals(prior.getString(0)))contentChanged=true;}if(contentChanged)changed(db,device);
             ContentValues active=new ContentValues();active.put("device",device);active.put("scope",scope);db.insertWithOnConflict("official_activity_scope",null,active,SQLiteDatabase.CONFLICT_REPLACE);db.setTransactionSuccessful();return rows.length();
         }finally{db.endTransaction();}
     }

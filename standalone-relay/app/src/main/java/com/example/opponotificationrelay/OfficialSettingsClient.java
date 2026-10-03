@@ -33,8 +33,9 @@ public final class OfficialSettingsClient {
         JSONObject result=new JSONObject(run(request));if(result.optInt("schema")!=1||!"OK".equals(result.optString("status")))throw new IllegalStateException(code(result));
         JSONObject activity=result.getJSONObject("activity");if(!"OK".equals(activity.optString("status")))throw new IllegalStateException(code(activity));return activity;
     }
-    public JSONObject health(String device,long start,long end,boolean raw)throws Exception {
-        JSONObject result=new JSONObject(run(new JSONObject().put("operation",raw?"readHeartRaw":"readHealth").put("device",device).put("start",start).put("end",end)));
+    public JSONObject health(String device,long start,long end,boolean raw)throws Exception {return health(device,start,end,raw,java.time.ZoneId.systemDefault().getId());}
+    public JSONObject health(String device,long start,long end,boolean raw,String zone)throws Exception {
+        JSONObject result=new JSONObject(run(new JSONObject().put("operation",raw?"readHeartRaw":"readHealth").put("device",device).put("start",start).put("end",end).put("zone",zone)));
         if(result.optInt("schema")!=1||!"OK".equals(result.optString("status")))throw new IllegalStateException(code(result));
         JSONObject health=result.getJSONObject("health");if(!"OK".equals(health.optString("status")))throw new IllegalStateException(code(health));return health;
     }

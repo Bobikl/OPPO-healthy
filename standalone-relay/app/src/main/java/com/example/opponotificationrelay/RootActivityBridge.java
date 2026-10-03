@@ -35,8 +35,11 @@ final class RootActivityBridge {
     static long[] values(JSONArray a)throws Exception {if(a.length()!=8)throw new IOException("ACTIVITY_VALUES");long[] out=new long[8];for(int i=0;i<8;i++){Object n=a.get(i);if(!(n instanceof Number)||((Number)n).doubleValue()!=((Number)n).longValue())throw new IOException("ACTIVITY_VALUES");out[i]=a.getLong(i);}return out;}
     static String scope(String account,byte[] key)throws Exception {Mac mac=Mac.getInstance("HmacSHA256");mac.init(new SecretKeySpec(key,"HmacSHA256"));byte[] bytes=mac.doFinal(("activity-account-v1:"+account).getBytes(StandardCharsets.UTF_8));StringBuilder s=new StringBuilder();for(byte b:bytes)s.append(String.format(Locale.ROOT,"%02x",b&255));Arrays.fill(bytes,(byte)0);return s.toString();}
     static JSONObject read(Object db,String account,String device,byte[] key)throws Exception {
+        return read(db,account,device,key,"20150101","21000101");
+    }
+    static JSONObject read(Object db,String account,String device,byte[] key,String first,String last)throws Exception {
         JSONArray rows=new JSONArray();Set<Integer> days=new HashSet<>();
-        try(Cursor c=query(db,"SELECT * FROM DBSportDataStat WHERE ssoid=? AND upper(device_unique_id)=? AND sport_mode=-3 ORDER BY date LIMIT 5001",account,device)) {
+        try(Cursor c=query(db,"SELECT * FROM DBSportDataStat WHERE ssoid=? AND upper(device_unique_id)=? AND sport_mode=-3 AND date>=? AND date<? ORDER BY date LIMIT 5001",account,device,first,last)) {
             while(c.moveToNext()) {int date=c.getInt(c.getColumnIndexOrThrow("date"));long[] v=values(c);ActivityBridgePolicy.valid(date,v);
                 if(!days.add(date)||rows.length()>=5000)throw new IOException("ACTIVITY_DUPLICATE_OR_LIMIT");
                 rows.put(new JSONObject().put("date",date).put("values",new JSONArray(v)).put("observed",c.getLong(c.getColumnIndexOrThrow("update_timestamp"))));
@@ -55,22 +58,16 @@ final class RootActivityBridge {
             }
         }return result;
     }
-    static String backup()throws Exception {
+    static File backupDir()throws Exception {
         File dir=new File(RootOfficialSettingsReader.BASE,"files/relay-activity-backups");if(!dir.exists()&&!dir.mkdir())throw new IOException("ACTIVITY_BACKUP");
         if(!dir.getCanonicalPath().equals(dir.getPath())||Os.stat(dir.getPath()).st_uid!=RootOfficialSettingsReader.uid)throw new IOException("ACTIVITY_BACKUP_OWNER");
-        File[] existing=dir.listFiles();if(existing==null||existing.length>=20)throw new IOException("ACTIVITY_BACKUP_LIMIT");
-        File target=new File(dir,"before-"+System.currentTimeMillis()+"-"+UUID.randomUUID().toString());if(!target.mkdir())throw new IOException("ACTIVITY_BACKUP");Os.chmod(target.getPath(),0700);
-        JSONObject manifest=new JSONObject();long total=0;
-        for(String suffix:new String[]{"","-wal","-shm"}) {File src=new File(RootOfficialSettingsReader.BASE,"databases/database.db"+suffix);if(!src.exists())continue;src=RootOfficialSettingsReader.official("databases/database.db"+suffix);
-            if(src.length()>256L*1024*1024 || (total+=src.length())>300L*1024*1024)throw new IOException("ACTIVITY_BACKUP_SIZE");
-            File dest=new File(target,src.getName());MessageDigest md=MessageDigest.getInstance("SHA-256");long n=0;
-            try(InputStream in=new FileInputStream(src);FileOutputStream out=new FileOutputStream(dest)){byte[] b=new byte[65536];int k;while((k=in.read(b))!=-1){out.write(b,0,k);md.update(b,0,k);n+=k;}out.getFD().sync();}
-            Os.chmod(dest.getPath(),0600);if(n!=src.length()||n!=dest.length())throw new IOException("ACTIVITY_BACKUP_CHANGED");
-            byte[] expected=md.digest();md.reset();try(InputStream in=new FileInputStream(dest)){byte[] b=new byte[65536];int k;while((k=in.read(b))!=-1)md.update(b,0,k);}if(!Arrays.equals(expected,md.digest()))throw new IOException("ACTIVITY_BACKUP_VERIFY");
-            StringBuilder hash=new StringBuilder();for(byte b:expected)hash.append(String.format(Locale.ROOT,"%02x",b&255));manifest.put(src.getName(),new JSONObject().put("bytes",n).put("sha256",hash));
-        }
-        try(FileOutputStream out=new FileOutputStream(new File(target,"manifest.json"))){out.write(manifest.toString().getBytes(StandardCharsets.UTF_8));out.getFD().sync();}
-        return target.getName();
+        return dir;
+    }
+    static String backup()throws Exception {
+        return ActivityBackupStore.create(backupDir(),name->{
+            File file=new File(RootOfficialSettingsReader.BASE,"databases/"+name);
+            return file.exists()?RootOfficialSettingsReader.official("databases/"+name):null;
+        });
     }
     static Object writable(byte[] key)throws Exception {
         Class<?> t=Class.forName("net.zetetic.database.sqlcipher.SQLiteDatabase"),f=Class.forName("net.zetetic.database.sqlcipher.SQLiteDatabase$CursorFactory"),h=Class.forName("net.zetetic.database.DatabaseErrorHandler"),hook=Class.forName("net.zetetic.database.sqlcipher.SQLiteDatabaseHook");
@@ -104,6 +101,9 @@ final class RootActivityBridge {
                     try(Cursor c=query(writer,"PRAGMA quick_check")){if(!c.moveToFirst()||!"ok".equals(c.getString(0)))throw new IOException("ACTIVITY_INTEGRITY");}
                     if(!plan(writer,account,device,rows).isEmpty())throw new IOException("ACTIVITY_VERIFY");type.getMethod("setTransactionSuccessful").invoke(writer);count=actual.size();
                 }finally{try{if(transaction)type.getMethod("endTransaction").invoke(writer);}finally{type.getMethod("close").invoke(writer);}}
+                // Only a completed transaction may retire older recovery copies.
+                // Cleanup failure must never turn an already committed write into a retry.
+                try{ActivityBackupStore.prune(backupDir(),backup);}catch(Exception ignored){}
             }
         }
         JSONObject result=read(db,account,device,dbKey);RootNapWriter.accountUnchanged(mmkvKey,encoded);return result.put("written",count).put("backup",backup);

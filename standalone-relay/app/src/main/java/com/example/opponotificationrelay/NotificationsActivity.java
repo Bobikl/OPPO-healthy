@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /** One scrolling notification page. App rows are recycled; icons are bounded and loaded off the UI thread. */
-public final class NotificationsActivity extends Activity {
+public final class NotificationsActivity extends OfficialUiActivity {
     private static final int CARD=0xff303030, BLUE=0xff287bff;
     private final Handler ui=new Handler(Looper.getMainLooper());
     private final List<Entry> all=new ArrayList<>(),shown=new ArrayList<>();
@@ -34,8 +34,8 @@ public final class NotificationsActivity extends Activity {
         final String pkg,label;final boolean system;
         Entry(String pkg,String label,boolean system){this.pkg=pkg;this.label=label;this.system=system;}
     }
-    @Override public void onCreate(Bundle saved){
-        super.onCreate(saved);selected=RelayConfig.selectedApps(this);
+    @Override public void onUiCreate(Bundle saved){
+        super.onUiCreate(saved);selected=RelayConfig.selectedApps(this);
         LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);
         search=new EditText(this);search.setSingleLine(true);search.setTextSize(15);search.setTextColor(DeviceStyle.TEXT);
         search.setHintTextColor(DeviceStyle.MUTED);search.setHint("搜索应用名称或包名");search.setVisibility(View.GONE);
@@ -58,11 +58,11 @@ public final class NotificationsActivity extends Activity {
             public void afterTextChanged(Editable s){}public void onTextChanged(CharSequence s,int a,int b,int c){filter();}});
         loadApps();render();
     }
-    @Override protected void onResume(){super.onResume();selected=RelayConfig.selectedApps(this);if(adapter!=null)adapter.notifyDataSetChanged();render();ui.postDelayed(refresh,2000);}
-    @Override protected void onPause(){ui.removeCallbacks(refresh);super.onPause();}
-    @Override protected void onDestroy(){
+    @Override protected void onUiResume(){super.onUiResume();selected=RelayConfig.selectedApps(this);if(adapter!=null)adapter.notifyDataSetChanged();render();ui.postDelayed(refresh,2000);}
+    @Override protected void onUiPause(){ui.removeCallbacks(refresh);super.onUiPause();}
+    @Override protected void onUiDestroy(){
         cancelled=true;if(loader!=null)loader.interrupt();iconWorker.shutdownNow();ui.removeCallbacksAndMessages(null);
-        icons.evictAll();iconPending.clear();if(list!=null)list.setAdapter(null);all.clear();shown.clear();super.onDestroy();
+        icons.evictAll();iconPending.clear();if(list!=null)list.setAdapter(null);all.clear();shown.clear();super.onUiDestroy();
     }
     private int dp(int n){return DeviceStyle.dp(this,n);}
     private TextView label(String text,int size,int color){TextView v=new TextView(this);v.setText(text);v.setTextSize(size);v.setTextColor(color);v.setLineSpacing(dp(3),1);return v;}

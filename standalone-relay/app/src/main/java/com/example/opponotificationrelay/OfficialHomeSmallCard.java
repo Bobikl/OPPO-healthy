@@ -69,8 +69,8 @@ final class OfficialHomeSmallCard extends FrameLayout {
     static List<HealthCandleEntry> heartEntries(HealthMetricsData data,LocalDate date){
         int[] lo=new int[24],hi=new int[24];long start=HealthMetricsData.time(date),end=HealthMetricsData.time(date.plusDays(1));
         // The official card groups valid raw measurements by local hour. Retain bin fallback for live watch data.
-        for(HealthMetricsData.Bin b:data.bins.subMap(start,true,end,false).values()){int h=Instant.ofEpochMilli(b.stamp).atZone(HealthMetricsData.ZONE).getHour();if(b.min>0){lo[h]=lo[h]==0?b.min:Math.min(lo[h],b.min);hi[h]=Math.max(hi[h],b.max);}}
-        for(Map.Entry<Long,Integer> e:data.raw.subMap(start,true,end,false).entrySet()){int h=Instant.ofEpochMilli(e.getKey()).atZone(HealthMetricsData.ZONE).getHour(),v=e.getValue();if(v>0){lo[h]=lo[h]==0?v:Math.min(lo[h],v);hi[h]=Math.max(hi[h],v);}}
+        for(HealthMetricsData.Bin b:data.bins.subMap(start,true,end,false).values()){int h=Instant.ofEpochMilli(b.stamp).atZone(HealthMetricsData.zone()).getHour();if(b.min>0){lo[h]=lo[h]==0?b.min:Math.min(lo[h],b.min);hi[h]=Math.max(hi[h],b.max);}}
+        for(Map.Entry<Long,Integer> e:data.raw.subMap(start,true,end,false).entrySet()){int h=Instant.ofEpochMilli(e.getKey()).atZone(HealthMetricsData.zone()).getHour(),v=e.getValue();if(v>0){lo[h]=lo[h]==0?v:Math.min(lo[h],v);hi[h]=Math.max(hi[h],v);}}
         List<HealthCandleEntry> out=new ArrayList<>();for(int h=0;h<24;h++)if(lo[h]>0)out.add(new HealthCandleEntry(h,lo[h],hi[h]));return out;
     }
     private void bindSleep(HealthMetricsData data,HealthMetricsData.Day d){

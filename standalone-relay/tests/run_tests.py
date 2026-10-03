@@ -22,7 +22,10 @@ BUILD.mkdir(exist_ok=True)
 extra = [str(ROOT / "tests/ConnectionQueueTest.java"),str(ROOT / "tests/ResourcePolicyTest.java"),str(ROOT / "tests/UidOptimizationTest.java")]
 extra.append(str(ROOT / "tests/ScreenFilterTest.java"))
 extra.append(str(ROOT / "tests/RecoveryBoundaryTest.java"))
-names = ["OafCrypto", "OafWire", "OafSession", "RelayPayloadEncoder", "RelayEvent", "HandoverPolicy", "ObserverMessage", "RelayIcon", "WatchIconBitmap", "PairingRecord", "HandoverNoticePolicy", "ScreenForwardPolicy", "StartupPolicy", "RootListenerCommands"]
+extra.append(str(ROOT / "tests/HealthReadWindowTest.java"))
+extra.append(str(ROOT / "tests/HealthTimeTest.java"))
+extra.append(str(ROOT / "tests/HealthChannelLockTest.java"))
+names = ["HealthTime","HealthSnapshotWindow","HealthReadWindow","OafCrypto", "OafWire", "OafSession", "RelayPayloadEncoder", "RelayEvent", "HandoverPolicy", "ObserverMessage", "RelayIcon", "WatchIconBitmap", "PairingRecord", "HandoverNoticePolicy", "ScreenForwardPolicy", "StartupPolicy", "RootListenerCommands"]
 names.extend(["ConnectionQueue", "NotificationSwitchPolicy", "NapQuietPolicy", "OafTraceMetadata", "MessageBudget", "ConnectionState", "SendDeadline", "BoundedWorker", "EventStatistics"])
 extra.append(str(ROOT / "tests/NotificationSwitchTest.java"))
 extra.append(str(ROOT / "tests/NotificationControlsTest.java"))
@@ -122,3 +125,9 @@ subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUIL
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.OxygenChartDataTest"], check=True, timeout=15, encoding="utf-8")
 
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.RecoveryBoundaryTest"], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.HealthReadWindowTest"], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.HealthTimeTest"], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.HealthChannelLockTest"], check=True, timeout=15, encoding="utf-8")

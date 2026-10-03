@@ -8,12 +8,12 @@ import android.widget.*;
 import java.time.*;
 import java.util.*;
 
-public final class HealthTrendActivity extends Activity implements HealthDataManager.Listener {
+public final class HealthTrendActivity extends OfficialUiActivity implements HealthDataManager.Listener {
     private LocalDate date=LocalDate.now();private HealthMetricsData data;private LinearLayout root,toolbar;private ScrollView scroll;private TextView status;
-    @Override public void onCreate(Bundle state){super.onCreate(state);try{date=LocalDate.parse(state!=null?state.getString("date"):getIntent().getStringExtra("date"));}catch(Exception ignored){}build(false);}
-    @Override protected void onStart(){super.onStart();HealthDataManager.get(this).add(this);HealthDataManager.get(this).request(date,false,false);}
-    @Override protected void onStop(){HealthDataManager.get(this).remove(this);super.onStop();}
-    @Override protected void onSaveInstanceState(Bundle state){state.putString("date",date.toString());super.onSaveInstanceState(state);}
+    @Override public void onUiCreate(Bundle state){super.onUiCreate(state);try{date=LocalDate.parse(state!=null?state.getString("date"):getIntent().getStringExtra("date"));}catch(Exception ignored){}build(false);}
+    @Override protected void onUiStart(){super.onUiStart();HealthDataManager.get(this).add(this);HealthDataManager.get(this).request(date,false,false);}
+    @Override protected void onUiStop(){HealthDataManager.get(this).remove(this);data=null;super.onUiStop();}
+    @Override protected void onUiSaveInstanceState(Bundle state){state.putString("date",date.toString());super.onUiSaveInstanceState(state);}
     @Override public void changed(HealthMetricsData value,String message,boolean busy){if(value!=data){data=value;build(true);}if(status!=null){status.setText(message);status.setVisibility(message.isEmpty()?View.GONE:View.VISIBLE);}}
     private void change(LocalDate value){if(value.isAfter(LocalDate.now())||value.isBefore(LocalDate.of(2019,1,1)))return;date=value;build(false);HealthDataManager.get(this).request(date,false,false);}
     private void build(boolean keep){int old=keep&&scroll!=null?scroll.getScrollY():0;root=HealthUi.vertical(this);root.setBackgroundColor(DeviceStyle.BG);toolbar=HealthUi.header(this,root,"健康趋势",this::menu);LinearLayout calendar=HealthUi.vertical(this);HealthUi.padding(calendar,18,7,18,8);HealthUi.dateRow(this,calendar,HealthMetricsData.dayLabel(date),date.isBefore(LocalDate.now()),()->change(date.minusDays(1)),()->change(date.plusDays(1)),()->HealthUi.pick(this,date,this::change));root.addView(calendar);
