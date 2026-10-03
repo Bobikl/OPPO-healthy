@@ -5,7 +5,7 @@ import java.io.*;
 public final class NativeObserver {
     private NativeObserver() { }
     public static boolean supported() {
-        if(android.os.Build.VERSION.SDK_INT<33)return false;
+        if(android.os.Build.VERSION.SDK_INT<34)return false;
         for(String abi:android.os.Build.SUPPORTED_ABIS)if("arm64-v8a".equals(abi))return true;
         return false;
     }

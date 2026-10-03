@@ -141,7 +141,8 @@ public final class OfficialHealthMonitor {
             if(m==null) return;
             if("ERROR".equals(m.type)) {
                 if(!ready && !activeNative && compactRuntime) compactRuntime=false;
-                fail("系统状态监听不可用（"+m.reason+"），已暂停接管");return;
+                boolean retry=ObserverRegistration.retryable(m.reason);
+                fail("系统状态监听不可用（"+m.reason+"），已暂停接管"+(retry?"":"；必要接口缺失，停止自动重试，可手动重新检查"),retry);return;
             }
             if("READY".equals(m.type)) {
                 if(ready) throw new IllegalArgumentException("duplicate ready");
@@ -197,14 +198,15 @@ public final class OfficialHealthMonitor {
     private void cancelConfirmation() {
         cancel(graceTimer);graceTimer=null;cancel(checkTimeout);checkTimeout=null;pendingRequest=0;
     }
-    private void fail(String why) {
+    private void fail(String why) {fail(why,true);}
+    private void fail(String why,boolean retry) {
         if(activeNative) {
             nativeAllowed=false;activeNative=false;
             FileLogger.w("OAF-owner","原生状态监听失败，下次回退 Java；保持暂停接管");
         }
         disconnect();detail=why;publish();
-        if(!stopped) {
-            cancel(retryTimer);
+        cancel(retryTimer);retryTimer=null;
+        if(!stopped && retry) {
             retryTimer=events.schedule(this::restart,retrySeconds,TimeUnit.SECONDS);
             retrySeconds=Math.min(300,retrySeconds*2);
         }

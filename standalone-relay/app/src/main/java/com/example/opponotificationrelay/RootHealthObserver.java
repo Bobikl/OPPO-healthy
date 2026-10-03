@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 
 /**
  * 由本 APK 的 dex 启动的只读 Root 辅助进程。
- * 只订阅指定 UID、查询状态、peek 已有 Binder 并 linkToDeath。
+ * 优先订阅指定 UID；旧接口回调先按 UID 过滤，再查询状态、peek 已有 Binder 并 linkToDeath。
  * 不绑定/启动/停止服务，不读取官方私有文件，不发送官方业务事务。
  */
 public final class RootHealthObserver {
@@ -118,9 +118,7 @@ public final class RootHealthObserver {
         });
         int[] selected=new int[uids.size()]; int index=0;
         for(int uid:uids) selected[index++]=uid;
-        Object token=api.getMethod("registerUidObserverForUids",type,int.class,int.class,String.class,int[].class)
-            .invoke(am,observer,flags,cutpoint,"com.android.shell",selected);
-        if(token == null) throw new IllegalStateException("missing registration token");
+        ObserverRegistration.register(am,api,type,observer,flags,cutpoint,selected);
         registered=true;
         managerBinder=((IInterface)am).asBinder();
         managerDeath=() -> { emit("ERROR SYSTEM_SERVICE_DIED"); System.exit(2); };
@@ -211,7 +209,7 @@ public final class RootHealthObserver {
         try {
             monitor.events.submit(() -> {
                 try { monitor.init(args); }
-                catch(Exception e) { emit("ERROR INIT_FAILED"); throw new RuntimeException(e); }
+                catch(Throwable e) { emit("ERROR "+ObserverRegistration.failure(e)); throw new RuntimeException(e); }
             }).get(30,TimeUnit.SECONDS);
             try(BufferedReader in=new BufferedReader(new InputStreamReader(System.in,StandardCharsets.UTF_8))) {
                 String line;

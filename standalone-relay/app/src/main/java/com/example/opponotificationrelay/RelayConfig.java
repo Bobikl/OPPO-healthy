@@ -90,9 +90,7 @@ public final class RelayConfig {
             catch(android.content.pm.PackageManager.NameNotFoundException ignored) {continue;}
             Process child=null;
             try {
-                String apk=c.getApplicationInfo().sourceDir.replace("'","'\\''");
-                String command="exec env CLASSPATH='"+apk+"' /system/bin/app_process /system/bin com.example.opponotificationrelay.RootPairingImporter "+pkg+" "+uid+" "+mac;
-                child=new ProcessBuilder("su","-c",command).redirectErrorStream(true).start();
+                child=new ProcessBuilder(PairingImportLaunch.command(c.getApplicationInfo().sourceDir,pkg,uid,mac)).redirectErrorStream(true).start();
                 final Process running=child;
                 FutureTask<String> read=new FutureTask<>(() -> {
                     try(InputStream in=running.getInputStream();ByteArrayOutputStream bytes=new ByteArrayOutputStream()) {
@@ -128,6 +126,9 @@ public final class RelayConfig {
         return new ImportResult(false,failure+"。原有本地凭据未改动。重新配对仍需先由官方完成；本应用暂不支持从零配对。");
     }
     private static String importError(String code) {
+        if("OFFICIAL_UID_REQUIRED".equals(code)) return "配对读取进程未取得官方应用身份，请检查 Root 工具是否支持指定 UID";
+        if("KEYSTORE_PROVIDER_FAILED".equals(code)) return "系统密钥服务初始化失败，此系统的配对读取方式需要适配";
+        if("KEYSTORE_LOAD_FAILED".equals(code)) return "无法打开系统密钥服务，请解锁手机后重试";
         if("KEYSTORE_ACCESS_FAILED".equals(code)) return "系统未允许解密官方配对记录，此设备的无模块读取路径尚不可用";
         if("IMPORT_TIMEOUT".equals(code)) return "读取超时，请确认 Root 授权后重试";
         if("PAIRING_NOT_FOUND".equals(code)) return "官方没有当前 MAC 的 MCU 配对记录，请先用官方连接该手表";

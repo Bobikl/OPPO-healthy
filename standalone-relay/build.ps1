@@ -98,7 +98,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Native observer build failed' }
 
 New-Item -ItemType Directory -Force -Path $helperPackage, $helperDex, $assets | Out-Null
 Get-ChildItem -LiteralPath (Join-Path $classes 'com\example\opponotificationrelay') -Filter '*.class' |
-    Where-Object { $_.Name -match '^(RootHealthObserver|RootObserverBootstrap|ObserverMessage|HandoverPolicy|CoalescedRecheck|ObserverStateGate)(\$.*)?\.class$' } |
+    Where-Object { $_.Name -match '^(RootHealthObserver|RootObserverBootstrap|ObserverRegistration|ObserverMessage|HandoverPolicy|CoalescedRecheck|ObserverStateGate)(\$.*)?\.class$' } |
     ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $helperPackage }
 $helperJar = Join-Path $workBuild 'helper-classes.jar'
 & $jar cf $helperJar -C $helperClasses .

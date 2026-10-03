@@ -17,7 +17,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 /**
  * 用户点击后的一次性只读导入。不启动官方/蓝牙、不加载官方代码、不注入模块。
- * Root 只读取指定官方目录；解密前仅在此临时进程内降权为目录所属 UID。
+ * 由 su 直接以目录所属官方 UID 启动；不在已启动的 ART 进程中切换身份。
  * 只 getKey(ksc_key_alias) 并解密目标记录，不创建/删除/枚举任何 Keystore 项。
  * 敏感结果仅通过父子匿名管道返回，不落共享文件，不打印异常或密钥日志。
  */
@@ -36,11 +36,12 @@ public final class RootPairingImporter {
         deadline.setDaemon(true);deadline.start();
         byte[] clear=null,encrypted=null;
         try {
-            if(android.os.Process.myUid()!=0) throw new SecurityException();
             stage="ARGUMENT_INVALID";
             if(args.length!=3 || !("com.heytap.health".equals(args[0]) || "com.coloros.health".equals(args[0]))) throw new IllegalArgumentException();
             String pkg=args[0],mac=args[2]; int uid=Integer.parseInt(args[1]);
             if(uid<10000 || !mac.matches("(?i)([0-9a-f]{2}:){5}[0-9a-f]{2}")) throw new IllegalArgumentException();
+            stage="OFFICIAL_UID_REQUIRED";
+            if(android.os.Process.myUid()!=uid || Os.getuid()!=uid || Os.getgid()!=uid)throw new SecurityException();
             int user=uid/100000;
             String de="/data/user_de/"+user+"/"+pkg,ce="/data/user/"+user+"/"+pkg;
             stage="OFFICIAL_RECORD_UNAVAILABLE";
@@ -48,6 +49,7 @@ public final class RootPairingImporter {
             if(Os.stat(base).st_uid!=uid) throw new SecurityException();
             String discovery=preference(base+"/shared_prefs/AccessoryPreferences.xml","DiscoveryData");
             stage="PAIRING_NOT_FOUND";
+            if(discovery==null || discovery.isEmpty())throw new IOException();
             PairingRecord record=PairingRecord.find(discovery,mac);
             stage="LOCAL_ID_NOT_FOUND";
             byte[] localId=PairingRecord.hex(preference(base+"/shared_prefs/fast_pair_sdk_preferences.xml","sp_key_duid"));
@@ -56,12 +58,16 @@ public final class RootPairingImporter {
             String[] row=readRecord(base+"/databases/ksc.db",record);
             encrypted=PairingRecord.hex(row[0]); byte[] iv=PairingRecord.hex(row[1]);
             if(encrypted.length!=16 || iv.length!=16) throw new IllegalArgumentException();
-            // 永久降权只影响这一个临时辅助进程，不修改手机授权、SELinux 或官方文件。
-            stage="KEYSTORE_ACCESS_FAILED";
-            Os.class.getMethod("setgroups",int[].class).invoke(null,(Object)new int[]{uid});
-            Os.setgid(uid); Os.setuid(uid);
-            if(android.os.Process.myUid()!=uid) throw new SecurityException();
+            stage="KEYSTORE_PROVIDER_FAILED";
+            if(java.security.Security.getProvider("AndroidKeyStore")==null) {
+                Class<?> provider;
+                try {provider=Class.forName("android.security.keystore2.AndroidKeyStoreProvider");}
+                catch(ClassNotFoundException older){provider=Class.forName("android.security.keystore.AndroidKeyStoreProvider");}
+                provider.getMethod("install").invoke(null);
+            }
+            stage="KEYSTORE_LOAD_FAILED";
             KeyStore store=KeyStore.getInstance("AndroidKeyStore");store.load(null);
+            stage="KEYSTORE_ACCESS_FAILED";
             SecretKey wrapping=(SecretKey)store.getKey("ksc_key_alias",null);
             if(wrapping==null) throw new SecurityException();
             Cipher cipher=Cipher.getInstance("AES/CBC/NoPadding");
@@ -91,7 +97,7 @@ public final class RootPairingImporter {
                     return parser.nextText();
             }
         }
-        throw new IOException();
+        return null;
     }
     private static String[] readRecord(String path,PairingRecord record) throws Exception {
         if(!new File(path).isFile()) throw new IOException();

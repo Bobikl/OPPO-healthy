@@ -19,10 +19,22 @@ public final class BackgroundStart {
     public static boolean shouldRestore(Context c) {
         return StartupPolicy.restore(RelayConfig.autoRestore(c),RelayForegroundService.enabled(c));
     }
+    public static boolean bluetoothReady(Context c) {
+        return StartupPolicy.bluetoothReady(Build.VERSION.SDK_INT,Build.VERSION.SDK_INT<31 ||
+            c.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT)==android.content.pm.PackageManager.PERMISSION_GRANTED);
+    }
+    static void missingBluetooth() {
+        status="自动恢复已暂停，请在权限设置中允许附近的设备；原运行设置已保留";
+        FileLogger.w("Startup",status);
+    }
+    static void startFailed(RuntimeException failure) {
+        status="服务启动条件未满足，已暂停恢复；请检查附近设备权限及后台启动设置";
+        FileLogger.w("Startup",status+" ("+failure.getClass().getSimpleName()+")");
+    }
     public static void restore(Context c,String cause) {
         if(!shouldRestore(c)) return;
         try {
-            RelayForegroundService.resumeSaved(c);
+            if(!RelayForegroundService.resumeSaved(c))return;
             status="已请求恢复上次运行状态，实际状态见通知监听与蓝牙链路";
             FileLogger.i("Startup","恢复请求："+cause);
         } catch(RuntimeException e) {

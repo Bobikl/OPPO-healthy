@@ -21,6 +21,7 @@ BUILD = ROOT / "tests/build"
 BUILD.mkdir(exist_ok=True)
 extra = [str(ROOT / "tests/ConnectionQueueTest.java"),str(ROOT / "tests/ResourcePolicyTest.java"),str(ROOT / "tests/UidOptimizationTest.java")]
 extra.append(str(ROOT / "tests/ScreenFilterTest.java"))
+extra.append(str(ROOT / "tests/RecoveryBoundaryTest.java"))
 names = ["OafCrypto", "OafWire", "OafSession", "RelayPayloadEncoder", "RelayEvent", "HandoverPolicy", "ObserverMessage", "RelayIcon", "WatchIconBitmap", "PairingRecord", "HandoverNoticePolicy", "ScreenForwardPolicy", "StartupPolicy", "RootListenerCommands"]
 names.extend(["ConnectionQueue", "NotificationSwitchPolicy", "NapQuietPolicy", "OafTraceMetadata", "MessageBudget", "ConnectionState", "SendDeadline", "BoundedWorker", "EventStatistics"])
 extra.append(str(ROOT / "tests/NotificationSwitchTest.java"))
@@ -39,6 +40,7 @@ extra.append(str(ROOT / "tests/ConnectionSafetyTest.java"))
 extra.append(str(ROOT / "tests/BackgroundWorkTest.java"))
 names.extend(["RollingLogSink", "ReconnectPolicy", "RetrySignal", "ObserverLaunch"])
 names.extend(["CoalescedRecheck","ObserverStateGate"])
+names.extend(["ObserverRegistration","PairingImportLaunch"])
 names.extend(["OfficialSettingsPreview", "SettingsPreviewProtocol", "MmkvSnapshot"])
 names.extend(["SettingsImportPlan","NapWritePolicy","ServiceLease"])
 names.extend(["DeviceUiState","DeviceIdentity","DeviceTelemetry","DeviceStatusProtocol","OafDeviceChannel"])
@@ -118,3 +120,5 @@ subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUIL
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.SleepProjectionTest"], check=True, timeout=15, encoding="utf-8")
 
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.OxygenChartDataTest"], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.RecoveryBoundaryTest"], check=True, timeout=15, encoding="utf-8")

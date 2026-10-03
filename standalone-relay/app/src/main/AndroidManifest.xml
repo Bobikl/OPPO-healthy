@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".RelayForegroundService" android:exported="false" android:stopWithTask="false" android:foregroundServiceType="connectedDevice" />
+        <service android:name=".RelayForegroundService" android:exported="false" android:stopWithTask="false" android:foregroundServiceType="connectedDevice|shortService" />
         <activity android:name=".SleepTimelineActivity" android:exported="false" android:screenOrientation="sensorLandscape" android:theme="@style/DeviceTheme" />
         <activity android:name=".SleepDetailActivity" android:exported="false" android:screenOrientation="portrait" android:theme="@style/DeviceTheme" />
         <activity android:name=".DailyActivityDetailActivity" android:exported="false" android:screenOrientation="portrait" android:theme="@style/DeviceTheme" />
