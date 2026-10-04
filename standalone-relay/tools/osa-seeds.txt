@@ -1,0 +1,3 @@
+com.heytap.health.osahssdkself.OsahsSDKNative
+com.heytap.health.osahssdkself.bean.*
+com.heytap.health.sleep.formula.formula.*

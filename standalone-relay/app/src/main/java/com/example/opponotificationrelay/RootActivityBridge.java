@@ -38,6 +38,9 @@ final class RootActivityBridge {
         return read(db,account,device,key,"20150101","21000101");
     }
     static JSONObject read(Object db,String account,String device,byte[] key,String first,String last)throws Exception {
+        return readLocal(db,account,device,scope(account,key),first,last);
+    }
+    static JSONObject readLocal(Object db,String account,String device,String scope,String first,String last)throws Exception {
         JSONArray rows=new JSONArray();Set<Integer> days=new HashSet<>();
         try(Cursor c=query(db,"SELECT * FROM DBSportDataStat WHERE ssoid=? AND upper(device_unique_id)=? AND sport_mode=-3 AND date>=? AND date<? ORDER BY date LIMIT 5001",account,device,first,last)) {
             while(c.moveToNext()) {int date=c.getInt(c.getColumnIndexOrThrow("date"));long[] v=values(c);ActivityBridgePolicy.valid(date,v);
@@ -45,7 +48,7 @@ final class RootActivityBridge {
                 rows.put(new JSONObject().put("date",date).put("values",new JSONArray(v)).put("observed",c.getLong(c.getColumnIndexOrThrow("update_timestamp"))));
             }
         }
-        return new JSONObject().put("status","OK").put("scope",scope(account,key)).put("rows",rows);
+        return new JSONObject().put("status","OK").put("scope",scope).put("rows",rows);
     }
     static final class Change {final int date;final long id;final long[] values;Change(int d,long id,long[] v){date=d;this.id=id;values=v;}}
     static List<Change> plan(Object db,String account,String device,JSONArray input)throws Exception {

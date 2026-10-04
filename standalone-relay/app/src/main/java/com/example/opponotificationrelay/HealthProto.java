@@ -28,6 +28,16 @@ public final class HealthProto {
         public Node message(int n)throws IOException{Field f=unique(n,2);return f==null?null:parse(f.bytes);}
         public byte[] bytes(int n)throws IOException{Field f=unique(n,2);return f==null?null:f.bytes.clone();}
         public List<Node> messages(int n)throws IOException{List<Node> out=new ArrayList<>();for(Field f:fields)if(f.number==n){if(f.wire!=2)throw new IOException("HEALTH_FIELD_SHAPE");out.add(parse(f.bytes));}return out;}
+        public int int32(int n,int fallback)throws IOException{Field f=unique(n,0);return f==null?fallback:asInt32(f.value);}
+        private static int asInt32(long value)throws IOException{if(value<Integer.MIN_VALUE || value>0xffffffffL)throw new IOException("HEALTH_INTEGER_RANGE");return(int)value;}
+        public int[] repeatedInt32(int n,int maximum)throws IOException{
+            if(maximum<0||maximum>8192)throw new IOException("HEALTH_REPEATED_LIMIT");List<Integer> values=new ArrayList<>();
+            for(Field f:fields)if(f.number==n){if(f.wire==0){if(values.size()>=maximum)throw new IOException("HEALTH_REPEATED_LIMIT");values.add(asInt32(f.value));}
+                else if(f.wire==2){Input in=new Input(f.bytes);while(in.p<f.bytes.length){if(values.size()>=maximum)throw new IOException("HEALTH_REPEATED_LIMIT");values.add(asInt32(in.read()));}}
+                else throw new IOException("HEALTH_FIELD_SHAPE");}
+            int[] result=new int[values.size()];for(int i=0;i<result.length;i++)result[i]=values.get(i);return result;
+        }
+        public Node withBytes(int n,byte[] value){if(value==null||value.length>LIMIT)throw new IllegalArgumentException("HEALTH_BODY_LIMIT");return replace(n,Collections.singletonList(new Field(n,2,0,value.clone())));}
         public Node withNumber(int n,int value){if(value<0)throw new IllegalArgumentException("HEALTH_VALUE");return replace(n,Collections.singletonList(new Field(n,0,value,null)));}
         public Node withMessage(int n,Node value){return replace(n,Collections.singletonList(new Field(n,2,0,value.encode())));}
         public Node withMessages(int n,List<Node> values){List<Field> out=new ArrayList<>();for(Node value:values)out.add(new Field(n,2,0,value.encode()));return replace(n,out);}
@@ -40,7 +50,7 @@ public final class HealthProto {
         if(data==null || data.length>LIMIT)throw new IOException("HEALTH_BODY_LIMIT");
         Input in=new Input(data);List<Field> fields=new ArrayList<>();
         while(in.p<data.length){long tag=in.read();int wire=(int)(tag&7);long id=tag>>>3;
-            if(tag<0 || id<1 || id>0x1fffffff || fields.size()>=512)throw new IOException("HEALTH_TAG");
+            if(tag<0 || id<1 || id>0x1fffffff || fields.size()>=4096)throw new IOException("HEALTH_TAG");
             if(wire==0)fields.add(new Field((int)id,wire,in.read(),null));
             else {long size=wire==2?in.read():wire==1?8:wire==5?4:-1;if(size<0 || size>data.length-in.p)throw new IOException("HEALTH_WIRE");byte[] b=Arrays.copyOfRange(data,in.p,in.p+(int)size);in.p+=(int)size;fields.add(new Field((int)id,wire,0,b));}
         }

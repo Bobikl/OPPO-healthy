@@ -17,6 +17,9 @@
 | 手表设置 | 已适配的通知、睡眠及健康监测设置；以应用中实际提供的项目为准。 |
 | 健康首页 | 健康趋势、心率、睡眠、血氧、手腕温度、身心状态、放松、日照、体重、血糖和睡眠呼吸暂停。 |
 | 历史记录 | 已适配指标支持日、周、月、年切换、日历选择和记录查看；无记录时保持空状态。 |
+| 睡眠呼吸监测 | 睡眠详情内提供手机录音与手表监测双开关；支持回放删除、资料同步及本机分析，数据不足时不生成结果，完整整晚有效结果仍待验证。 |
+| 账号与本地历史 | 独立账号登录、加密会话保存及本机官方历史导入。 |
+| 数据云同步 | 分类开关、手动与三种自动调度；当前以健康数据下载和部分睡眠偏好双向同步为主，实际范围见 [实现记录](standalone-relay/CLOUD_SYNC_STATUS.md)。 |
 | 原版界面控件 | 使用官方 COUI 控件、部分 Compose 卡片及原版图表渲染器，数据由独立应用适配。 |
 
 ## 运行条件
@@ -71,6 +74,17 @@ python '.\standalone-relay\tests\run_tests.py'
 ```
 
 依赖准备脚本校验输入 APK，生成编译期接口、原始 UI 类依赖集合、资源包及 Compose 所需的服务描述文件。输出位于 `standalone-relay/official-ui/`，不需要从手机导出账号、配对凭据或健康数据库。
+
+睡眠呼吸监测还需准备同一固定版本中的原生算法依赖（28 个新增 JNI／数据类和两套 arm64 库）。使用与上面相同的 APK、JADX 和 JDK 路径运行：
+
+```powershell
+python '.\standalone-relay\tools\prepare_official_osa.py' `
+  --apk '本机官方APK路径' `
+  --jadx-jar '本机jadx-1.5.6-all.jar路径' `
+  --java-home '本机JDK目录'
+```
+
+输出保存在 `standalone-relay/official-osa/`；构建时核对原始 DEX 和原生库哈希，编译签名桩不进入 APK。
 
 构建结果为仓库根目录的 `oppo-notification-relay-v<版本>-debug.apk`。`standalone-relay/version.txt` 表示下一次构建版本；成功构建后补丁版本自动加一。
 

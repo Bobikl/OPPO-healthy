@@ -22,10 +22,25 @@ public final class RootSettingsBootstrap {
                 child.destroy();child=null;
             }
             if(scratch!=null) {
+                removeHistory(new File(scratch,"export"));
                 new File(scratch,"reader.jar").delete();new File(scratch,"libsqlcipher.so").delete();
                 if(scratch.delete())scratch=null;
             }
         }
+    }
+    private static void removeHistory(File f){
+        if(f.isDirectory()){File[] children=f.listFiles();if(children!=null)for(File child:children)removeHistory(child);}f.delete();
+    }
+    private static void publishHistory(JSONObject request)throws Exception {
+        File destination=new File(request.getString("destination"));String base="/data/user/0/com.example.opponotificationrelay/files/official-history/";
+        if(!destination.getPath().matches(java.util.regex.Pattern.quote(base)+"stage-[0-9a-f-]{36}")||!destination.getCanonicalPath().equals(destination.getPath())||!destination.isDirectory())throw new IOException("HISTORY_DESTINATION");
+        int owner=Os.stat("/data/user/0/com.example.opponotificationrelay").st_uid;if(Os.stat(destination.getPath()).st_uid!=owner)throw new IOException("HISTORY_OWNER");
+        copyHistory(new File(scratch,"export"),destination,owner);
+        Process label=new ProcessBuilder("/system/bin/restorecon","-RF",destination.getPath()).start();if(label.waitFor()!=0)throw new IOException("HISTORY_LABEL");
+    }
+    private static void copyHistory(File from,File to,int owner)throws Exception {
+        if(from.isDirectory()){if(!to.exists()&&!to.mkdir())throw new IOException("HISTORY_DIRECTORY");Os.chown(to.getPath(),owner,owner);Os.chmod(to.getPath(),0700);File[] children=from.listFiles();if(children==null)throw new IOException("HISTORY_LIST");for(File f:children)copyHistory(f,new File(to,f.getName()),owner);}
+        else {try(InputStream in=new FileInputStream(from);FileOutputStream out=new FileOutputStream(to)){byte[] b=new byte[65536];int n;while((n=in.read(b))!=-1)out.write(b,0,n);out.getFD().sync();}Os.chown(to.getPath(),owner,owner);Os.chmod(to.getPath(),0600);}
     }
     private static void abort() {cleanup();System.exit(2);}
     static void fileFromZip(String apk,String name,File out,int max) throws Exception {
@@ -52,7 +67,7 @@ public final class RootSettingsBootstrap {
     public static void main(String[] args) {
         Thread parent=new Thread(()->{try{while(System.in.read()!=-1){}}catch(IOException ignored){}abort();},"settings-parent");
         parent.setDaemon(true);parent.start();
-        Thread deadline=new Thread(()->{try{Thread.sleep(45000);}catch(InterruptedException ignored){return;}abort();},"settings-deadline");
+        Thread deadline=new Thread(()->{try{Thread.sleep(210000);}catch(InterruptedException ignored){return;}abort();},"settings-deadline");
         deadline.setDaemon(true);deadline.start();
         String result=null;
         try {
@@ -74,6 +89,7 @@ public final class RootSettingsBootstrap {
                 Os.chmod(scratch.getPath(),0700);
                 fileFromZip(own,"assets/settings-reader.jar",new File(scratch,"reader.jar"),256*1024);
                 fileFromZip(official,"lib/arm64-v8a/libsqlcipher.so",new File(scratch,"libsqlcipher.so"),16*1024*1024);
+                File export=new File(scratch,"export");if(!export.mkdir())throw new IOException("HISTORY_DIRECTORY");Os.chown(export.getPath(),uid,uid);Os.chmod(export.getPath(),0700);
                 Os.chmod(scratch.getPath(),0711);
                 command="exec env CLASSPATH="+SettingsPreviewProtocol.quote(new File(scratch,"reader.jar")+":"+official)+
                     " /system/bin/app_process /system/bin com.example.opponotificationrelay.RootOfficialSettingsReader "+
@@ -85,7 +101,10 @@ public final class RootSettingsBootstrap {
             final Process running=child;
             FutureTask<String> read=new FutureTask<>(()->SettingsPreviewProtocol.read(running.getInputStream()));
             Thread reader=new Thread(read,"settings-pipe");reader.setDaemon(true);reader.start();
-            result=read.get(32,TimeUnit.SECONDS);
+            result=read.get(190,TimeUnit.SECONDS);
+            if(args.length==5){JSONObject request=new JSONObject(new String(android.util.Base64.decode(args[4],android.util.Base64.NO_WRAP),java.nio.charset.StandardCharsets.UTF_8));
+                if("exportHistory".equals(request.optString("operation")) && "OK".equals(new JSONObject(result).optString("status")))publishHistory(request);
+            }
             // Result is published only after our two temporary files and directory have been removed.
         } catch(Throwable failure) {
             String code=failure instanceof IOException?failure.getMessage():null;

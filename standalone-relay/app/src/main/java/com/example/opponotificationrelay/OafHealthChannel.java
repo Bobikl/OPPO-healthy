@@ -36,6 +36,12 @@ public final class OafHealthChannel {
     private HealthSetting changeKey;private int changeValue;
     public interface SleepReply {void complete(boolean accepted,byte[] response,String message);}
     private SleepSettingsProtocol.Request sleepRequest;private SleepReply sleepReply;
+    private OsaWatchProtocol.Request osaRequest;private SleepReply osaReply;
+    public synchronized boolean osa(OsaWatchProtocol.Request request,SleepReply reply){
+        if(closed||session<32||retire||phase!=0||refreshRequested||request==null||reply==null)return false;
+        osaRequest=request;osaReply=reply;phase=11;changed("正在读取手表呼吸监测数据…");return true;
+    }
+    private void finishOsa(boolean ok,byte[] body,String message){SleepReply callback=osaReply;osaReply=null;osaRequest=null;if(callback!=null)callback.complete(ok,body==null?new byte[0]:body.clone(),message);}
     private HealthSyncProtocol.Request historyRequest;private SleepReply historyReply;
     public synchronized boolean history(HealthSyncProtocol.Request request,SleepReply reply){
         if(closed || session<32 || retire || phase!=0 || refreshRequested || request==null || reply==null)return false;
@@ -61,7 +67,7 @@ public final class OafHealthChannel {
     public synchronized int reserved(){return session>=32?session:connecting?requested:-1;}
     public synchronized boolean matches(int sid){return !closed && sid>=32 && sid==session;}
     public synchronized Snapshot snapshot(){return new Snapshot(values,revision,readAt,phase!=0 || connecting || refreshRequested,!closed && !retire && session>=32,message);}
-    public synchronized void close(){outbox.clear();finishHistory(false,null,"连接已断开");finishSleep(false,null,"手表连接已断开，本次操作未确认");closed=true;session=-1;connecting=false;phase=0;refreshRequested=false;values=Collections.emptyMap();before=null;changeKey=null;readAt=0;revision++;}
+    public synchronized void close(){outbox.clear();finishOsa(false,null,"呼吸监测读取已中断");finishHistory(false,null,"连接已断开");finishSleep(false,null,"手表连接已断开，本次操作未确认");closed=true;session=-1;connecting=false;phase=0;refreshRequested=false;values=Collections.emptyMap();before=null;changeKey=null;readAt=0;revision++;}
     private void changed(String msg){message=msg;events.status(msg);events.changed();}
     public synchronized void refresh(){if(closed || phase!=0 || connecting)return;wanted=true;refreshRequested=true;changed("正在读取手表设置…");}
     public synchronized boolean change(HealthSetting key,int value,long expected){
@@ -107,13 +113,14 @@ public final class OafHealthChannel {
         if(session!=sid){session=sid;values=Collections.emptyMap();readAt=0;revision++;}
         connecting=false;deadline=0;retire=false;events.changed();
     }
-    private void fail(String msg){outbox.clear();finishHistory(false,null,msg);finishSleep(false,null,msg);phase=0;refreshRequested=false;connecting=false;started=false;deadline=0;before=null;changeKey=null;values=Collections.emptyMap();readAt=0;revision++;retire=session>=32;changed(msg);}
+    private void fail(String msg){outbox.clear();finishOsa(false,null,"呼吸监测读取已中断");finishHistory(false,null,msg);finishSleep(false,null,msg);phase=0;refreshRequested=false;connecting=false;started=false;deadline=0;before=null;changeKey=null;values=Collections.emptyMap();readAt=0;revision++;retire=session>=32;changed(msg);}
     public void pump()throws IOException{try{synchronized(this){
         if(closed)return;long now=events.now();
         if(deadline!=0 && now>=deadline){if(sleepRequest!=null){fail("手表未确认作息设置，请核对后重试");return;}fail(changeKey==null?"读取超时，请刷新重试":"未确认保存结果，请刷新核对手表设置");return;}
         if(session<32 || retire)return;
         if(refreshRequested && phase==0){refreshRequested=false;phase=1;}
         if(phase==1 || phase==5){int next=phase==5?6:2;phase=next;deadline=now+TIMEOUT;send(session,OafCrypto.concat(new byte[]{0,(byte)HealthSettingsProtocol.QUERY},HealthSettingsProtocol.query()));}
+        else if(phase==11){phase=12;deadline=now+TIMEOUT;send(session,OafCrypto.concat(new byte[]{0,(byte)osaRequest.cid},osaRequest.bytes()));}
         else if(phase==9){phase=10;deadline=now+TIMEOUT;send(session,OafCrypto.concat(new byte[]{0,(byte)historyRequest.kind.cid},historyRequest.bytes()));}
         else if(phase==7){phase=8;deadline=now+TIMEOUT;send(session,OafCrypto.concat(new byte[]{0,(byte)sleepRequest.cid},sleepRequest.bytes()));}
         else if(phase==3){byte[] body=HealthSettingsProtocol.change(before,changeKey,changeValue);phase=4;deadline=now+TIMEOUT;send(session,OafCrypto.concat(new byte[]{0,(byte)changeKey.cid},body));}
@@ -122,6 +129,9 @@ public final class OafHealthChannel {
         if(closed || session<32 || retire || data.length<2 || data[0]!=0)return;int cid=data[1]&255;
         try{
             byte[] body=Arrays.copyOfRange(data,2,data.length);
+            if(phase==12&&osaRequest!=null&&cid==osaRequest.cid){
+                osaRequest.validate(body);phase=0;deadline=0;retire=true;started=false;values=Collections.emptyMap();readAt=0;revision++;finishOsa(true,body,"已收到呼吸监测响应");changed("已收到呼吸监测响应");return;
+            }
             if(phase==10 && historyRequest!=null && cid==historyRequest.kind.cid){
                 phase=0;deadline=0;retire=true;started=false;values=Collections.emptyMap();readAt=0;revision++;
                 finishHistory(true,body,"已收到手表健康响应");changed("已收到手表健康响应");return;
@@ -141,6 +151,6 @@ public final class OafHealthChannel {
                 if(HealthSettingsProtocol.acknowledgement(body)!=HealthSettingsProtocol.SUCCESS){fail("手表未接受本次设置，请刷新后重试");return;}
                 phase=5;deadline=0;changed("手表已响应，正在读取确认…");
             }
-        }catch(IOException invalid){fail("手表返回的数据无法确认，请刷新重试");}
+        }catch(IOException invalid){if(osaRequest!=null)finishOsa(false,null,invalid.getMessage());fail("手表返回的数据无法确认，请刷新重试");}
     }
 }

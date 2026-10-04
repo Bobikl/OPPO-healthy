@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'Stop'
 $OutputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -54,21 +54,35 @@ New-Item -ItemType Directory -Force -Path $classes, $dex, $generated | Out-Null
 
 & $aapt2 compile --dir (Join-Path $workApp 'src\main\res') -o $resCompiled
 if ($LASTEXITCODE -ne 0) { throw "aapt2 compile 失败: $LASTEXITCODE" }
-& $aapt2 link --java $generated -o $unsigned -I $platform --manifest (Join-Path $workApp 'src\main\AndroidManifest.xml') --auto-add-overlay --min-sdk-version 29 --target-sdk-version 35 --version-code $versionCode --version-name $versionName $resCompiled
+& $aapt2 link --java $generated -o $unsigned -I $platform -A (Join-Path $workApp 'src\main\assets') --manifest (Join-Path $workApp 'src\main\AndroidManifest.xml') --auto-add-overlay --min-sdk-version 29 --target-sdk-version 35 --version-code $versionCode --version-name $versionName $resCompiled
 if ($LASTEXITCODE -ne 0) { throw "aapt2 link 失败: $LASTEXITCODE" }
 
 $officialUi = Join-Path $root 'official-ui'
 $officialApi = Join-Path $officialUi 'compile-only-api.jar'
-$classPath = $platform + ';' + $officialApi
+$officialOsa = Join-Path $root 'official-osa'
+$osaApi = Join-Path $officialOsa 'compile-only-api.jar'
+if (-not (Test-Path -LiteralPath $osaApi)) { throw 'Prepare OSA dependencies with tools/prepare_official_osa.py first' }
+& python -X utf8 (Join-Path $root 'tools/verify_official_osa.py') $officialOsa
+if ($LASTEXITCODE -ne 0) { throw 'OSA dependency verification failed' }
+$accountSdk = Join-Path $root 'official-account'
+$accountApi = Join-Path $accountSdk 'compile-only-api.jar'
+& python -X utf8 (Join-Path $root 'tools/verify_official_account.py') $accountSdk
+if ($LASTEXITCODE -ne 0) { throw 'Account runtime verification failed' }
+$classPath = $platform + ';' + $officialApi + ';' + $osaApi + ';' + $accountApi
 $sources = Get-ChildItem -LiteralPath (Join-Path $workApp 'src\main\java') -Recurse -Filter '*.java' | Select-Object -ExpandProperty FullName
 $sources += Get-ChildItem -LiteralPath $generated -Recurse -Filter '*.java' | Select-Object -ExpandProperty FullName
-& $javac '-J-Dfile.encoding=UTF-8' -encoding UTF-8 -source 8 -target 8 -cp $classPath -d $classes $sources
+# javac @argfile avoids the Windows 32K command-line limit as sources grow.
+$javacSourceList = Join-Path $workBuild 'javac-sources.txt'
+$javacSourceText = (($sources | ForEach-Object { '"' + $_.Replace('\','/') + '"' }) -join [Environment]::NewLine)
+[IO.File]::WriteAllText($javacSourceList,$javacSourceText,[Text.UTF8Encoding]::new($false))
+if ([IO.File]::ReadAllText($javacSourceList,[Text.Encoding]::UTF8) -cne $javacSourceText) { throw 'javac source list UTF-8 verification failed' }
+& $javac '-J-Dfile.encoding=UTF-8' '-J-Dsun.stdout.encoding=UTF-8' '-J-Dsun.stderr.encoding=UTF-8' -encoding UTF-8 -source 8 -target 8 -cp $classPath -d $classes ('@' + $javacSourceList)
 if ($LASTEXITCODE -ne 0) { throw "javac 失败: $LASTEXITCODE" }
 $classesJar = Join-Path $workBuild 'classes.jar'
 Remove-Item -LiteralPath $classesJar -Force -ErrorAction SilentlyContinue
 & $jar cf $classesJar -C $classes .
 if ($LASTEXITCODE -ne 0) { throw "jar 打包失败: $LASTEXITCODE" }
-& $d8 --lib $platform --classpath $officialApi --output $dex $classesJar
+& $d8 --lib $platform --classpath $officialApi --classpath $accountApi --output $dex $classesJar
 if ($LASTEXITCODE -ne 0) { throw "d8 失败: $LASTEXITCODE" }
 & $jar uf $unsigned -C $dex classes.dex
 if ($LASTEXITCODE -ne 0) { throw "写入 APK 失败: $LASTEXITCODE" }
@@ -83,7 +97,11 @@ Get-ChildItem -LiteralPath (Join-Path $officialUi 'dex') -Filter '*.dex' | Sort-
     Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $officialDexWork $dexName)
     $officialDexIndex++
 }
-& $jar uf $unsigned -C $officialDexWork . -C $officialUi assets/official-ui-resources.apk -C (Join-Path $officialUi 'java-resources') META-INF/services
+# This DEX contains only the additional 28 original JNI/model classes.
+Copy-Item -LiteralPath (Join-Path $officialOsa 'classes.dex') -Destination (Join-Path $officialDexWork ('classes' + $officialDexIndex + '.dex'))
+$officialDexIndex++
+Copy-Item -LiteralPath (Join-Path $accountSdk 'classes.dex') -Destination (Join-Path $officialDexWork ('classes' + $officialDexIndex + '.dex'))
+& $jar uf $unsigned -C $officialDexWork . -C $officialUi assets/official-ui-resources.apk -C (Join-Path $officialUi 'java-resources') META-INF/services -C $officialOsa lib -C $accountSdk lib
 if ($LASTEXITCODE -ne 0) { throw 'Official UI resources packaging failed' }
 
 
@@ -120,7 +138,7 @@ $settingsPackage = Join-Path $settingsClasses 'com\example\opponotificationrelay
 $settingsDex = Join-Path $workBuild 'settings-dex'
 New-Item -ItemType Directory -Force -Path $settingsPackage, $settingsDex | Out-Null
 Get-ChildItem -LiteralPath (Join-Path $classes 'com\example\opponotificationrelay') -Filter '*.class' |
-    Where-Object { $_.Name -match '^(RootOfficialSettingsReader|RootHealthDataReader|HealthTime|RootKnowledgeReader|RootActivityBridge|ActivityBackupStore|ActivityBridgePolicy|RootSleepSettingsReader|RootNapWriter|OfficialNapBridge|NapWritePolicy|SettingsImportPlan|MmkvSnapshot|OfficialSettingsPreview|SettingsPreviewProtocol)(\$.*)?\.class$' } |
+    Where-Object { $_.Name -match '^(RootOfficialSettingsReader|RootAccountExport|RootHistoryExport|RootHealthDataReader|RootHealthCalendarReader|HealthTime|RootKnowledgeReader|RootActivityBridge|ActivityBackupStore|ActivityBridgePolicy|RootSleepSettingsReader|RootNapWriter|OfficialNapBridge|NapWritePolicy|SettingsImportPlan|MmkvSnapshot|OfficialSettingsPreview|SettingsPreviewProtocol)(\$.*)?\.class$' } |
     ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $settingsPackage }
 $settingsJar = Join-Path $workBuild 'settings-classes.jar'
 & $jar cf $settingsJar -C $settingsClasses .

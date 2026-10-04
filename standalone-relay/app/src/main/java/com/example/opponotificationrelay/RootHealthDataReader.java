@@ -88,12 +88,16 @@ final class RootHealthDataReader {
             if(output.size()>40000)throw new IOException("HEALTH_ROW_LIMIT");}
     }
     static JSONObject read(Object db,String account,byte[] key,JSONObject request)throws Exception {
+        return readLocal(db,account,RootActivityBridge.scope(account,key),request);
+    }
+    static JSONObject readLocal(Object db,String account,String scope,JSONObject request)throws Exception {
         String operation=request.getString("operation"),device=request.getString("device");
         if(!device.matches("(?i)[0-9a-f]{2}(:[0-9a-f]{2}){5}"))throw new IOException("HEALTH_DEVICE");device=device.toUpperCase(java.util.Locale.ROOT);
         long start=request.getLong("start"),end=request.getLong("end");
-        if(request.length()!=(request.has("zone")?5:4)||start<1546272000000L||end<=start||end-start>367L*86400000L||end>System.currentTimeMillis()+86400000L)throw new IOException("HEALTH_RANGE");
+        if(request.length()!=(request.has("zone")?5:4)+(request.has("calendar")?1:0)||start<1546272000000L||end<=start||end-start>(request.has("calendar")?10000L:367L)*86400000L||end>System.currentTimeMillis()+86400000L)throw new IOException("HEALTH_RANGE");
         ZoneId zone=ZoneId.of(request.optString("zone",ZoneId.systemDefault().getId()));java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone(zone));
-        JSONObject result=new JSONObject().put("zone",zone.getId()).put("status","OK").put("scope",RootActivityBridge.scope(account,key)).put("start",start).put("end",end).put("readAt",System.currentTimeMillis());
+        JSONObject result=new JSONObject().put("zone",zone.getId()).put("status","OK").put("scope",scope).put("start",start).put("end",end).put("readAt",System.currentTimeMillis());
+        if(request.has("calendar")){if(!"readHealth".equals(operation))throw new IOException("CALENDAR_OPERATION");return result.put("calendar",RootHealthCalendarReader.dates(db,account,device,request.getString("calendar"),start,end,zone));}
         String from=Long.toString(start),to=Long.toString(end);
         if("readHeartRaw".equals(operation)){
             if(end-start>26*3600000L)throw new IOException("HEALTH_RANGE");
@@ -129,7 +133,7 @@ final class RootHealthDataReader {
         readWellness(db,account,device,start,end,result);
         readAdditionalCards(db,account,start,end,result);
         result.put("knowledge",RootKnowledgeReader.read(db));
-        result.put("activity",RootActivityBridge.read(db,account,device,key,first,last));
+        result.put("activity",RootActivityBridge.readLocal(db,account,device,scope,first,last));
         if(result.toString().length()>1100000)throw new IOException("HEALTH_OUTPUT_LIMIT");return result;
     }
 }

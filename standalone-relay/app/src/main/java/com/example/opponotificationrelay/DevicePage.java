@@ -28,12 +28,16 @@ final class DevicePage implements DeviceController.View {
         for(int i=0;i<healthIcons.length;i++){if(i>0)divider(health);row(health,HealthSetting.CATEGORIES[i],healthIcons[i],0,"health:"+i).setText(healthHints[i]);}
         LinearLayout secondary=activity.findViewById(R.id.device_secondary_group);
         row(secondary,"设备管理",R.drawable.official_ic_icon_connect_share,0,SettingsActivity.DEVICE).setText("配对信息与连接管理");
+        divider(secondary);row(secondary,"账号与登录",R.drawable.official_ic_icon_connect_share,0,"account").setText("账号迁移与登录验证");
+        divider(secondary);row(secondary,"数据云同步",R.drawable.official_ic_icon_connect_share,0,"cloud").setText("分类开关、立即同步与自动同步");
         divider(secondary);row(secondary,"高级设置与诊断",R.drawable.official_ic_icon_more1,0,SettingsActivity.DIAGNOSTICS).setText("状态详情、监听修复与日志");
         String version="";try{version=activity.getPackageManager().getPackageInfo(activity.getPackageName(),0).versionName;}catch(Exception ignored){}
         ((TextView)activity.findViewById(R.id.device_footer)).setText("独立通知转发 · "+version);
         scroll.setOnScrollChangeListener((v,x,y,oldX,oldY)->updateTitle());
     }
     private void open(String section){
+        if("cloud".equals(section)){activity.startActivity(new Intent(activity,CloudSyncActivity.class));return;}
+        if("account".equals(section)){activity.startActivity(new Intent(activity,AccountActivity.class));return;}
         if(section.startsWith("health:")){activity.startActivity(new Intent(activity,HealthSettingsActivity.class).putExtra(HealthSettingsActivity.CATEGORY,Integer.parseInt(section.substring(7))));return;}
         if(SettingsActivity.NOTIFICATIONS.equals(section))activity.startActivity(new Intent(activity,NotificationsActivity.class));
         else activity.startActivity(new Intent(activity,SettingsActivity.class).putExtra(SettingsActivity.EXTRA_SECTION,section));

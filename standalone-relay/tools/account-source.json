@@ -1,0 +1,12 @@
+{
+  "sourceApkSha256": "d8163ec849de6ee121171d1d1312b05f1500c8d4ec225c19f949042ae185aeaf",
+  "additionalClasses": 1533,
+  "dexSha256": "8a2d5afe5cdf4790375d701adb5a66ffa20a085746b95f12f7d9e529b3517035",
+  "configuration": "device-private encrypted migration; not bundled",
+  "libraries": {
+    "lib/arm64-v8a/libsqlcipher.so": {
+      "sha256": "91060e3d9360d4ac0858633f24ed97a62b66b6cdf18c00f8ef8a1e39e72fd76f",
+      "bytes": 6571864
+    }
+  }
+}

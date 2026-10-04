@@ -16,15 +16,20 @@ final class OfficialUiResources {
     // APK parsing is process-wide; Resources, themes and window contexts remain per wrapper.
     private static ResourcesLoader sharedLoader;
     static boolean ready(){return prepared;}
+    static synchronized void ensureReady(Context context){
+        if(prepared)return;
+        try{File file=extract(context.getApplicationContext(),false);loader(file);archive=file;prepared=true;}
+        catch(Exception e){throw new IllegalStateException("UI_RESOURCES",e);}
+    }
     static void prepare(Context context,Runnable callback){
         Context app=context.getApplicationContext();
         worker.execute(()->{
             try{
-                if(!prepared){
+                synchronized(OfficialUiResources.class){if(!prepared){
                     File file=extract(app,false);
                     try{loader(file);}catch(Exception first){file=extract(app,true);loader(file);}
                     archive=file;prepared=true;
-                }
+                }}
             }catch(Exception e){android.util.Log.e("OfficialUiResources","Resource preparation failed",e);}
             main.post(callback);
         });
@@ -35,6 +40,18 @@ final class OfficialUiResources {
             if(global==null){global=new UiContext(base.getApplicationContext(),archive);com.oplus.aiunit.vision.e88.d(global);}
             return new UiContext(base,archive);
         }catch(Exception e){throw new IllegalStateException("Official UI resources could not be loaded",e);}
+    }
+    private static Context accountGlobal;
+    static Context wrapAccount(Context base){
+        wrap(base);
+        try{
+            if(accountGlobal==null)accountGlobal=new AccountContext(base.getApplicationContext(),archive);
+            return new AccountContext(base,archive);
+        }catch(Exception e){throw new IllegalStateException("ACCOUNT_RESOURCES",e);}
+    }
+    static final class AccountContext extends UiContext {
+        AccountContext(Context base,File file)throws Exception{super(base,file);resources.addLoaders(AccountVisualAssets.loader(base));}
+        @Override public Context getApplicationContext(){return accountGlobal==null?this:accountGlobal;}
     }
     static Context panel(android.app.Activity activity){wrap(activity);try{return new PanelContext(activity,archive);}catch(Exception e){throw new IllegalStateException("Official panel resources",e);}}
     // Window services remain bound to the host. Context traversal stops at the isolated

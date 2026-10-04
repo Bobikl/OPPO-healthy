@@ -102,8 +102,21 @@ public final class SettingsActivity extends OfficialUiActivity {
         if(NOTIFICATIONS.equals(section)){title="更多通知设置";buildNotifications(root);}
         else if(PROTECTION.equals(section)){title="防断连设置";buildConnection(root);buildListener(root,false);buildStartup(root);}
         else if(DEVICE.equals(section)){title="设备管理";buildPairing(root);buildConnection(root);}
-        else {title="高级设置与诊断";buildListener(root,true);buildDiagnostics(root);}
+        else {title="高级设置与诊断";buildHistoryData(root);buildListener(root,true);buildDiagnostics(root);}
         DeviceStyle.styleTree(root);scroll.addView(root);DeviceStyle.shell(this,title,scroll);
+    }
+    private boolean historyToggleRendering;
+    private void buildHistoryData(LinearLayout root){
+        LinearLayout box=card();TextView title=new TextView(this);title.setText("个人数据与历史记录");title.setTextSize(18);box.addView(title,wrap());
+        TextView state=new TextView(this);state.setText(OfficialHistoryStore.status(this));state.setTextSize(13);
+        Button importAll=new Button(this);importAll.setText("一键导入并合并全部个人数据");importAll.setEnabled(OfficialHistoryStore.allowed(this));
+        addSwitchRow(box,"允许读取官方 App 数据","开启后可手动导入官方个人资料与全部历史；关闭后只读取独立版已保存的数据。",OfficialHistoryStore.allowed(this),(button,checked)->{
+            if(historyToggleRendering)return;
+            if(HistoryImportUi.running()){historyToggleRendering=true;button.setChecked(OfficialHistoryStore.allowed(this));historyToggleRendering=false;Toast.makeText(this,"请等待当前导入完成",Toast.LENGTH_SHORT).show();return;}
+            try{OfficialHistoryStore.setAllowed(this,checked);importAll.setEnabled(checked);}catch(Exception e){button.setChecked(OfficialHistoryStore.allowed(this));}
+        });
+        importAll.setOnClickListener(v->HistoryImportUi.show(this,()->state.setText(OfficialHistoryStore.status(this))));box.addView(importAll,wrap());box.addView(state,wrap());root.addView(box,wrap());
+        if(HistoryImportUi.running())uiHandler.post(()->HistoryImportUi.show(this,()->state.setText(OfficialHistoryStore.status(this))));
     }
     private void buildListener(LinearLayout root,boolean advanced) {
         // 状态卡片

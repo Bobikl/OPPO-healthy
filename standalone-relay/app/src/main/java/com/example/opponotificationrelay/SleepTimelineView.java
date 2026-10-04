@@ -11,9 +11,13 @@ import java.util.*;
 final class SleepTimelineView extends FrameLayout {
     static final int[] COLORS={0xff5252d3,0xff9393ff,0xff84d0ff,0xffffc30e};static final String[] NAMES={"深睡","浅睡","快速眼动","清醒"};
     private boolean expanded;private BarLineChartBase chart;private List<SleepUnitData> stages=Collections.emptyList();private List<TimeStampedData> heart=Collections.emptyList(),oxygen=Collections.emptyList();
+    private List<HealthMetricsData.SleepSegment> boundRows=Collections.emptyList();private boolean boundExpanded;private String boundZone="";
+    private static boolean sameRows(List<HealthMetricsData.SleepSegment> a,List<HealthMetricsData.SleepSegment> b){
+        if(a.size()!=b.size())return false;for(int i=0;i<a.size();i++){HealthMetricsData.SleepSegment x=a.get(i),y=b.get(i);if(x.start!=y.start||x.end!=y.end||x.stage!=y.stage||x.last!=y.last)return false;}return true;
+    }
     SleepTimelineView(Context c){super(c);}
     void setExpanded(boolean value){expanded=value;}
-    void bind(List<HealthMetricsData.SleepSegment> rows){stages=OfficialChartSupport.sleep(rows);removeAllViews();Context c=OfficialUiResources.wrap(getContext());
+    void bind(List<HealthMetricsData.SleepSegment> rows){String zone=HealthMetricsData.zone().getId();if(chart!=null&&boundExpanded==expanded&&boundZone.equals(zone)&&sameRows(boundRows,rows))return;boundRows=new ArrayList<>(rows);boundExpanded=expanded;boundZone=zone;stages=OfficialChartSupport.sleep(rows);removeAllViews();Context c=OfficialUiResources.wrap(getContext());
         if(expanded){SleepCombinedChart combined=new SleepCombinedChart(c);combined.C(stages,heart,oxygen);combined.setXAxisValueFormatter((i,x)->HealthMetricsData.timeLabel((long)(x*60000)));chart=combined;}
         else{SleepDetailsChart detail=new SleepDetailsChart(c);detail.setSleepData(stages);detail.setXAxisValueFormatter((i,x)->HealthMetricsData.timeLabel((long)(x*60000)));chart=detail;}
         OfficialChartSupport.configure(chart,"暂无睡眠阶段记录",OfficialChartSupport::sleepLabel);chart.setContentDescription(rows.isEmpty()?"暂无睡眠阶段记录":"睡眠阶段时间线，"+HealthMetricsData.timeLabel(rows.get(0).start)+"至"+HealthMetricsData.timeLabel(rows.get(rows.size()-1).end-60000)+"，点按查看阶段");addView(chart,new FrameLayout.LayoutParams(-1,-1));if(chart instanceof SleepDetailsChart)((SleepDetailsChart)chart).Q();

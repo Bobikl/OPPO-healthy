@@ -82,6 +82,7 @@ public final class RelayConfig {
     }
     /** 只读导入现有官方配对，失败不删除、不覆盖原凭据；不等于实现全新配对。 */
     public static ImportResult importOfficialPairing(Context c) {
+        if(!OfficialHistoryStore.allowed(c))return new ImportResult(false,"已关闭官方数据访问，保留独立版配对信息");
         String mac=getTargetMac(c),failure="未找到已安装的官方健康应用";
         if(!mac.matches("(?i)([0-9a-f]{2}:){5}[0-9a-f]{2}")) return new ImportResult(false,"请先保存有效手表 MAC 地址");
         for(String pkg:new String[]{"com.heytap.health","com.coloros.health"}) {
@@ -90,7 +91,7 @@ public final class RelayConfig {
             catch(android.content.pm.PackageManager.NameNotFoundException ignored) {continue;}
             Process child=null;
             try {
-                child=new ProcessBuilder(PairingImportLaunch.command(c.getApplicationInfo().sourceDir,pkg,uid,mac)).redirectErrorStream(true).start();
+                child=OfficialHistoryStore.launch(c,new ProcessBuilder(PairingImportLaunch.command(c.getApplicationInfo().sourceDir,pkg,uid,mac)).redirectErrorStream(true));
                 final Process running=child;
                 FutureTask<String> read=new FutureTask<>(() -> {
                     try(InputStream in=running.getInputStream();ByteArrayOutputStream bytes=new ByteArrayOutputStream()) {
@@ -114,6 +115,7 @@ public final class RelayConfig {
                 validate(j);
                 if(!j.getString("mac").equalsIgnoreCase(mac) || !mac.equalsIgnoreCase(getTargetMac(c)))
                     throw new Exception("TARGET_CHANGED");
+                OfficialHistoryStore.requireAllowed(c);
                 synchronized(RelayConfig.class) {
                     if(!getPrefs(c).edit().putString("oaf_credentials",j.toString()).remove("credentials_verified_at")
                         .remove("aes_key").remove("node_id").commit()) throw new Exception("SAVE_FAILED");
@@ -121,7 +123,7 @@ public final class RelayConfig {
                 return new ImportResult(true,"已直接读取官方现有配对，无需迁移模块。等待官方退出后，由独立通道鉴权确认是否可用。");
             } catch(java.util.concurrent.TimeoutException e) {failure="读取超时，请确认已向本应用授予 Root 权限";}
             catch(Exception e) {failure="读取或校验失败，请检查 Root 权限、手表 MAC 与官方配对状态";}
-            finally {if(child!=null) {try {child.getOutputStream().close();} catch(Exception ignored) { } child.destroy();}}
+            finally {if(child!=null) {OfficialHistoryStore.release(child);try {child.getOutputStream().close();} catch(Exception ignored) { } child.destroy();}}
         }
         return new ImportResult(false,failure+"。原有本地凭据未改动。重新配对仍需先由官方完成；本应用暂不支持从零配对。");
     }

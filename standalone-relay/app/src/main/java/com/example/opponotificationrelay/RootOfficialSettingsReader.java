@@ -101,6 +101,10 @@ public final class RootOfficialSettingsReader {
             String account=encodedAccount==null?null:MmkvSnapshot.gunzip(keep(Base64.decode(encodedAccount,Base64.NO_WRAP)),256);
             if(account==null || account.isEmpty() || account.length()>256 || account.codePoints().anyMatch(Character::isISOControl))
                 throw new IOException("ACCOUNT_UNAVAILABLE");
+            if(request!=null && "exportAccount".equals(request.optString("operation"))){
+                if(request.length()!=1)throw new IOException("READ_ARGUMENT");
+                return RootAccountExport.read(mmkvKey,account,encodedAccount);
+            }
             stage="UNWRAP_DATABASE_KEY";
             byte[] dbKey=unwrap(store,"db_key",wrapped,ds);
             stage="SQLCIPHER_LOAD";
@@ -119,6 +123,10 @@ public final class RootOfficialSettingsReader {
             type.getMethod("execSQL",String.class).invoke(database,"PRAGMA query_only=ON");
             if(((Integer)type.getMethod("getVersion").invoke(database))!=66)throw new IOException("DATABASE_VERSION");
             stage="NAP_QUERY";
+            if(request!=null && "exportHistory".equals(request.optString("operation"))){
+                stage="HISTORY_EXPORT";JSONObject result=RootHistoryExport.run(database,account,dbKey,scratch);
+                RootNapWriter.accountUnchanged(mmkvKey,encodedAccount);return result;
+            }
             if(request!=null && ("readActivity".equals(request.optString("operation"))||"syncActivity".equals(request.optString("operation"))))
                 return RootActivityBridge.run(database,account,dbKey,mmkvKey,encodedAccount,request);
             if(request!=null && ("readHealth".equals(request.optString("operation"))||"readHeartRaw".equals(request.optString("operation")))){
@@ -144,7 +152,7 @@ public final class RootOfficialSettingsReader {
     public static void main(String[] args) {
         Thread parent=new Thread(()->{try{while(System.in.read()!=-1){}}catch(IOException ignored){}System.exit(0);},"settings-reader-parent");
         parent.setDaemon(true);parent.start();
-        Thread deadline=new Thread(()->{try{Thread.sleep(28000);}catch(InterruptedException ignored){return;}System.exit(2);},"settings-reader-deadline");
+        Thread deadline=new Thread(()->{try{Thread.sleep(180000);}catch(InterruptedException ignored){return;}System.exit(2);},"settings-reader-deadline");
         deadline.setDaemon(true);deadline.start();
         JSONObject out=new JSONObject();
         try {
@@ -159,7 +167,7 @@ public final class RootOfficialSettingsReader {
             if(args.length==3) {
                 if(args[2].length()>32768 || !args[2].matches("[A-Za-z0-9+/=]+"))throw new IOException("WRITE_ARGUMENT");
                 JSONObject request=new JSONObject(new String(Base64.decode(args[2],Base64.NO_WRAP),StandardCharsets.UTF_8));
-                out.put(("readHealth".equals(request.optString("operation"))||"readHeartRaw".equals(request.optString("operation")))?"health":request.optString("operation").endsWith("Activity")?"activity":"readSleep".equals(request.optString("operation"))?"sleep":"write",readNap(args[1],request));
+                out.put("exportAccount".equals(request.optString("operation"))?"account":("readHealth".equals(request.optString("operation"))||"readHeartRaw".equals(request.optString("operation")))?"health":request.optString("operation").endsWith("Activity")?"activity":"readSleep".equals(request.optString("operation"))?"sleep":"write",readNap(args[1],request));
             } else {
                 try{out.put("apps",readApps());}catch(Throwable e){out.put("apps",new JSONObject().put("status","ERROR").put("code",errorCode(e)));}
                 try{out.put("nap",readNap(args[1],null));}catch(Throwable e){out.put("nap",new JSONObject().put("status","ERROR").put("code",errorCode(e)));}

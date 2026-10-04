@@ -56,6 +56,7 @@ public final class RfcommWearTransport implements WearTransport {
         if(link!=null && active(link.token) && ownsChannel() && socket==link.socket && getState()==STATE_READY){link.foreground.set(true);link.wake();}
     }
     private boolean validHealthLink(DeviceLink link){DeviceIdentity identity=DeviceIdentityStore.read(context);return identity!=null && "OWW251".equals(identity.model) && link!=null && link.health!=null && active(link.token) && ownsChannel() && socket==link.socket && getState()==STATE_READY && link.mac.equalsIgnoreCase(RelayConfig.getTargetMac(context));}
+    public boolean readOsa(OsaWatchProtocol.Request request,OafHealthChannel.SleepReply reply){DeviceLink link=deviceLink;if(!validHealthLink(link))return false;boolean accepted=link.health.osa(request,reply);if(accepted)link.wake();return accepted;}
     public OafHealthChannel.Snapshot healthSettings(){DeviceLink link=deviceLink;return validHealthLink(link)?link.health.snapshot():OafHealthChannel.Snapshot.unavailable("请先连接手表，连接后刷新读取设置");}
     public long healthConnection(){DeviceLink link=deviceLink;return validHealthLink(link)?link.token:-1;}
     public long healthGeneration(){DeviceLink link=deviceLink;return validHealthLink(link) && link.health.snapshot().connected?link.token*2048+link.health.reserved():-1;}

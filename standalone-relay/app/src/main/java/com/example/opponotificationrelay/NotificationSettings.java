@@ -21,6 +21,7 @@ public final class NotificationSettings {
     }
     /** 仅由连接工作线程调用，每次接管读取一次，不按通知轮询 Root。 */
     public static void refreshBaseline(Context c) {
+        if(!OfficialHistoryStore.allowed(c)){detail=hasBaseline(c)?"已关闭官方数据访问，使用独立版保存的通知设置":"已关闭官方数据访问，尚无已保存的通知基线";return;}
         String target=RelayConfig.getTargetMac(c);
         if(!target.matches("(?i)([0-9a-f]{2}:){5}[0-9a-f]{2}")) {
             detail="未同步：请先保存有效的目标手表地址";return;
@@ -39,7 +40,7 @@ public final class NotificationSettings {
                 String command="exec env CLASSPATH='"+apk+"' /system/bin/app_process /system/bin com.example.opponotificationrelay.RootNotificationSettingsReader "+pkg+" "+uid;
                 ProcessBuilder launch=globalNamespace ? new ProcessBuilder("su","--mount-master","-c",command)
                     : new ProcessBuilder("su","-c",command);
-                child=launch.redirectErrorStream(true).start();
+                child=OfficialHistoryStore.launch(c,launch.redirectErrorStream(true));
                 final Process process=child;
                 FutureTask<String> read=new FutureTask<>(() -> {
                     try(InputStream in=process.getInputStream();ByteArrayOutputStream bytes=new ByteArrayOutputStream()) {
@@ -63,14 +64,14 @@ public final class NotificationSettings {
                 for(String line:output.split("\\r?\\n"))
                     if(line.matches("CID84BASE1 ERROR [A-Z0-9_]{1,40}")) FileLogger.w("NotificationSettings",line);
                 int bitmap=NotificationSwitchPolicy.parseBaseline(output);
-                if(!target.equalsIgnoreCase(RelayConfig.getTargetMac(c))) return;
+                if(!OfficialHistoryStore.allowed(c)||!target.equalsIgnoreCase(RelayConfig.getTargetMac(c))) return;
                 if(!RelayConfig.getPrefs(c).edit().putInt(key(c),bitmap).commit()) throw new IllegalStateException("CID84 save failed");
                 detail="已读取官方保存的通知设置，等待写入手表";
                 FileLogger.i("NotificationSettings","已读取官方通知开关基线 bitmap=0x"+Integer.toHexString(bitmap));
                 return;
             } catch(InterruptedException ignored) {Thread.currentThread().interrupt();return;}
             catch(Exception failure) {FileLogger.w("NotificationSettings","读取基线失败 type="+failure.getClass().getSimpleName());}
-            finally {if(child!=null) {try {child.getOutputStream().close();} catch(Exception ignored) { } child.destroy();}}
+            finally {if(child!=null) {OfficialHistoryStore.release(child);try {child.getOutputStream().close();} catch(Exception ignored) { } child.destroy();}}
             }
         }
         detail=hasBaseline(c) ? "官方设置暂不可读，将沿用此手表上次保存的基线" : "未同步：无法读取官方保存的通知设置，请查看日志后重新连接";

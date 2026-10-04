@@ -20,7 +20,7 @@ public final class OfficialSettingsClient {
         cancelled=true;closeChild();
     }
     private synchronized void closeChild(){
-        if(child!=null){try{child.getOutputStream().close();}catch(Exception ignored){}child.destroy();child=null;}
+        if(child!=null){OfficialHistoryStore.release(child);try{child.getOutputStream().close();}catch(Exception ignored){}child.destroy();child=null;}
     }
     public OfficialSettingsPreview read() throws Exception {return decode(run(null));}
     public JSONObject readSleep() throws Exception {
@@ -39,10 +39,23 @@ public final class OfficialSettingsClient {
         if(result.optInt("schema")!=1||!"OK".equals(result.optString("status")))throw new IllegalStateException(code(result));
         JSONObject health=result.getJSONObject("health");if(!"OK".equals(health.optString("status")))throw new IllegalStateException(code(health));return health;
     }
+    public JSONObject calendar(String device,String metric,String zone)throws Exception {
+        java.time.ZoneId z=java.time.ZoneId.of(zone);long start=java.time.LocalDate.of(2019,1,1).atStartOfDay(z).toInstant().toEpochMilli(),end=java.time.LocalDate.now(z).plusDays(1).atStartOfDay(z).toInstant().toEpochMilli();
+        JSONObject result=new JSONObject(run(new JSONObject().put("operation","readHealth").put("device",device).put("start",start).put("end",end).put("zone",zone).put("calendar",metric)));
+        if(result.optInt("schema")!=1||!"OK".equals(result.optString("status")))throw new IllegalStateException(code(result));JSONObject h=result.getJSONObject("health");if(!"OK".equals(h.optString("status")))throw new IllegalStateException(code(h));return h;
+    }
+    void exportHistory(java.io.File destination)throws Exception {
+        JSONObject result=new JSONObject(run(new JSONObject().put("operation","exportHistory").put("destination",destination.getPath())));
+        if(!"OK".equals(result.optString("status")))throw new IllegalStateException(code(result));
+    }
     private String run(JSONObject request) throws Exception {
+        String operation=request==null?"":request.optString("operation");
+        boolean local="readHealth".equals(operation)||"readHeartRaw".equals(operation)||"readSleep".equals(operation)||"readActivity".equals(operation);
+        if(local)return OfficialHistoryStore.read(context,request).toString();
+        OfficialHistoryStore.requireAllowed(context);
         boolean activity=request!=null && request.optString("operation").endsWith("Activity");
         boolean offlineWrite=activity && "syncActivity".equals(request.optString("operation"));
-        boolean write=request!=null && !activity && !"readSleep".equals(request.optString("operation")) && !"readHealth".equals(request.optString("operation")) && !"readHeartRaw".equals(request.optString("operation"));
+        boolean write=request!=null && !"exportHistory".equals(operation) && !activity && !"readSleep".equals(request.optString("operation")) && !"readHealth".equals(request.optString("operation")) && !"readHeartRaw".equals(request.optString("operation"));
         if(!BUSY.compareAndSet(false,true))throw new IllegalStateException("BUSY");
         ServiceLease<android.os.IBinder> lease=null;
         try {
@@ -56,7 +69,7 @@ public final class OfficialSettingsClient {
                 throw new IllegalStateException("USER_UNSUPPORTED");
             if(offlineWrite && app.enabled)throw new IllegalStateException("ACTIVITY_OFFICIAL_RUNNING");
             if(write && !app.enabled)throw new IllegalStateException("OFFICIAL_DISABLED");
-            long deadline=SystemClock.elapsedRealtime()+65000;
+            long deadline=SystemClock.elapsedRealtime()+("exportHistory".equals(operation)?205000:65000);
             if(write) {
                 lease=OfficialDataLease.open(context,app.uid);
                 if(!lease.value().isBinderAlive())throw new IllegalStateException("LEASE_DISCONNECTED");
@@ -73,8 +86,8 @@ public final class OfficialSettingsClient {
                     synchronized(this) {
                         if(cancelled || Thread.currentThread().isInterrupted())throw new InterruptedException();
                         if(lease!=null && !lease.value().isBinderAlive())throw new IllegalStateException("LEASE_DISCONNECTED");
-                        child=(global?new ProcessBuilder("su","--mount-master","-c",command):new ProcessBuilder("su","-c",command))
-                            .redirectErrorStream(true).start();running=child;
+                        child=OfficialHistoryStore.launch(context,(global?new ProcessBuilder("su","--mount-master","-c",command):new ProcessBuilder("su","-c",command))
+                            .redirectErrorStream(true));running=child;
                     }
                     FutureTask<String> read=new FutureTask<>(()->SettingsPreviewProtocol.read(running.getInputStream()));
                     Thread pipe=new Thread(read,"settings-preview-result");pipe.setDaemon(true);pipe.start();
@@ -86,7 +99,7 @@ public final class OfficialSettingsClient {
                     if(current.applicationInfo==null || current.applicationInfo.uid!=app.uid ||
                        !current.applicationInfo.sourceDir.equals(app.sourceDir) || current.getLongVersionCode()!=info.getLongVersionCode())
                         throw new IllegalStateException("OFFICIAL_CHANGED");
-                    return payload;
+                    OfficialHistoryStore.requireAllowed(context);return payload;
                 } catch(InterruptedException e){Thread.currentThread().interrupt();throw e;}
                 catch(ExecutionException e){if(write||offlineWrite)throw e;last=e;}
                 catch(java.io.IOException e){if(write||offlineWrite)throw e;last=e;}
@@ -126,6 +139,10 @@ public final class OfficialSettingsClient {
         String code=error.getMessage();
         if(code==null || !code.matches("[A-Z_]{1,64}"))code="READ_FAILED";
         switch(code) {
+            case "OFFICIAL_ACCESS_DISABLED":return "已关闭官方数据访问，请在高级设置中开启后再导入。";
+            case "HISTORY_NOT_IMPORTED":return "请先在高级设置中一键导入全部个人数据。";
+            case "HISTORY_ACCOUNT_CHANGED":return "官方账号与已保存的历史账号不同，未合并，原记录已保留。";
+            case "HISTORY_SPACE":return "空间不足，请至少留出 400 MB 后重试。";
             case "BUSY":return "上一次读取正在结束，请稍后重试。";
             case "DEVICE_UNSUPPORTED":return "当前只支持 Android 13 及以上的 ARM64 设备。";
             case "USER_UNSUPPORTED":return "当前预览仅支持手机主用户，暂不支持应用分身或工作资料。";

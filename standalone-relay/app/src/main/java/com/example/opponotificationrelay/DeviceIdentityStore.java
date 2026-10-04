@@ -20,6 +20,7 @@ public final class DeviceIdentityStore {
         try{return new DeviceIdentity(p.getString("model",""),p.getString("skuCode",""),p.getString("sku",""),p.getString("name",""));}catch(IllegalArgumentException ignored){return null;}
     }
     public static synchronized void refresh(Context original,boolean force,Callback callback){
+        if(!OfficialHistoryStore.allowed(original)){if(callback!=null)callback.done("已关闭官方数据访问，保留独立版设备信息");return;}
         Context c=original.getApplicationContext();String mac=RelayConfig.getTargetMac(c);long now=SystemClock.elapsedRealtime();
         if(busy || !DeviceStatusProtocol.validMac(mac) || (!force && (read(c)!=null || (mac.equals(attempted) && now-attemptedAt<300000)))){
             if(callback!=null)callback.done(busy?"设备信息正在读取":"请先保存有效手表 MAC 地址");return;
@@ -35,15 +36,15 @@ public final class DeviceIdentityStore {
                 for(boolean global:new boolean[]{true,false}){
                     Process child=null;FutureTask<String> task=null;
                     try{
-                        child=(global?new ProcessBuilder("su","--mount-master",Integer.toString(app.uid),"-c",command):new ProcessBuilder("su",Integer.toString(app.uid),"-c",command)).redirectErrorStream(true).start();
+                        child=OfficialHistoryStore.launch(c,(global?new ProcessBuilder("su","--mount-master",Integer.toString(app.uid),"-c",command):new ProcessBuilder("su",Integer.toString(app.uid),"-c",command)).redirectErrorStream(true));
                         final Process running=child;task=new FutureTask<>(()->SettingsPreviewProtocol.read(running.getInputStream()));Thread reader=new Thread(task,"device-info-pipe");reader.setDaemon(true);reader.start();
                         String value=task.get(20,TimeUnit.SECONDS);if(value.length()>4096)throw new IllegalStateException("RESULT_LIMIT");result=new JSONObject(value);break;
                     }catch(Exception failed){if(!global)throw failed;}
-                    finally{if(child!=null){try{child.getOutputStream().close();}catch(Exception ignored){}child.destroy();try{child.getInputStream().close();}catch(Exception ignored){}}if(task!=null)task.cancel(true);}
+                    finally{if(child!=null){OfficialHistoryStore.release(child);try{child.getOutputStream().close();}catch(Exception ignored){}child.destroy();try{child.getInputStream().close();}catch(Exception ignored){}}if(task!=null)task.cancel(true);}
                 }
                 if(result!=null && "OK".equals(result.optString("status"))){
                     DeviceIdentity d=new DeviceIdentity(result.getString("model"),result.getString("skuCode"),result.getString("sku"),result.getString("name"));
-                    if(mac.equalsIgnoreCase(RelayConfig.getTargetMac(c))){
+                    if(OfficialHistoryStore.allowed(c)&&mac.equalsIgnoreCase(RelayConfig.getTargetMac(c))){
                         prefs(c).edit().putString("mac",mac).putString("model",d.model).putString("skuCode",d.skuCode).putString("sku",d.skuLabel).putString("name",d.name).putLong("readAt",System.currentTimeMillis()).commit();
                         message="已读取 "+d.name+" · "+d.skuLabel;FileLogger.i("DeviceIdentity","型号/SKU 已读取，官方外观资源="+d.blueWatchX2());
                     }else message="设备已切换，本次读取结果已忽略";

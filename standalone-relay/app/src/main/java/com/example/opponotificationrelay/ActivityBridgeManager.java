@@ -15,6 +15,7 @@ final class ActivityBridgeManager {
     boolean running(){return running;}String message(){return message;}
     synchronized void sync(){if(running)return;running=true;message="正在与官方健康同步…";String device=RelayConfig.getTargetMac(context);
         worker.execute(()->{try{
+            OfficialHistoryStore.requireAllowed(context);
             String mac=HealthArchive.device(device);boolean enabled=context.getPackageManager().getApplicationInfo("com.heytap.health",PackageManager.MATCH_DISABLED_COMPONENTS).enabled;
             HealthArchive archive=HealthArchive.get(context);OfficialSettingsClient client=new OfficialSettingsClient(context);
             JSONObject result=client.activity(mac,enabled?null:archive.watchActivity(mac));

@@ -139,7 +139,7 @@ public final class SleepHabitsRepository {
                     proposed.put("sync",HealthProto.parse(mode).number(4,0)).put("syncAt",HealthProto.parse(mode).number(5,0));
                     readMode(owner,proposed);if(HealthProto.parse(mode).number(2,0)!=(Integer)value)throw new IOException("SLEEP_READBACK_MISMATCH");
                 }
-                synchronized(this){current(owner);if(!prefs.edit().putString(key(),proposed.toString()).remove(key()+":pending").commit())throw new IOException("SLEEP_LOCAL_SAVE");values=proposed;revision++;message="accord".equals(field)?"已保存，并从手表读取确认":"手表已确认保存；已记录到独立版";}
+                synchronized(this){current(owner);synchronized(CloudPreferences.LOCK){SharedPreferences.Editor editor=prefs.edit().putString(key(),proposed.toString()).remove(key()+":pending");CloudPreferences.remember(context,editor,scope,field,proposed);if(!editor.commit())throw new IOException("SLEEP_LOCAL_SAVE");}values=proposed;revision++;message="accord".equals(field)?"已保存，并从手表读取确认":"手表已确认保存；已记录到独立版";}
             }catch(Exception e){String reason=safe(e);status("SLEEP_SET_REMINDER_TIME_FIRST".equals(reason)?"请先设定提醒时间，再开启提醒":"SLEEP_REST_REQUIRED".equals(reason)?"请先添加作息时间":"保存未完成："+reason+(sent?"，请核对手表后重试":""));}
             finally{synchronized(this){busy=false;}}
         });return true;

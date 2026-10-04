@@ -57,6 +57,9 @@ extra.append(str(ROOT / "tests/ServiceLeaseTest.java"))
 extra.append(str(ROOT / "tests/NapWriteTest.java"))
 extra.append(str(ROOT / "tests/SettingsImportTest.java"))
 extra.extend([str(ROOT / "tests/SettingsPreviewTest.java"), str(ROOT / "tests/MmkvSnapshotTest.java")])
+names.extend(["SnoreWavWriter", "OsaWatchProtocol"])
+extra.append(str(ROOT / "tests/SnoreWavTest.java"))
+extra.append(str(ROOT / "tests/OsaWatchProtocolTest.java"))
 subprocess.run([str(JAVA / "javac.exe"), "-J-Dfile.encoding=UTF-8", "-encoding", "UTF-8", "-d", str(BUILD), *extra,
                 *[str(SOURCE / (name + ".java")) for name in names], str(ROOT / "tests/OafProtocolTest.java"), str(ROOT / "tests/RootListenerCommandsTest.java")],
                check=True, encoding="utf-8")
@@ -131,3 +134,7 @@ subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUIL
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.HealthTimeTest"], check=True, timeout=15, encoding="utf-8")
 
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.HealthChannelLockTest"], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.SnoreWavTest"], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.OsaWatchProtocolTest"], check=True, timeout=15, encoding="utf-8")

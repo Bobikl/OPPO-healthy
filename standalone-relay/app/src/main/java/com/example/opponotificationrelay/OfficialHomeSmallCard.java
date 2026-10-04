@@ -38,13 +38,23 @@ final class OfficialHomeSmallCard extends FrameLayout {
     void bind(HealthMetricsData data,LocalDate day){
         date=day;detailDate=day;HealthMetricsData.Day d=data==null?null:data.find(day);
         // Cache by rendered values, not the reader object: the home poll must not restart chart animation.
-        String key=kind+"/"+day+"/"+(d==null?"empty":d.latest+"/"+d.latestTime+"/"+d.min+"/"+d.max+"/"+d.rest+"/"+d.sleepMinutes+"/"+d.sleepScore+"/"+d.sleepOut+"/"+d.oxygenLatest+"/"+d.oxygenTime+"/"+d.wristBase+"/"+d.wristValue+"/"+d.mentalAverage+"/"+d.mentalState+"/"+d.mentalLatest+"/"+d.mentalLatestState+"/"+d.mentalTime+"/"+d.sunshineMinutes+"/"+d.sunshineTarget+"/"+d.relaxSeconds+"/"+d.relaxCount);
+        String key=kind+"/"+day+"/"+HealthMetricsData.zone().getId()+"/"+(data==null?"":data.device)+"/";
+        if(d==null)key+="empty";else switch(kind){
+            case HEART:key+=d.latest+"/"+d.latestTime+"/"+d.min+"/"+d.max+"/"+d.rest;break;
+            case SLEEP:key+=d.sleepMinutes+"/"+d.sleepScore+"/"+d.sleepOut;break;
+            case OXYGEN:key+=d.oxygenLatest+"/"+d.oxygenTime;break;
+            case WRIST:key+=d.wristBase+"/"+d.wristValue;break;
+            case MENTAL:key+=d.mentalAverage+"/"+d.mentalState+"/"+d.mentalLatest+"/"+d.mentalLatestState+"/"+d.mentalTime;break;
+            case SUNSHINE:key+=d.sunshineMinutes+"/"+d.sunshineTarget;break;
+            case GLUCOSE:key+=d.glucoseLatest+"/"+d.glucoseTime+"/"+d.glucoseTrend+"/"+d.glucoseLow+"/"+d.glucoseHigh;break;
+            case APNEA:key+=d.apneaLevel;break;
+        }
         if(data!=null){if(kind==HEART){for(HealthCandleEntry e:heartEntries(data,day))key+="/"+e.getX()+":"+e.getLow()+":"+e.getHigh();}
             else if(kind==SLEEP){for(HealthMetricsData.SleepSegment s:data.sleep(day))key+="/"+s.start+":"+s.end+":"+s.stage+":"+s.last;}
             else if(kind==MENTAL){for(HealthMetricsData.Mental p:data.mental(day))key+="/"+p.time+":"+p.value+":"+p.state;}
             else if(kind==RELAX){for(HealthMetricsData.Relax p:data.relax(day))key+="/"+p.time+":"+p.seconds+":"+p.type+":"+p.subtype;}
             else if(kind==TREND)for(HealthMetricsData.Trend t:data.trends(day))key+="/"+t.metric+":"+t.wording();}
-        if(kind>=WEIGHT){if(d!=null)key+="/"+d.glucoseLatest+"/"+d.glucoseTime+"/"+d.glucoseLow+"/"+d.glucoseHigh+"/"+d.glucoseTrend+"/"+d.apneaLevel+"/"+d.apneaVersion;if(data!=null){if(kind==WEIGHT){Map.Entry<Long,Integer> last=data.weights.floorEntry(HealthMetricsData.time(day.plusDays(1))-1);if(last!=null){detailDate=HealthMetricsData.date(last.getKey());key+="/"+data.weights.subMap(HealthMetricsData.time(detailDate.minusDays(6)),true,HealthMetricsData.time(detailDate.plusDays(1)),false);}}if(kind==GLUCOSE)for(HealthMetricsData.Glucose p:data.glucose(day))key+="/"+p.time+":"+p.milli+":"+p.trend;}}
+        if(kind>=WEIGHT){if(data!=null){if(kind==WEIGHT){Map.Entry<Long,Integer> last=data.weights.floorEntry(HealthMetricsData.time(day.plusDays(1))-1);if(last!=null){detailDate=HealthMetricsData.date(last.getKey());key+="/"+data.weights.subMap(HealthMetricsData.time(detailDate.minusDays(6)),true,HealthMetricsData.time(detailDate.plusDays(1)),false);}}if(kind==GLUCOSE)for(HealthMetricsData.Glucose p:data.glucose(day))key+="/"+p.time+":"+p.milli+":"+p.trend;}}
         if(key.equals(boundKey))return;boundKey=key;card.d();card.setForeground(null);card.setCustomBackgroundDrawable(null);
         if(kind==HEART)bindHeart(data,d);else if(kind==SLEEP)bindSleep(data,d);else if(kind==OXYGEN)bindOxygen(d);else if(kind==WRIST)bindWrist(d);else if(kind==MENTAL)bindMental(data,d);else if(kind==RELAX)bindRelax(data,d);else if(kind==SUNSHINE)bindSunshine(d);else if(kind==WEIGHT)bindWeight(data);else if(kind==GLUCOSE)bindGlucose(data,d);else if(kind==APNEA)bindApnea(d);else bindTrend(data);
     }

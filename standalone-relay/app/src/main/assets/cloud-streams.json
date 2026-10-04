@@ -1,0 +1,5860 @@
+[
+  {
+    "id": "activity-stat",
+    "category": "activity",
+    "title": "活动汇总",
+    "table": "DBSportDataStat",
+    "fields": [
+      {
+        "column": "calories_goal_complete",
+        "name": "caloriesGoalComplete",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "current_day_calories_goal",
+        "name": "currentDayCaloriesGoal",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "current_day_move_about_times_goal",
+        "name": "currentDayMoveAboutTimesGoal",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "current_day_steps_goal",
+        "name": "currentDayStepsGoal",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "current_day_workout_goal",
+        "name": "currentDayWorkoutGoal",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "day_goal_complete",
+        "name": "dayGoalComplete",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "end_time",
+        "name": "endTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "extension",
+        "name": "extension",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "mjk_intake_calories_goal",
+        "name": "mjkIntakeCaloriesGoal",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "mjk_total_calories_goal",
+        "name": "mjkTotalCaloriesGoal",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_time",
+        "name": "modifiedTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "move_about_times_goal_complete",
+        "name": "moveAboutTimesGoalComplete",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sedentary_counts",
+        "name": "sedentaryCounts",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sedentary_total_duration",
+        "name": "sedentaryTotalDuration",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sport_mode",
+        "name": "sportMode",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "sportStatId",
+        "type": "J",
+        "required": true,
+        "auto": true
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "start_time",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "static_cal_source",
+        "name": "staticCalSource",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "steps_goal_complete",
+        "name": "stepsGoalComplete",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "total_altitude_offset",
+        "name": "totalAltitudeOffset",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_amount_of_exercise",
+        "name": "totalAmountOfExercise",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_calories",
+        "name": "totalCalories",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_distance",
+        "name": "totalDistance",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_duration",
+        "name": "totalDuration",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_move_about_times",
+        "name": "totalMoveAboutTimes",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_static_cal",
+        "name": "totalStaticCal",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_steps",
+        "name": "totalSteps",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_workout_minutes",
+        "name": "totalWorkoutMinutes",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "update_timestamp",
+        "name": "updateTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "workout_goal_complete",
+        "name": "workoutGoalComplete",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "caloriesGoalComplete": "calories_goal_complete",
+      "currentDayCaloriesGoal": "current_day_calories_goal",
+      "activitiesGoal": "current_day_move_about_times_goal",
+      "currentDayStepsGoal": "current_day_steps_goal",
+      "exerciseGoal": "current_day_workout_goal",
+      "date": "date",
+      "dayGoalComplete": "day_goal_complete",
+      "display": "display",
+      "endTimestamp": "end_time",
+      "extension": "extension",
+      "mjkIntakeCaloriesGoal": "mjk_intake_calories_goal",
+      "mjkTotalCaloriesGoal": "mjk_total_calories_goal",
+      "modifiedTime": "modified_time",
+      "activitiesGoalComplete": "move_about_times_goal_complete",
+      "sedentaryCounts": "sedentary_counts",
+      "sedentaryTime": "sedentary_total_duration",
+      "sportMode": "sport_mode",
+      "startTimestamp": "start_time",
+      "staticCalSource": "static_cal_source",
+      "stepsGoalComplete": "steps_goal_complete",
+      "totalAltitudeOffset": "total_altitude_offset",
+      "totalCalories": "total_calories",
+      "totalDistance": "total_distance",
+      "totalDuration": "total_duration",
+      "totalMoveAboutTimes": "total_move_about_times",
+      "totalStaticCal": "total_static_cal",
+      "totalSteps": "total_steps",
+      "totalWorkoutMinutes": "total_workout_minutes",
+      "updateTimestamp": "update_timestamp",
+      "updated": "updated",
+      "exerciseGoalComplete": "workout_goal_complete"
+    },
+    "keys": [
+      "ssoid",
+      "date",
+      "sport_mode"
+    ],
+    "version": "v2/c2s/sport/steps/queryStepsStatVersionList",
+    "pull": "v1/c2s/sport/steps/pullStatVersionPageData",
+    "push": "v3/c2s/sport/steps/syncStepsStat",
+    "range": true,
+    "wrapper": "stepsStatList",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "StepsStatPOJO",
+    "wireTypes": {
+      "activitiesGoal": "I",
+      "activitiesGoalComplete": "I",
+      "caloriesGoalComplete": "I",
+      "currentDayCaloriesGoal": "I",
+      "currentDayStepsGoal": "I",
+      "date": "I",
+      "dayGoalComplete": "I",
+      "display": "I",
+      "endTimestamp": "J",
+      "exerciseGoal": "I",
+      "exerciseGoalComplete": "I",
+      "extension": "Ljava/lang/String;",
+      "maxStrideFrequency": "Ljava/lang/Integer;",
+      "minStrideFrequency": "Ljava/lang/Integer;",
+      "mjkIntakeCaloriesGoal": "I",
+      "mjkTotalCaloriesGoal": "I",
+      "modifiedTime": "J",
+      "sedentaryCounts": "J",
+      "sedentaryTime": "J",
+      "sportMode": "I",
+      "ssoid": "Ljava/lang/String;",
+      "startTimestamp": "J",
+      "staticCalSource": "I",
+      "stepsGoalComplete": "I",
+      "totalAltitudeOffset": "I",
+      "totalCalories": "J",
+      "totalDistance": "I",
+      "totalDuration": "J",
+      "totalMoveAboutTimes": "I",
+      "totalStaticCal": "J",
+      "totalSteps": "I",
+      "totalWorkoutMinutes": "I",
+      "updateTimestamp": "J",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "activity-detail",
+    "category": "activity",
+    "title": "活动明细",
+    "table": "DBSportDataDetail",
+    "fields": [
+      {
+        "column": "altitude_offset",
+        "name": "altitudeOffset",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "amount_of_exercise",
+        "name": "amountOfExercise",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "calories",
+        "name": "calories",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_version",
+        "name": "dataVersion",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_category",
+        "name": "deviceType",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "distance",
+        "name": "distance",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "end_time",
+        "name": "endTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_time",
+        "name": "modifiedTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sedentary_state",
+        "name": "sedentaryState",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "sportDetailId",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sport_mode",
+        "name": "sportMode",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "start_time",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "steps",
+        "name": "steps",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "workout",
+        "name": "workout",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "altitudeOffset": "altitude_offset",
+      "amountOfExercise": "amount_of_exercise",
+      "calories": "calories",
+      "clientDataId": "client_data_id",
+      "dataVersion": "data_version",
+      "deviceType": "device_category",
+      "deviceUniqueId": "device_unique_id",
+      "display": "display",
+      "distance": "distance",
+      "endTimestamp": "end_time",
+      "modifiedTime": "modified_time",
+      "sedentaryState": "sedentary_state",
+      "sportMode": "sport_mode",
+      "startTimestamp": "start_time",
+      "steps": "steps",
+      "timezone": "timezone",
+      "updated": "updated",
+      "workout": "workout"
+    },
+    "keys": [
+      "ssoid",
+      "device_unique_id",
+      "start_time"
+    ],
+    "version": "v3/c2s/sport/steps/queryStepsDetailVersionList",
+    "pull": "v5/c2s/sport/steps/queryStepsDetailData",
+    "push": "v5/c2s/sport/steps/syncStepsDetail",
+    "range": false,
+    "wrapper": "stepsDetailList",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTime",
+    "cloudModel": "DBSportDataDetail",
+    "wireTypes": {
+      "altitudeOffset": "I",
+      "amountOfExercise": "I",
+      "calories": "J",
+      "clientDataId": "Ljava/lang/String;",
+      "dataVersion": "I",
+      "deviceType": "Ljava/lang/String;",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "display": "I",
+      "distance": "I",
+      "endTimestamp": "J",
+      "modifiedTime": "J",
+      "sedentaryState": "I",
+      "sportDetailId": "J",
+      "sportMode": "I",
+      "ssoid": "Ljava/lang/String;",
+      "startTimestamp": "J",
+      "steps": "I",
+      "syncStatus": "I",
+      "timezone": "Ljava/lang/String;",
+      "updated": "I",
+      "workout": "I"
+    }
+  },
+  {
+    "id": "heart",
+    "category": "vitals",
+    "title": "心率明细",
+    "table": "DBHeartRate",
+    "fields": [
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_created_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_type",
+        "name": "deviceType",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "heartRateDataId",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "heart_rate_type",
+        "name": "heartRateType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "heart_rate_value",
+        "name": "heartRateValue",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "reliability",
+        "name": "reliability",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientDataId": "client_data_id",
+      "dataCreatedTimestamp": "data_created_timestamp",
+      "deviceType": "device_type",
+      "deviceUniqueId": "device_unique_id",
+      "display": "display",
+      "heartRateType": "heart_rate_type",
+      "heartRateValue": "heart_rate_value",
+      "modifiedTimestamp": "modified_timestamp",
+      "reliability": "reliability",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "device_unique_id",
+      "data_created_timestamp",
+      "heart_rate_type"
+    ],
+    "version": "v3/c2s/health/heartRate/queryHeartRateDetailVersionList",
+    "pull": "v5/c2s/health/heartRate/queryHeartRateDetailData",
+    "push": "v5/c2s/health/heartRate/syncHeartRateDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBHeartRate",
+    "wireTypes": {
+      "clientDataId": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "deviceType": "Ljava/lang/Integer;",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "display": "I",
+      "heartRateDataId": "J",
+      "heartRateType": "I",
+      "heartRateValue": "I",
+      "modifiedTimestamp": "J",
+      "reliability": "Ljava/lang/Integer;",
+      "ssoid": "Ljava/lang/String;",
+      "syncStatus": "I",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "heart-stat",
+    "category": "vitals",
+    "title": "心率汇总",
+    "table": "DBHeartRateDataStatTable",
+    "fields": [
+      {
+        "column": "average_hr",
+        "name": "averageHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "heartRateDataStatId",
+        "type": "J",
+        "required": true,
+        "auto": true
+      },
+      {
+        "column": "max_hr",
+        "name": "maxHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "metadata",
+        "name": "metadata",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "min_hr",
+        "name": "minHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "rest_hr",
+        "name": "restHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sleep_base_hr",
+        "name": "sleepBaseHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "walk_avg_hr",
+        "name": "walkAvgHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "averageHeartRate": "average_hr",
+      "date": "date",
+      "deviceUniqueId": "device_unique_id",
+      "maxHeartRate": "max_hr",
+      "metadata": "metadata",
+      "minHeartRate": "min_hr",
+      "modifiedTimestamp": "modified_timestamp",
+      "restHeartRate": "rest_hr",
+      "sleepBaseAvgHeartRate": "sleep_base_hr",
+      "timezone": "timezone",
+      "walkingAvgHeartRate": "walk_avg_hr"
+    },
+    "keys": [
+      "ssoid",
+      "date"
+    ],
+    "version": "v3/c2s/health/heartRate/queryHeartRateStatVersionList",
+    "pull": "v5/c2s/health/heartRate/pullStatVersionPageData",
+    "push": "v5/c2s/health/heartRate/syncHeartRateStat",
+    "range": true,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "HeartRateStatPOJO",
+    "wireTypes": {
+      "averageHeartRate": "I",
+      "date": "I",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "maxHeartRate": "I",
+      "metadata": "Ljava/lang/String;",
+      "minHeartRate": "I",
+      "modifiedTimestamp": "J",
+      "restHeartRate": "I",
+      "sleepBaseAvgHeartRate": "Ljava/lang/Integer;",
+      "timezone": "Ljava/lang/String;",
+      "walkingAvgHeartRate": "Ljava/lang/Integer;"
+    }
+  },
+  {
+    "id": "heart-warning",
+    "category": "vitals",
+    "title": "心率异常",
+    "table": "DBHeartRateWarning",
+    "fields": [
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "end_timestamp",
+        "name": "endTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "heartRateWarningId",
+        "type": "J",
+        "required": true,
+        "auto": true
+      },
+      {
+        "column": "max_heart_rate",
+        "name": "maxHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_heart_rate_threshold",
+        "name": "maxHeartRateThreshold",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_heart_rate",
+        "name": "minHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_heart_rate_threshold",
+        "name": "minHeartRateThreshold",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "start_timestamp",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "warning_heart_rate_type",
+        "name": "warningHeartRateType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "warning_type",
+        "name": "warningType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientDataId": "client_data_id",
+      "deviceUniqueId": "device_unique_id",
+      "endTimestamp": "end_timestamp",
+      "maxHeartRate": "max_heart_rate",
+      "maxHeartRateThreshold": "max_heart_rate_threshold",
+      "minHeartRate": "min_heart_rate",
+      "minHeartRateThreshold": "min_heart_rate_threshold",
+      "modifiedTimestamp": "modified_timestamp",
+      "startTimestamp": "start_timestamp",
+      "updated": "updated",
+      "warningHeartRateType": "warning_heart_rate_type",
+      "warningType": "warning_type"
+    },
+    "keys": [
+      "ssoid",
+      "device_unique_id",
+      "start_timestamp",
+      "warning_type"
+    ],
+    "version": "v3/c2s/health/heartRate/queryHeartRateWarningDetailVersionList",
+    "pull": "v5/c2s/health/heartRate/queryHeartRateWarningDetailData",
+    "push": "v5/c2s/health/heartRate/syncHeartRateWarningDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBHeartRateWarning",
+    "wireTypes": {
+      "clientDataId": "Ljava/lang/String;",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "endTimestamp": "J",
+      "heartRateWarningId": "J",
+      "maxHeartRate": "I",
+      "maxHeartRateThreshold": "I",
+      "minHeartRate": "I",
+      "minHeartRateThreshold": "I",
+      "modifiedTimestamp": "J",
+      "ssoid": "Ljava/lang/String;",
+      "startTimestamp": "J",
+      "syncStatus": "I",
+      "updated": "I",
+      "warningHeartRateType": "I",
+      "warningType": "I"
+    }
+  },
+  {
+    "id": "spo2",
+    "category": "vitals",
+    "title": "血氧明细",
+    "table": "DBBloodOxygenSaturation",
+    "fields": [
+      {
+        "column": "_id",
+        "name": "bloodOxygenSaturationId",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "blood_oxygen_saturation_type",
+        "name": "bloodOxygenSaturationType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "blood_oxygen_saturation_value",
+        "name": "bloodOxygenSaturationValue",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_created_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "bloodOxygenSaturationType": "blood_oxygen_saturation_type",
+      "bloodOxygenSaturationValue": "blood_oxygen_saturation_value",
+      "clientDataId": "client_data_id",
+      "dataCreatedTimestamp": "data_created_timestamp",
+      "deviceUniqueId": "device_unique_id",
+      "display": "display",
+      "modifiedTimestamp": "modified_timestamp",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "device_unique_id",
+      "data_created_timestamp",
+      "blood_oxygen_saturation_type"
+    ],
+    "version": "v3/c2s/health/bloodOxygen/queryBloodOxygenDetailVersionList",
+    "pull": "v5/c2s/health/bloodOxygen/queryBloodOxygenDetailData",
+    "push": "v5/c2s/health/bloodOxygen/syncBloodOxygenDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBBloodOxygenSaturation",
+    "wireTypes": {
+      "bloodOxygenSaturationId": "J",
+      "bloodOxygenSaturationType": "I",
+      "bloodOxygenSaturationValue": "I",
+      "clientDataId": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "display": "I",
+      "modifiedTimestamp": "J",
+      "ssoid": "Ljava/lang/String;",
+      "syncStatus": "I",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "spo2-stat",
+    "category": "vitals",
+    "title": "血氧汇总",
+    "table": "DBBloodOxygenSaturationDataStat",
+    "fields": [
+      {
+        "column": "average_blood_oxygen_saturation",
+        "name": "averageBloodOxygenSaturation",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "bloodOxygenSaturationDataStatId",
+        "type": "J",
+        "required": true,
+        "auto": true
+      },
+      {
+        "column": "blood_oxygen_saturation_drop",
+        "name": "bloodOxygenSaturationDrop",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "low_blood_oxygen_saturation_day",
+        "name": "lowBloodOxygenSaturationDay",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "low_blood_oxygen_saturation_total_time",
+        "name": "lowBloodOxygenSaturationTotalTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_blood_oxygen_saturation",
+        "name": "maxBloodOxygenSaturation",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "metadata",
+        "name": "metadata",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "min_blood_oxygen_saturation",
+        "name": "minBloodOxygenSaturation",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "averageBloodOxygenSaturation": "average_blood_oxygen_saturation",
+      "bloodOxygenSaturationDrop": "blood_oxygen_saturation_drop",
+      "clientDataId": "client_data_id",
+      "date": "date",
+      "deviceUniqueId": "device_unique_id",
+      "lowBloodOxygenSaturationDay": "low_blood_oxygen_saturation_day",
+      "lowBloodOxygenSaturationTotalTime": "low_blood_oxygen_saturation_total_time",
+      "maxBloodOxygenSaturation": "max_blood_oxygen_saturation",
+      "metadata": "metadata",
+      "minBloodOxygenSaturation": "min_blood_oxygen_saturation",
+      "modifiedTimestamp": "modified_timestamp",
+      "timezone": "timezone",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "date"
+    ],
+    "version": "v3/c2s/health/bloodOxygen/queryBloodOxygenStatVersionList",
+    "pull": "v5/c2s/health/bloodOxygen/pullStatVersionPageData",
+    "push": "v5/c2s/health/bloodOxygen/syncBloodOxygenStat",
+    "range": true,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBBloodOxygenSaturationDataStat",
+    "wireTypes": {
+      "averageBloodOxygenSaturation": "I",
+      "bloodOxygenSaturationDataStatId": "J",
+      "bloodOxygenSaturationDrop": "I",
+      "clientDataId": "Ljava/lang/String;",
+      "date": "I",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "lowBloodOxygenSaturationDay": "I",
+      "lowBloodOxygenSaturationTotalTime": "J",
+      "maxBloodOxygenSaturation": "I",
+      "metadata": "Ljava/lang/String;",
+      "minBloodOxygenSaturation": "I",
+      "modifiedTimestamp": "J",
+      "ssoid": "Ljava/lang/String;",
+      "syncStatus": "I",
+      "timezone": "Ljava/lang/String;",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "stress",
+    "category": "vitals",
+    "title": "压力明细",
+    "table": "DBStressTable",
+    "fields": [
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_created_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_name",
+        "name": "deviceName",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "rmssd",
+        "name": "rmssd",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "sdnn",
+        "name": "sdnn",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "stressDataId",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "stress_type",
+        "name": "stressType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "stress_value",
+        "name": "stressValue",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientDataId": "client_data_id",
+      "dataCreatedTimestamp": "data_created_timestamp",
+      "deviceName": "device_name",
+      "deviceUniqueId": "device_unique_id",
+      "display": "display",
+      "modifiedTimestamp": "modified_timestamp",
+      "rmssd": "rmssd",
+      "sdnn": "sdnn",
+      "stressType": "stress_type",
+      "stressValue": "stress_value",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "device_unique_id",
+      "data_created_timestamp",
+      "stress_type"
+    ],
+    "version": "v2/c2s/health/stress/queryStressDetailVersion",
+    "pull": "v5/c2s/health/stress/queryStressDetailData",
+    "push": "v5/c2s/health/stress/syncStressDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBStress",
+    "wireTypes": {
+      "clientDataId": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "deviceName": "Ljava/lang/String;",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "display": "I",
+      "modifiedTimestamp": "J",
+      "rmssd": "Ljava/lang/Integer;",
+      "sdnn": "Ljava/lang/Integer;",
+      "ssoid": "Ljava/lang/String;",
+      "stressDataId": "J",
+      "stressType": "I",
+      "stressValue": "I",
+      "syncStatus": "I",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "stress-stat",
+    "category": "vitals",
+    "title": "压力汇总",
+    "table": "DBStressDataStatTable",
+    "fields": [
+      {
+        "column": "average_hr",
+        "name": "averageStress",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "high_stress_total_time",
+        "name": "highStressTotalTime",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_hr",
+        "name": "maxStress",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_stress_timestamp",
+        "name": "maxStressTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "metadata",
+        "name": "metadata",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "middle_stress_total_time",
+        "name": "middleStressTotalTime",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_hr",
+        "name": "minStress",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "normal_stress_total_time",
+        "name": "normalStressTotalTime",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "relax_stress_total_time",
+        "name": "relaxStressTotalTime",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "stressDataStatId",
+        "type": "J",
+        "required": true,
+        "auto": true
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "averageStress": "average_hr",
+      "clientDataId": "client_data_id",
+      "date": "date",
+      "deviceUniqueId": "device_unique_id",
+      "highStressTotalTime": "high_stress_total_time",
+      "maxStress": "max_hr",
+      "maxStressTimestamp": "max_stress_timestamp",
+      "metadata": "metadata",
+      "middleStressTotalTime": "middle_stress_total_time",
+      "minStress": "min_hr",
+      "modifiedTimestamp": "modified_timestamp",
+      "normalStressTotalTime": "normal_stress_total_time",
+      "relaxStressTotalTime": "relax_stress_total_time",
+      "timezone": "timezone",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "date"
+    ],
+    "version": "v2/c2s/health/stress/queryStressStatVersion",
+    "pull": "v5/c2s/health/stress/pullStatVersionPageData",
+    "push": "v5/c2s/health/stress/syncStressStat",
+    "range": true,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBStressDataStat",
+    "wireTypes": {
+      "averageStress": "I",
+      "clientDataId": "Ljava/lang/String;",
+      "date": "I",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "highStressTotalTime": "I",
+      "maxStress": "I",
+      "maxStressTimestamp": "J",
+      "metadata": "Ljava/lang/String;",
+      "middleStressTotalTime": "I",
+      "minStress": "I",
+      "modifiedTimestamp": "J",
+      "normalStressTotalTime": "I",
+      "relaxStressTotalTime": "I",
+      "ssoid": "Ljava/lang/String;",
+      "stressDataStatId": "J",
+      "syncStatus": "I",
+      "timezone": "Ljava/lang/String;",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "hrv",
+    "category": "vitals",
+    "title": "HRV",
+    "table": "DBHrvTable",
+    "fields": [
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "end_timestamp",
+        "name": "endTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "hrv_type",
+        "name": "hrvType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "hrv_value",
+        "name": "hrvValue",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "metadata",
+        "name": "metadata",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "start_timestamp",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientDataId": "client_data_id",
+      "deviceUniqueId": "device_unique_id",
+      "display": "display",
+      "endTimestamp": "end_timestamp",
+      "heartRateVarValue": "hrv_value",
+      "metadata": "metadata",
+      "modifiedTimestamp": "modified_timestamp",
+      "startTimestamp": "start_timestamp",
+      "updated": "updated",
+      "dataCreatedTimestamp": "start_timestamp"
+    },
+    "keys": [
+      "ssoid",
+      "device_unique_id",
+      "start_timestamp",
+      "hrv_type"
+    ],
+    "version": "v2/c2s/health/heartRateVar/queryHeartRateVarDetailVersion",
+    "pull": "v5/c2s/health/heartRateVar/queryHeartRateVarDetailData",
+    "push": "v5/c2s/health/heartRateVar/syncHeartRateVarDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "HrvCloudData",
+    "wireTypes": {
+      "clientDataId": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "display": "I",
+      "endTimestamp": "J",
+      "heartRateVarValue": "I",
+      "metadata": "Ljava/lang/String;",
+      "modifiedTimestamp": "J",
+      "startTimestamp": "J",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "sleep",
+    "category": "sleep",
+    "title": "睡眠分期",
+    "table": "DBSleepTable",
+    "fields": [
+      {
+        "column": "alg_origin_state",
+        "name": "algOriginData",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_version",
+        "name": "dataVersion",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_type",
+        "name": "deviceType",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "end_time",
+        "name": "endTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "metadata",
+        "name": "metadata",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "sleepDataId",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sleep_state",
+        "name": "sleepState",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sleep_type",
+        "name": "sleepType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "start_time",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "algOriginData": "alg_origin_state",
+      "clientDataId": "client_data_id",
+      "dataVersion": "data_version",
+      "deviceType": "device_type",
+      "deviceUniqueId": "device_unique_id",
+      "display": "display",
+      "endTimestamp": "end_time",
+      "metadata": "metadata",
+      "modifiedTimestamp": "modified_timestamp",
+      "sleepState": "sleep_state",
+      "sleepType": "sleep_type",
+      "startTimestamp": "start_time",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "device_unique_id",
+      "start_time",
+      "sleep_type"
+    ],
+    "version": "v3/c2s/health/sleep/querySleepStatusVersionList",
+    "pull": "v5/c2s/health/sleep/querySleepStatusData",
+    "push": "v5/c2s/health/sleep/syncSleepStatus",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBSleep",
+    "wireTypes": {
+      "algOriginData": "I",
+      "clientDataId": "Ljava/lang/String;",
+      "dataVersion": "I",
+      "deviceType": "Ljava/lang/Integer;",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "display": "I",
+      "endTimestamp": "J",
+      "metadata": "Ljava/lang/String;",
+      "modifiedTimestamp": "J",
+      "sleepDataId": "J",
+      "sleepState": "I",
+      "sleepType": "I",
+      "ssoid": "Ljava/lang/String;",
+      "startTimestamp": "J",
+      "syncStatus": "I",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "sleep-stat",
+    "category": "sleep",
+    "title": "睡眠汇总",
+    "table": "DBSleepDataStatTable",
+    "fields": [
+      {
+        "column": "checked_sleep_score",
+        "name": "checkedSleepScore",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "fall_asleep",
+        "name": "fallAsleep",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "metadata",
+        "name": "metadata",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "sleepDataStatId",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sleep_out",
+        "name": "sleepOut",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sleep_score",
+        "name": "sleepScore",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "total_deep_sleep_time",
+        "name": "totalDeepSleepTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_lightly_sleep_time",
+        "name": "totalLightlySleepTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_rem_time",
+        "name": "totalRemTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_sleep_time",
+        "name": "totalSleepTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_wake_up_time",
+        "name": "totalWakeUpTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "checkedSleepScore": "checked_sleep_score",
+      "date": "date",
+      "deviceUniqueId": "device_unique_id",
+      "fallAsleep": "fall_asleep",
+      "metadata": "metadata",
+      "modifiedTimestamp": "modified_timestamp",
+      "sleepOut": "sleep_out",
+      "sleepScore": "sleep_score",
+      "timezone": "timezone",
+      "totalDeepSleepTime": "total_deep_sleep_time",
+      "totalLightlySleepTime": "total_lightly_sleep_time",
+      "totalRemTime": "total_rem_time",
+      "totalSleepTime": "total_sleep_time",
+      "totalWakeUpTime": "total_wake_up_time",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "date"
+    ],
+    "version": "v3/c2s/health/sleep/querySleepStatVersionList",
+    "pull": "v5/c2s/health/sleep/pullStatVersionPageData",
+    "push": "v5/c2s/health/sleep/syncSleepStat",
+    "range": true,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "SleepStatPOJO",
+    "wireTypes": {
+      "checkedSleepScore": "Ljava/lang/Integer;",
+      "date": "I",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "display": "I",
+      "fallAsleep": "J",
+      "metadata": "Ljava/lang/String;",
+      "modifiedTimestamp": "J",
+      "sleepOut": "J",
+      "sleepScore": "Ljava/lang/Integer;",
+      "timezone": "Ljava/lang/String;",
+      "totalDeepSleepTime": "J",
+      "totalLightlySleepTime": "J",
+      "totalRemTime": "J",
+      "totalSleepTime": "J",
+      "totalWakeUpTime": "J",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "sleep-heart",
+    "category": "sleep",
+    "title": "睡眠心率",
+    "table": "DBSleepHeartRateStat",
+    "fields": [
+      {
+        "column": "avg_sleep_heart_rate",
+        "name": "avgSleepHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_hr",
+        "name": "maxHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_hr",
+        "name": "minHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "reasonable_range_high",
+        "name": "reasonableRangeHigh",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "reasonable_range_low",
+        "name": "reasonableRangeLow",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "warning_number",
+        "name": "warningNumber",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "avgSleepHeartRate": "avg_sleep_heart_rate",
+      "date": "date",
+      "maxHeartRate": "max_hr",
+      "minHeartRate": "min_hr",
+      "modifiedTimestamp": "modified_timestamp",
+      "reasonableRangeHigh": "reasonable_range_high",
+      "reasonableRangeLow": "reasonable_range_low",
+      "warningNumber": "warning_number"
+    },
+    "keys": [
+      "ssoid",
+      "date"
+    ],
+    "version": "v3/c2s/health/sleep/querySleepHeartRateStatVersion",
+    "pull": "v1/c2s/health/sleep/querySleepHeartRateStatData",
+    "push": "v3/c2s/health/sleep/syncSleepHeartRateStat",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "SleepHeartRateStatPOJO",
+    "wireTypes": {
+      "avgSleepHeartRate": "Ljava/lang/Integer;",
+      "date": "I",
+      "maxHeartRate": "Ljava/lang/Integer;",
+      "minHeartRate": "Ljava/lang/Integer;",
+      "modifiedTimestamp": "J",
+      "reasonableRangeHigh": "Ljava/lang/Integer;",
+      "reasonableRangeLow": "Ljava/lang/Integer;",
+      "warningNumber": "I"
+    }
+  },
+  {
+    "id": "sleep-advice",
+    "category": "sleep",
+    "title": "睡眠建议",
+    "table": "DBSleepAdvice",
+    "fields": [
+      {
+        "column": "bedtime",
+        "name": "bedtime",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "burden",
+        "name": "burden",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "data_timestamp",
+        "name": "dataTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "duration",
+        "name": "duration",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "out_bedtime",
+        "name": "outBedtime",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "bedtime": "bedtime",
+      "burden": "burden",
+      "dataClient": "data_client",
+      "duration": "duration",
+      "modifiedTimestamp": "modified_timestamp",
+      "outBedtime": "out_bedtime"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "data_timestamp"
+    ],
+    "version": "v3/c2s/health/sleep/querySleepAdviceVersion",
+    "pull": "v5/c2s/health/sleep/querySleepAdviceData",
+    "push": "v5/c2s/health/sleep/syncSleepAdvice",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "SleepAdvicePOJO",
+    "wireTypes": {
+      "bedtime": "I",
+      "burden": "I",
+      "dataClient": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "duration": "I",
+      "modifiedTimestamp": "J",
+      "outBedtime": "I"
+    }
+  },
+  {
+    "id": "snore-stat",
+    "category": "breathing",
+    "title": "鼾症与呼吸风险",
+    "table": "DBOsaResult",
+    "fields": [
+      {
+        "column": "ahi",
+        "name": "ahi",
+        "type": "Ljava/lang/Float;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "extension",
+        "name": "extension",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "first_hrv_time",
+        "name": "firstHrvTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "first_sleep_time",
+        "name": "firstSleepTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "first_snore_info_time",
+        "name": "firstSnoreInfoTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "first_spo2_time",
+        "name": "firstSpo2Time",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "from_type",
+        "name": "fromType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "invalid_spo2_ratio",
+        "name": "invalidSpo2Ratio",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "last_hrv_time",
+        "name": "lastHrvTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "last_sleep_time",
+        "name": "lastSleepTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "last_snore_info_time",
+        "name": "lastSnoreInfoTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "last_spo2_time",
+        "name": "lastSpo2Time",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "osa_feature",
+        "name": "osaFeature",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "osa_level",
+        "name": "osaLevel",
+        "type": "B",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "record_time_interval",
+        "name": "recordTimeInterval",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "silenced_ratio",
+        "name": "silencedRatio",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "silenced_time",
+        "name": "silencedTime",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sleep_breath_type",
+        "name": "sleepBreathType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "snore_file_id_list",
+        "name": "snoreFileDataIdList",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "snore_ratio",
+        "name": "snoreRatio",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "snore_result_bean",
+        "name": "snoreResultBean",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "typical_fragment",
+        "name": "typicalFragmentBeanList",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "typical_fragment_num",
+        "name": "typicalFragmentNum",
+        "type": "B",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "version",
+        "name": "version",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "ahi": "ahi",
+      "date": "date",
+      "extension": "extension",
+      "firstHrvTime": "first_hrv_time",
+      "firstSleepTime": "first_sleep_time",
+      "firstSnoreInfoTime": "first_snore_info_time",
+      "firstSpo2Time": "first_spo2_time",
+      "fromType": "from_type",
+      "invalidSpo2ratio": "invalid_spo2_ratio",
+      "lastHrvTime": "last_hrv_time",
+      "lastSleepTime": "last_sleep_time",
+      "lastSnoreInfoTime": "last_snore_info_time",
+      "lastSpo2Time": "last_spo2_time",
+      "modifiedTimestamp": "modified_timestamp",
+      "osaFeatureList": "osa_feature",
+      "osaLevel": "osa_level",
+      "snoreOperationTimeList": "record_time_interval",
+      "silencedRatio": "silenced_ratio",
+      "silencedTime": "silenced_time",
+      "sleepBreathType": "sleep_breath_type",
+      "snoreFileDataIdList": "snore_file_id_list",
+      "snoreRatio": "snore_ratio",
+      "snoreResultBean": "snore_result_bean",
+      "timeZone": "timezone",
+      "typicalFragmentBeanList": "typical_fragment",
+      "typicalFragmentNum": "typical_fragment_num",
+      "updated": "updated",
+      "version": "version"
+    },
+    "keys": [
+      "ssoid",
+      "date",
+      "version"
+    ],
+    "version": "v2/c2s/health/snore/querySnoreStatVersion",
+    "pull": "v5/c2s/health/snore/querySnoreStatData",
+    "push": "v5/c2s/health/snore/syncSnoreStat",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "OsaResultPOJO",
+    "wireTypes": {
+      "ahi": "D",
+      "date": "I",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "extension": "Ljava/lang/String;",
+      "firstHrvTime": "J",
+      "firstSleepTime": "J",
+      "firstSnoreInfoTime": "J",
+      "firstSpo2Time": "J",
+      "fromType": "I",
+      "invalidSpo2ratio": "I",
+      "lastHrvTime": "J",
+      "lastSleepTime": "J",
+      "lastSnoreInfoTime": "J",
+      "lastSpo2Time": "J",
+      "modifiedTimestamp": "J",
+      "osaFeatureList": "Ljava/util/List;",
+      "osaLevel": "I",
+      "silencedRatio": "I",
+      "silencedTime": "I",
+      "sleepBreathType": "I",
+      "snoreFileDataIdList": "Ljava/lang/String;",
+      "snoreOperationTimeList": "Ljava/util/List;",
+      "snoreParamType": "I",
+      "snoreRatio": "I",
+      "snoreResultBean": "Ljava/lang/String;",
+      "ssoid": "Ljava/lang/String;",
+      "syncStatus": "I",
+      "timeZone": "Ljava/lang/String;",
+      "typicalFragmentBeanList": "Ljava/lang/String;",
+      "typicalFragmentNum": "I",
+      "updated": "I",
+      "version": "I"
+    },
+    "defaults": {
+      "deviceUniqueId": "",
+      "snoreParamType": 0
+    }
+  },
+  {
+    "id": "hearing",
+    "category": "other",
+    "title": "听力明细",
+    "table": "DBHearingHealthTable",
+    "fields": [
+      {
+        "column": "data_created_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "db_value",
+        "name": "dbValue",
+        "type": "D",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_name",
+        "name": "deviceName",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "duration",
+        "name": "duration",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "extension",
+        "name": "extension",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "dataCreatedTimestamp": "data_created_timestamp",
+      "dbValue": "db_value",
+      "deviceName": "device_name",
+      "deviceUniqueId": "device_unique_id",
+      "display": "display",
+      "duration": "duration",
+      "extension": "extension",
+      "modifiedTimestamp": "modified_timestamp",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "device_unique_id",
+      "data_created_timestamp"
+    ],
+    "version": "v2/c2s/health/audition/queryAuditionRecordDetailVersion",
+    "pull": "v5/c2s/health/audition/queryAuditionRecordDetailData",
+    "push": "v5/c2s/health/audition/syncAuditionRecordDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBHearingHealth",
+    "wireTypes": {
+      "dataCreatedTimestamp": "J",
+      "dbValue": "D",
+      "deviceName": "Ljava/lang/String;",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "display": "I",
+      "duration": "J",
+      "extension": "Ljava/lang/String;",
+      "modifiedTimestamp": "J",
+      "ssoid": "Ljava/lang/String;",
+      "syncStatus": "I",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "hearing-stat",
+    "category": "other",
+    "title": "听力汇总",
+    "table": "DBHearingHealthStatTable",
+    "fields": [
+      {
+        "column": "average_value",
+        "name": "averageValue",
+        "type": "D",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "exposure",
+        "name": "exposure",
+        "type": "D",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "extension",
+        "name": "extension",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "max_value",
+        "name": "maxValue",
+        "type": "D",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_value",
+        "name": "minValue",
+        "type": "D",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "total_duration",
+        "name": "totalDuration",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "averageValue": "average_value",
+      "date": "date",
+      "deviceUniqueId": "device_unique_id",
+      "exposure": "exposure",
+      "extension": "extension",
+      "maxValue": "max_value",
+      "minValue": "min_value",
+      "modifiedTimestamp": "modified_timestamp",
+      "timezone": "timezone",
+      "totalDuration": "total_duration",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "date"
+    ],
+    "version": "v2/c2s/health/audition/queryAuditionRecordStatVersion",
+    "pull": "v2/c2s/health/audition/queryAuditionRecordStatData",
+    "push": "v2/c2s/health/audition/syncAuditionRecordStat",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBHearingHealthStat",
+    "wireTypes": {
+      "averageValue": "D",
+      "date": "I",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "exposure": "D",
+      "extension": "Ljava/lang/String;",
+      "maxValue": "D",
+      "minValue": "D",
+      "modifiedTimestamp": "J",
+      "ssoid": "Ljava/lang/String;",
+      "syncStatus": "I",
+      "timezone": "Ljava/lang/String;",
+      "totalDuration": "J",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "cycle",
+    "category": "other",
+    "title": "经期记录",
+    "table": "DBMenstrualCycle",
+    "fields": [
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "end_timestamp",
+        "name": "endTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "start_timestamp",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "stop_type",
+        "name": "stopType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "update_timestamp",
+        "name": "updateTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "display": "display",
+      "endTimestamp": "end_timestamp",
+      "modifiedTimestamp": "modified_timestamp",
+      "startTimestamp": "start_timestamp",
+      "updateTimestamp": "update_timestamp"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "start_timestamp"
+    ],
+    "version": "v4/c2s/health/physiological/queryPhysiologicalCycleVersion",
+    "pull": "v5/c2s/health/physiological/queryPhysiologicalCycleData",
+    "push": "v5/c2s/health/physiological/syncPhysiologicalCycle",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "MenstrualCyclePOJO",
+    "wireTypes": {
+      "clientModel": "Ljava/lang/String;",
+      "closeType": "I",
+      "dataClient": "Ljava/lang/String;",
+      "display": "I",
+      "endTimestamp": "J",
+      "modifiedTimestamp": "J",
+      "startTimestamp": "J",
+      "updateTimestamp": "J"
+    }
+  },
+  {
+    "id": "cycle-symptom",
+    "category": "other",
+    "title": "经期症状",
+    "table": "DBMenstrualCycleSymptom",
+    "fields": [
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "data_created_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "type",
+        "name": "type",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "update_timestamp",
+        "name": "updateTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "value",
+        "name": "value",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "dataCreatedTimestamp": "data_created_timestamp",
+      "display": "display",
+      "modifiedTimestamp": "modified_timestamp",
+      "type": "type",
+      "updateTimestamp": "update_timestamp",
+      "value": "value"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "data_created_timestamp",
+      "type"
+    ],
+    "version": "v4/c2s/health/physiological/queryPhysiologicalCycleSymptomsVersion",
+    "pull": "v5/c2s/health/physiological/queryPhysiologicalCycleSymptomsData",
+    "push": "v5/c2s/health/physiological/syncPhysiologicalCycleSymptoms",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "MenstrualCycleSymptomPOJO",
+    "wireTypes": {
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "display": "I",
+      "modifiedTimestamp": "J",
+      "type": "I",
+      "updateTimestamp": "J",
+      "value": "I"
+    }
+  },
+  {
+    "id": "cervical",
+    "category": "other",
+    "title": "颈椎汇总",
+    "table": "DBCervicalSpine",
+    "fields": [
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "end_timestamp",
+        "name": "endTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "good_seconds",
+        "name": "goodSeconds",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "heavy_seconds",
+        "name": "heavySeconds",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "low_head_percent",
+        "name": "lowHeadPercent",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "low_head_seconds",
+        "name": "lowHeadSeconds",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "mild_seconds",
+        "name": "mildSeconds",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "start_timestamp",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "wear_seconds",
+        "name": "wearSeconds",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "endTimestamp": "end_timestamp",
+      "goodSeconds": "good_seconds",
+      "heavySeconds": "heavy_seconds",
+      "lowHeadPercent": "low_head_percent",
+      "lowHeadSeconds": "low_head_seconds",
+      "mildSeconds": "mild_seconds",
+      "modifiedTimestamp": "modified_timestamp",
+      "startTimestamp": "start_timestamp",
+      "wearSeconds": "wear_seconds"
+    },
+    "keys": [
+      "ssoid",
+      "start_timestamp"
+    ],
+    "version": "v3/c2s/health/cervical/queryCervicalStatVersion",
+    "pull": "v5/c2s/health/cervical/queryCervicalStatData",
+    "push": "v5/c2s/health/cervical/syncCervicalStat",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "CervicalSpinePOJO",
+    "wireTypes": {
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "endTimestamp": "J",
+      "goodSeconds": "I",
+      "heavySeconds": "I",
+      "lowHeadPercent": "I",
+      "lowHeadSeconds": "I",
+      "mildSeconds": "I",
+      "modifiedTimestamp": "J",
+      "startTimestamp": "J",
+      "wearSeconds": "I"
+    }
+  },
+  {
+    "id": "cervical-action",
+    "category": "other",
+    "title": "颈椎动作",
+    "table": "DBCervicalSpineAction",
+    "fields": [
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "detect_type_data",
+        "name": "detectTypeList",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "start_timestamp",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "modifiedTimestamp": "modified_timestamp",
+      "startTimestamp": "start_timestamp"
+    },
+    "keys": [
+      "ssoid",
+      "start_timestamp"
+    ],
+    "version": "v3/c2s/health/cervical/queryCervicalActionDetailVersion",
+    "pull": "v5/c2s/health/cervical/queryCervicalActionDetailData",
+    "push": "v5/c2s/health/cervical/syncCervicalActionDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "CervicalSpineActionPOJO",
+    "wireTypes": {
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "detectTypeDataList": "Ljava/util/List;",
+      "modifiedTimestamp": "J",
+      "startTimestamp": "J"
+    }
+  },
+  {
+    "id": "workout-stat",
+    "category": "workout",
+    "title": "运动汇总",
+    "table": "DBOneTimeSportStat",
+    "fields": [
+      {
+        "column": "british_fastest_pace",
+        "name": "britishFastestPace",
+        "type": "S",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_data_id",
+        "name": "clientDataId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_unique_id",
+        "name": "deviceUniqueId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "end_time",
+        "name": "endTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "fastest_pace",
+        "name": "fastestPace",
+        "type": "S",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "longest_distance",
+        "name": "longestDistance",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_duration",
+        "name": "maxDuration",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_time",
+        "name": "modifiedTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "oneTimeSportStatId",
+        "type": "J",
+        "required": true,
+        "auto": true
+      },
+      {
+        "column": "ox_max",
+        "name": "oxMax",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sport_mode",
+        "name": "sportMode",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "start_time",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "total_abnormal_counts",
+        "name": "totalAbnormalCounts",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_altitude_offset",
+        "name": "totalAltitudeOffset",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_calories",
+        "name": "totalCalories",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_counts",
+        "name": "totalCounts",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_distance",
+        "name": "totalDistance",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_duration",
+        "name": "totalDuration",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_steps",
+        "name": "totalSteps",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "britishFastestPace": "british_fastest_pace",
+      "clientDataId": "client_data_id",
+      "date": "date",
+      "deviceUniqueId": "device_unique_id",
+      "display": "display",
+      "endTimestamp": "end_time",
+      "fastestPace": "fastest_pace",
+      "longestDistance": "longest_distance",
+      "maxDuration": "max_duration",
+      "modifiedTime": "modified_time",
+      "oxMax": "ox_max",
+      "sportMode": "sport_mode",
+      "startTimestamp": "start_time",
+      "timezone": "timezone",
+      "totalAbnormalCounts": "total_abnormal_counts",
+      "totalAltitudeOffset": "total_altitude_offset",
+      "totalCalories": "total_calories",
+      "totalCounts": "total_counts",
+      "totalDistance": "total_distance",
+      "totalDuration": "total_duration",
+      "totalSteps": "total_steps",
+      "updated": "updated"
+    },
+    "keys": [
+      "ssoid",
+      "date",
+      "sport_mode"
+    ],
+    "version": "v3/c2s/sport/data/querySportStatVersion",
+    "pull": "v3/c2s/sport/data/querySportStatData",
+    "push": "v3/c2s/sport/data/syncSportStat",
+    "range": false,
+    "wrapper": "sportStatList",
+    "versionField": "modifiedTime",
+    "versionList": "modifiedTime",
+    "pullField": "modifiedTime",
+    "cloudModel": "DBOneTimeSportStat",
+    "wireTypes": {
+      "britishFastestPace": "S",
+      "clientDataId": "Ljava/lang/String;",
+      "date": "I",
+      "deviceUniqueId": "Ljava/lang/String;",
+      "display": "I",
+      "endTimestamp": "J",
+      "fastestPace": "S",
+      "longestDistance": "I",
+      "maxDuration": "J",
+      "modifiedTime": "J",
+      "oneTimeSportStatId": "J",
+      "oxMax": "I",
+      "sportMode": "I",
+      "ssoid": "Ljava/lang/String;",
+      "startTimestamp": "J",
+      "syncStatus": "I",
+      "timezone": "Ljava/lang/String;",
+      "totalAbnormalCounts": "I",
+      "totalAltitudeOffset": "J",
+      "totalCalories": "J",
+      "totalCounts": "I",
+      "totalDistance": "J",
+      "totalDuration": "J",
+      "totalSteps": "J",
+      "updated": "I"
+    }
+  },
+  {
+    "id": "archive-record",
+    "category": "archives",
+    "title": "健康档案记录",
+    "table": "DBHealthArchiveRecord",
+    "fields": [
+      {
+        "column": "age",
+        "name": "age",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "analysis",
+        "name": "analysis",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "analysis_timestamp",
+        "name": "analysisTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "archive_type",
+        "name": "archiveType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_file_list",
+        "name": "clientFileList",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_created_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "deleted",
+        "name": "deleted",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "doc_id",
+        "name": "docId",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "file_source",
+        "name": "fileSource",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "guess_questions",
+        "name": "guessQuestions",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "image_url",
+        "name": "imgUrl",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "institute",
+        "name": "institute",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "name",
+        "name": "name",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "original_title",
+        "name": "originalTitle",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "owner",
+        "name": "owner",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "gender",
+        "name": "sex",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "simplify_title",
+        "name": "simplifyTitle",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "struct_data",
+        "name": "structData",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "suggestion",
+        "name": "suggestion",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "tag",
+        "name": "tag",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "type",
+        "name": "type",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "updated",
+        "name": "updated",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "upload_timestamp",
+        "name": "uploadTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "age": "age",
+      "analysis": "analysis",
+      "analysisTimestamp": "analysis_timestamp",
+      "archiveType": "archive_type",
+      "clientFileList": "client_file_list",
+      "dataCreatedTimestamp": "data_created_timestamp",
+      "del": "deleted",
+      "docId": "doc_id",
+      "fileSource": "file_source",
+      "guessQuestions": "guess_questions",
+      "imgUrl": "image_url",
+      "institute": "institute",
+      "modifiedTimestamp": "modified_timestamp",
+      "name": "name",
+      "originalTitle": "original_title",
+      "owner": "owner",
+      "gender": "gender",
+      "simplifyTitle": "simplify_title",
+      "structData": "struct_data",
+      "suggestion": "suggestion",
+      "tag": "tag",
+      "type": "type",
+      "uploadTimestamp": "upload_timestamp"
+    },
+    "keys": [
+      "ssoid",
+      "doc_id"
+    ],
+    "version": "v1/c2s/ai_health/document/queryHealthDocumentVersion",
+    "pull": "v1/c2s/ai_health/document/queryHealthDocumentData",
+    "push": "",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "HealthArchiveRecordPOJO",
+    "wireTypes": {
+      "age": "Ljava/lang/String;",
+      "analysis": "Ljava/lang/String;",
+      "analysisTimestamp": "J",
+      "archiveType": "I",
+      "clientFileList": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "del": "I",
+      "docId": "Ljava/lang/String;",
+      "fileSource": "I",
+      "gender": "Ljava/lang/String;",
+      "guessQuestions": "Ljava/lang/String;",
+      "imgUrl": "Ljava/lang/String;",
+      "institute": "Ljava/lang/String;",
+      "modifiedTimestamp": "J",
+      "name": "Ljava/lang/String;",
+      "originalTitle": "Ljava/lang/String;",
+      "owner": "Ljava/lang/String;",
+      "simplifyTitle": "Ljava/lang/String;",
+      "structData": "Ljava/lang/String;",
+      "suggestion": "Ljava/lang/String;",
+      "tag": "I",
+      "type": "Ljava/lang/String;",
+      "uploadTimestamp": "J"
+    }
+  },
+  {
+    "id": "mental-stat",
+    "category": "vitals",
+    "title": "身心日汇总",
+    "table": "DBPhysicalMentalStat",
+    "fields": [
+      {
+        "column": "avg_hrv",
+        "name": "avgHrv",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "avg_resting_heart_rate",
+        "name": "avgRestingHeartRate",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "avg_sleep_hrv",
+        "name": "avgSleepHrv",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "avg_stress",
+        "name": "avgStress",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "base_hrv",
+        "name": "baseHrv",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "baseline_high",
+        "name": "baseLineHigh",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "baseline_low",
+        "name": "baseLineLow",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "baseline_middle",
+        "name": "baseLineMiddle",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "hrv_reasonable_range_high",
+        "name": "hrvReasonableRangeHigh",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "hrv_reasonable_range_low",
+        "name": "hrvReasonableRangeLow",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_hrv",
+        "name": "maxHrv",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_sleep_hrv",
+        "name": "maxSleepHrv",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_stress",
+        "name": "maxStress",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_stress_timestamp",
+        "name": "maxStressTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_hrv",
+        "name": "minHrv",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_sleep_hrv",
+        "name": "minSleepHrv",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_stress",
+        "name": "minStress",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_stress_timestamp",
+        "name": "minStressTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "stress_reminder",
+        "name": "stressReminder",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "stress_state",
+        "name": "stressState",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "avgHrv": "avg_hrv",
+      "avgRestingHeartRate": "avg_resting_heart_rate",
+      "avgSleepHrv": "avg_sleep_hrv",
+      "avgStress": "avg_stress",
+      "baseHrv": "base_hrv",
+      "baseLineHigh": "baseline_high",
+      "baseLineLow": "baseline_low",
+      "baseLineMiddle": "baseline_middle",
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "date": "date",
+      "display": "display",
+      "hrvReasonableRangeHigh": "hrv_reasonable_range_high",
+      "hrvReasonableRangeLow": "hrv_reasonable_range_low",
+      "maxHrv": "max_hrv",
+      "maxSleepHrv": "max_sleep_hrv",
+      "maxStress": "max_stress",
+      "maxStressTimestamp": "max_stress_timestamp",
+      "minHrv": "min_hrv",
+      "minSleepHrv": "min_sleep_hrv",
+      "minStress": "min_stress",
+      "minStressTimestamp": "min_stress_timestamp",
+      "modifiedTimestamp": "modified_timestamp",
+      "stressReminder": "stress_reminder",
+      "stressState": "stress_state"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "date"
+    ],
+    "version": "v4/c2s/health/physical/mental/queryPhysicalMentalHealthStatVersionList",
+    "pull": "v5/c2s/health/physical/mental/pullStatVersionPageData",
+    "push": "v5/c2s/health/physical/mental/syncPhysicalMentalHealthStat",
+    "range": true,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "PhysicalMentalStatPOJO",
+    "wireTypes": {
+      "avgHrv": "I",
+      "avgRestingHeartRate": "Ljava/lang/Integer;",
+      "avgSleepHrv": "I",
+      "avgStress": "I",
+      "baseHrv": "I",
+      "baseLineHigh": "I",
+      "baseLineLow": "I",
+      "baseLineMiddle": "I",
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "date": "I",
+      "display": "I",
+      "hrvReasonableRangeHigh": "I",
+      "hrvReasonableRangeLow": "I",
+      "maxHrv": "I",
+      "maxSleepHrv": "I",
+      "maxStress": "I",
+      "maxStressTimestamp": "J",
+      "minHrv": "I",
+      "minSleepHrv": "I",
+      "minStress": "I",
+      "minStressTimestamp": "J",
+      "modifiedTimestamp": "J",
+      "stressReminder": "I",
+      "stressState": "Ljava/lang/Integer;"
+    }
+  },
+  {
+    "id": "wrist-stat",
+    "category": "vitals",
+    "title": "腕温日汇总",
+    "table": "DBWristTemperatureStat",
+    "fields": [
+      {
+        "column": "actions",
+        "name": "actions",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "confidence",
+        "name": "confidence",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "day_baseline_value",
+        "name": "dayBaseLineWristTemperature",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_value",
+        "name": "max",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "min_value",
+        "name": "min",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "symptoms",
+        "name": "symptoms",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "update_timestamp",
+        "name": "updateTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "value",
+        "name": "wristTemperature",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "actions": "actions",
+      "clientModel": "client_model",
+      "confidence": "confidence",
+      "dataClient": "data_client",
+      "date": "date",
+      "dateBaseLineWristTemperature": "day_baseline_value",
+      "temperatureUpRange": "max_value",
+      "temperatureDownRange": "min_value",
+      "modifiedTimestamp": "modified_timestamp",
+      "symptoms": "symptoms",
+      "updateTimestamp": "update_timestamp",
+      "wristTemperature": "value"
+    },
+    "keys": [
+      "ssoid",
+      "date"
+    ],
+    "version": "v4/c2s/health/wrist/temperature/queryWristTemperatureStatVersion",
+    "pull": "v5/c2s/health/wrist/temperature/pullStatVersionPageData",
+    "push": "v5/c2s/health/wrist/temperature/syncWristTemperatureStat",
+    "range": true,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "WristTemperatureStatPOJO",
+    "wireTypes": {
+      "actions": "I",
+      "clientModel": "Ljava/lang/String;",
+      "confidence": "I",
+      "dataClient": "Ljava/lang/String;",
+      "date": "I",
+      "dateBaseLineWristTemperature": "I",
+      "modifiedTimestamp": "J",
+      "symptoms": "I",
+      "temperatureDownRange": "I",
+      "temperatureUpRange": "I",
+      "updateTimestamp": "J",
+      "wristTemperature": "I"
+    }
+  },
+  {
+    "id": "glucose",
+    "category": "vitals",
+    "title": "血糖明细",
+    "table": "DBBloodSugar",
+    "fields": [
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "data_created_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "trend",
+        "name": "trend",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "type",
+        "name": "type",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "value",
+        "name": "value",
+        "type": "Ljava/lang/Double;",
+        "required": false,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "dataCreatedTimestamp": "data_created_timestamp",
+      "display": "display",
+      "modifiedTimestamp": "modified_timestamp",
+      "trend": "trend",
+      "type": "type",
+      "value": "value"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "data_created_timestamp"
+    ],
+    "version": "v4/c2s/health/glucose/queryGlucoseDetailVersion",
+    "pull": "v5/c2s/health/glucose/queryGlucoseDetail",
+    "push": "v5/c2s/health/glucose/syncGlucoseDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "BloodSugarPOJO",
+    "wireTypes": {
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "display": "I",
+      "modifiedTimestamp": "J",
+      "trend": "I",
+      "type": "I",
+      "value": "D"
+    }
+  },
+  {
+    "id": "glucose-stat",
+    "category": "vitals",
+    "title": "血糖汇总",
+    "table": "DBBloodSugarStat",
+    "fields": [
+      {
+        "column": "avg_value",
+        "name": "average",
+        "type": "Ljava/lang/Double;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "device_active_timestamp",
+        "name": "deviceActiveTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "goal_achieved",
+        "name": "goalAchieved",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "high_counts",
+        "name": "highCounts",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "high_threshold",
+        "name": "highThreshold",
+        "type": "D",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "low_counts",
+        "name": "lowCounts",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "low_threshold",
+        "name": "lowThreshold",
+        "type": "D",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "max_value",
+        "name": "max",
+        "type": "Ljava/lang/Double;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "min_value",
+        "name": "min",
+        "type": "Ljava/lang/Double;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "normal_counts",
+        "name": "normalCounts",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "normal_percent",
+        "name": "normalPercent",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timezone",
+        "name": "timezone",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "warning_counts",
+        "name": "warningCounts",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "average": "avg_value",
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "date": "date",
+      "deviceActiveTime": "device_active_timestamp",
+      "goalAchieved": "goal_achieved",
+      "highCounts": "high_counts",
+      "highThreshold": "high_threshold",
+      "lowCounts": "low_counts",
+      "lowThreshold": "low_threshold",
+      "max": "max_value",
+      "min": "min_value",
+      "modifiedTimestamp": "modified_timestamp",
+      "normalCounts": "normal_counts",
+      "normalPercent": "normal_percent",
+      "timezone": "timezone",
+      "warningCounts": "warning_counts"
+    },
+    "keys": [
+      "ssoid",
+      "date"
+    ],
+    "version": "v4/c2s/health/glucose/queryGlucoseStatVersion",
+    "pull": "v5/c2s/health/glucose/pullStatVersionPageData",
+    "push": "v5/c2s/health/glucose/syncGlucoseStat",
+    "range": true,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "BloodSugarStatPOJO",
+    "wireTypes": {
+      "average": "D",
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "date": "I",
+      "deviceActiveTime": "J",
+      "goalAchieved": "I",
+      "highCounts": "I",
+      "highThreshold": "D",
+      "lowCounts": "I",
+      "lowThreshold": "D",
+      "max": "D",
+      "min": "D",
+      "modifiedTimestamp": "J",
+      "normalCounts": "I",
+      "normalPercent": "I",
+      "timezone": "Ljava/lang/String;",
+      "warningCounts": "I"
+    }
+  },
+  {
+    "id": "glucose-warning",
+    "category": "vitals",
+    "title": "血糖预警",
+    "table": "DBBloodSugarWarning",
+    "fields": [
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "timestamp",
+        "name": "timestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "value",
+        "name": "value",
+        "type": "Ljava/lang/Double;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "type",
+        "name": "warningType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "modifiedTimestamp": "modified_timestamp",
+      "timestamp": "timestamp",
+      "value": "value",
+      "warningType": "type"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "type",
+      "timestamp"
+    ],
+    "version": "v4/c2s/health/glucose/queryGlucoseWarnVersion",
+    "pull": "v5/c2s/health/glucose/queryGlucoseWarn",
+    "push": "v5/c2s/health/glucose/syncGlucoseWarn",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "BloodSugarWarningPOJO",
+    "wireTypes": {
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "modifiedTimestamp": "J",
+      "timestamp": "J",
+      "value": "D",
+      "warningType": "I"
+    }
+  },
+  {
+    "id": "sleep-rr",
+    "category": "sleep",
+    "title": "睡眠 RR 间期",
+    "table": "DBSleepRRInterval",
+    "fields": [
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "data_created_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "data_list",
+        "name": "dataList",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "dataClient": "data_client",
+      "startTimestamp": "data_created_timestamp",
+      "rrIntervalDataList": "data_list",
+      "modifiedTimestamp": "modified_timestamp"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "data_created_timestamp"
+    ],
+    "version": "v3/c2s/health/sleep/querySleepRRIntervalDetailVersion",
+    "pull": "v5/c2s/health/sleep/querySleepRRIntervalDetailData",
+    "push": "v5/c2s/health/sleep/syncSleepRRIntervalDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "SleepRRIntervalPOJO",
+    "wireTypes": {
+      "dataClient": "Ljava/lang/String;",
+      "modifiedTimestamp": "J",
+      "rrIntervalDataList": "Ljava/util/List;",
+      "startTimestamp": "J"
+    }
+  },
+  {
+    "id": "exercise-intensity",
+    "category": "workout",
+    "title": "训练强度",
+    "table": "DBExerciseIntensity",
+    "fields": [
+      {
+        "column": "algo_exercise_load",
+        "name": "algoExerciseLoad",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "algo_result",
+        "name": "algoResult",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "duration",
+        "name": "duration",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "flash_id",
+        "name": "flashId",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modify_source",
+        "name": "modifySource",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "raw_exercise_intensity",
+        "name": "rawExerciseIntensity",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "sport_mode",
+        "name": "sportMode",
+        "type": "Ljava/lang/Integer;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "start_timestamp",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_to_device",
+        "name": "syncToDevice",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "update_timestamp",
+        "name": "updateTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "value",
+        "name": "value",
+        "type": "Ljava/lang/Double;",
+        "required": false,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "algoExerciseLoad": "algo_exercise_load",
+      "algoResult": "algo_result",
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "workoutDuration": "duration",
+      "flashId": "flash_id",
+      "modifiedTimestamp": "modified_timestamp",
+      "modifySource": "modify_source",
+      "rawExerciseIntensity": "raw_exercise_intensity",
+      "workoutType": "sport_mode",
+      "startTimestamp": "start_timestamp",
+      "updateTimestamp": "update_timestamp",
+      "exerciseIntensity": "value"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "start_timestamp"
+    ],
+    "version": "v5/c2s/exercise/intensity/queryExerciseIntensityVersion",
+    "pull": "v5/c2s/exercise/intensity/pullStatVersionPageData",
+    "push": "v5/c2s/exercise/intensity/syncExerciseIntensity",
+    "range": true,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "ExerciseIntensityPOJO",
+    "wireTypes": {
+      "algoExerciseLoad": "Ljava/lang/Integer;",
+      "algoResult": "Ljava/lang/Integer;",
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "exerciseIntensity": "Ljava/lang/Integer;",
+      "flashId": "Ljava/lang/Long;",
+      "modifiedTimestamp": "J",
+      "modifySource": "Ljava/lang/Integer;",
+      "rawExerciseIntensity": "Ljava/lang/Integer;",
+      "startTimestamp": "J",
+      "updateTimestamp": "J",
+      "workoutDuration": "J",
+      "workoutType": "I"
+    }
+  },
+  {
+    "id": "mental",
+    "category": "vitals",
+    "title": "身心明细",
+    "table": "DBPhysicalMentalStatus",
+    "fields": [
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "start_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "stress",
+        "name": "stress",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "stress_state",
+        "name": "stressState",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "type",
+        "name": "type",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "value",
+        "name": "value",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "dataCreatedTimestamp": "start_timestamp",
+      "display": "display",
+      "modifiedTimestamp": "modified_timestamp",
+      "stress": "stress",
+      "stressState": "stress_state",
+      "type": "type",
+      "value": "value"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "start_timestamp"
+    ],
+    "version": "v4/c2s/health/physical/mental/queryPhysicalMentalHealthDetailVersion",
+    "pull": "v5/c2s/health/physical/mental/queryPhysicalMentalHealthDetailData",
+    "push": "v5/c2s/health/physical/mental/syncPhysicalMentalHealthDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBPhysicalMentalStatus",
+    "wireTypes": {
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "display": "I",
+      "modifiedTimestamp": "J",
+      "ssoid": "Ljava/lang/String;",
+      "stress": "I",
+      "stressState": "I",
+      "syncStatus": "I",
+      "type": "I",
+      "value": "I"
+    },
+    "group": {
+      "array": "dataList",
+      "offsets": {
+        "startTimeOffset": "dataCreatedTimestamp"
+      },
+      "rename": {
+        "hrv": "value"
+      },
+      "fixed": {
+        "display": 1
+      }
+    }
+  },
+  {
+    "id": "wrist",
+    "category": "vitals",
+    "title": "腕温明细",
+    "table": "DBWristTemperature",
+    "fields": [
+      {
+        "column": "base_line",
+        "name": "baseLine",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "confidence",
+        "name": "confidence",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "end_timestamp",
+        "name": "endTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "start_timestamp",
+        "name": "startTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "status",
+        "name": "status",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "value",
+        "name": "value",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "baseLine": "base_line",
+      "clientModel": "client_model",
+      "confidence": "confidence",
+      "dataClient": "data_client",
+      "display": "display",
+      "endTimestamp": "end_timestamp",
+      "modifiedTimestamp": "modified_timestamp",
+      "startTimestamp": "start_timestamp",
+      "status": "status",
+      "value": "value"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "start_timestamp"
+    ],
+    "version": "v4/c2s/health/wrist/temperature/queryWristTemperatureDetailVersion",
+    "pull": "v5/c2s/health/wrist/temperature/queryWristTemperatureDetailData",
+    "push": "v5/c2s/health/wrist/temperature/syncWristTemperatureDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBWristTemperature",
+    "wireTypes": {
+      "baseLine": "I",
+      "clientModel": "Ljava/lang/String;",
+      "confidence": "I",
+      "dataClient": "Ljava/lang/String;",
+      "display": "I",
+      "endTimestamp": "J",
+      "modifiedTimestamp": "J",
+      "ssoid": "Ljava/lang/String;",
+      "startTimestamp": "J",
+      "status": "I",
+      "syncStatus": "I",
+      "value": "I"
+    },
+    "group": {
+      "array": "wristTemperatures",
+      "offsets": {
+        "startTimeOffset": "startTimestamp",
+        "endTimeOffset": "endTimestamp"
+      },
+      "rename": {
+        "wristTemperature": "value",
+        "baseLineWristTemperature": "baseLine"
+      }
+    }
+  },
+  {
+    "id": "sunshine",
+    "category": "other",
+    "title": "日照明细",
+    "table": "DBSunshineDetail",
+    "fields": [
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "data_created_timestamp",
+        "name": "dataCreatedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "display",
+        "name": "display",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "light_intensity",
+        "name": "lightIntensity",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sun_bathing",
+        "name": "sunBathing",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "vitamin_d_ingestion",
+        "name": "vitaminDIngestion",
+        "type": "I",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "dataCreatedTimestamp": "data_created_timestamp",
+      "display": "display",
+      "lightIntensity": "light_intensity",
+      "modifiedTimestamp": "modified_timestamp",
+      "sunBathing": "sun_bathing",
+      "vitaminDIngestion": "vitamin_d_ingestion"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "data_created_timestamp"
+    ],
+    "version": "v5/c2s/health/sunshine/querySunshineDetailVersion",
+    "pull": "v5/c2s/health/sunshine/querySunshineDetailData",
+    "push": "v5/c2s/health/sunshine/syncSunshineDetail",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBSunshineDetail",
+    "wireTypes": {
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "dataCreatedTimestamp": "J",
+      "display": "I",
+      "lightIntensity": "I",
+      "modifiedTimestamp": "J",
+      "ssoid": "Ljava/lang/String;",
+      "sunBathing": "I",
+      "syncStatus": "I",
+      "vitaminDIngestion": "I"
+    },
+    "group": {
+      "array": "details",
+      "rename": {
+        "startTimestamp": "dataCreatedTimestamp"
+      }
+    }
+  },
+  {
+    "id": "sunshine-stat",
+    "category": "other",
+    "title": "日照汇总",
+    "table": "DBSunshineStat",
+    "fields": [
+      {
+        "column": "avg_v_d",
+        "name": "avgVD",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "client_model",
+        "name": "clientModel",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "data_client",
+        "name": "dataClient",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "date",
+        "name": "date",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "favorite_time",
+        "name": "favoriteTime",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "goal_complete",
+        "name": "goalComplete",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "modified_timestamp",
+        "name": "modifiedTimestamp",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sunshine_type",
+        "name": "sunshineType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "target_duration",
+        "name": "targetDuration",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "total_duration",
+        "name": "totalDuration",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "vitamin_d",
+        "name": "vitaminD",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "vitamin_d_ingestion",
+        "name": "vitaminDIngestion",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "vitamin_d_ingestion_time",
+        "name": "vitaminDIngestionTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "avgVD": "avg_v_d",
+      "clientModel": "client_model",
+      "dataClient": "data_client",
+      "date": "date",
+      "favoriteTime": "favorite_time",
+      "goalComplete": "goal_complete",
+      "modifiedTimestamp": "modified_timestamp",
+      "sunshineType": "sunshine_type",
+      "targetDuration": "target_duration",
+      "totalDuration": "total_duration",
+      "vitaminD": "vitamin_d",
+      "vitaminDIngestion": "vitamin_d_ingestion",
+      "vitaminDIngestionTime": "vitamin_d_ingestion_time"
+    },
+    "keys": [
+      "ssoid",
+      "data_client",
+      "date"
+    ],
+    "version": "v5/c2s/health/sunshine/querySunshineStatVersion",
+    "pull": "v5/c2s/health/sunshine/pullSunshineStatPageList",
+    "push": "v5/c2s/health/sunshine/syncSunshine",
+    "range": true,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBSunshineStat",
+    "wireTypes": {
+      "avgVD": "I",
+      "clientModel": "Ljava/lang/String;",
+      "dataClient": "Ljava/lang/String;",
+      "date": "I",
+      "favoriteTime": "I",
+      "goalComplete": "I",
+      "modifiedTimestamp": "J",
+      "ssoid": "Ljava/lang/String;",
+      "sunshineType": "I",
+      "syncStatus": "I",
+      "targetDuration": "I",
+      "totalDuration": "I",
+      "vitaminD": "I",
+      "vitaminDIngestion": "I",
+      "vitaminDIngestionTime": "J"
+    },
+    "group": {
+      "array": "details"
+    }
+  },
+  {
+    "id": "profile",
+    "category": "settings",
+    "title": "个人资料",
+    "table": "DBUserInfo",
+    "fields": [
+      {
+        "column": "account_name",
+        "name": "accountName",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "age",
+        "name": "age",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "avatar",
+        "name": "avatar",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "birthday",
+        "name": "birthday",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "bloodPressureType",
+        "name": "bloodPressureType",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "country",
+        "name": "country",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "create_time",
+        "name": "createTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "guide_status",
+        "name": "guideStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "height",
+        "name": "height",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_time",
+        "name": "modifiedTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "sex",
+        "name": "sex",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "status",
+        "name": "status",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "upload_avatar",
+        "name": "uploadAvatar",
+        "type": "Z",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "user_id",
+        "name": "userId",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "userInfoId",
+        "type": "J",
+        "required": true,
+        "auto": true
+      },
+      {
+        "column": "user_name",
+        "name": "userName",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "user_name_need_modify",
+        "name": "userNameNeedModify",
+        "type": "Z",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "weight",
+        "name": "weight",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "birthday": "birthday",
+      "bloodPressureType": "bloodPressureType",
+      "guideStatus": "guide_status",
+      "height": "height",
+      "modifiedTime": "modified_time",
+      "sex": "sex",
+      "weight": "weight"
+    },
+    "keys": [
+      "ssoid"
+    ],
+    "version": "v3/c2s/account/queryUserAccount",
+    "pull": "v3/c2s/account/queryUserAccount",
+    "push": "",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "PullUserInfoResBody",
+    "wireTypes": {
+      "birthday": "Ljava/lang/String;",
+      "bloodPressureType": "I",
+      "clientDataId": "Ljava/lang/String;",
+      "guideStatus": "I",
+      "height": "Ljava/lang/String;",
+      "modifiedTime": "J",
+      "sex": "Ljava/lang/String;",
+      "ssoid": "Ljava/lang/String;",
+      "timezone": "Ljava/lang/String;",
+      "unitType": "I",
+      "weight": "Ljava/lang/String;"
+    },
+    "snapshot": true,
+    "encrypted": true,
+    "single": true
+  },
+  {
+    "id": "goals",
+    "category": "settings",
+    "title": "健康目标",
+    "table": "DBUserGoalInfo",
+    "fields": [
+      {
+        "column": "dead_line",
+        "name": "deadLine",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "goalInfoId",
+        "type": "J",
+        "required": true,
+        "auto": true
+      },
+      {
+        "column": "modified_time",
+        "name": "modifiedTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "type",
+        "name": "type",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "value",
+        "name": "value",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "modifiedTime": "modified_time",
+      "goalType": "type",
+      "goalStr": "value"
+    },
+    "keys": [
+      "ssoid",
+      "type"
+    ],
+    "version": "v2/c2s/sport/goal/queryUserGoal",
+    "pull": "v2/c2s/sport/goal/queryUserGoal",
+    "push": "",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "PullSportGoalRspBody",
+    "wireTypes": {
+      "clientDataId": "Ljava/lang/String;",
+      "endTime": "J",
+      "goalNum": "I",
+      "goalStr": "Ljava/lang/String;",
+      "goalType": "I",
+      "goalUnit": "I",
+      "modifiedTime": "J",
+      "ssoid": "Ljava/lang/String;",
+      "startTime": "J"
+    },
+    "snapshot": true
+  },
+  {
+    "id": "preferences",
+    "category": "settings",
+    "title": "作息与睡眠偏好",
+    "table": "DBUserPreference",
+    "fields": [
+      {
+        "column": "create_time",
+        "name": "createTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "preference_key",
+        "name": "key",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "modified_time",
+        "name": "modifiedTime",
+        "type": "J",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "module",
+        "name": "module",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "ssoid",
+        "name": "ssoid",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      },
+      {
+        "column": "sync_status",
+        "name": "syncStatus",
+        "type": "I",
+        "required": true,
+        "auto": false
+      },
+      {
+        "column": "_id",
+        "name": "userPreferenceId",
+        "type": "J",
+        "required": true,
+        "auto": true
+      },
+      {
+        "column": "preference_value",
+        "name": "value",
+        "type": "Ljava/lang/String;",
+        "required": false,
+        "auto": false
+      }
+    ],
+    "mapping": {
+      "settingKey": "preference_key",
+      "settingValue": "preference_value",
+      "module": "module"
+    },
+    "keys": [
+      "ssoid",
+      "preference_key"
+    ],
+    "version": "v1/c2s/switch/queryUserMultipleSettings",
+    "pull": "v1/c2s/switch/queryUserMultipleSettings",
+    "push": "",
+    "range": false,
+    "wrapper": "",
+    "versionField": "modifiedTimestamp",
+    "versionList": "modifiedTimestampList",
+    "pullField": "modifiedTimestamp",
+    "cloudModel": "DBUserPreference",
+    "wireTypes": {
+      "settingKey": "Ljava/lang/String;",
+      "settingValue": "Ljava/lang/String;",
+      "module": "Ljava/lang/String;"
+    },
+    "snapshot": true,
+    "request": {
+      "settingKeyList": [
+        "USER_REST_NEW",
+        "SLEEP_MODEL_SETTINGS",
+        "SLEEP_GOAL",
+        "BED_TIME_SWITCH",
+        "BED_TIME",
+        "STAY_UP_BED_TIME_SWITCH",
+        "STAY_UP_BED_TIME",
+        "CLOSE_MUSIC"
+      ]
+    }
+  }
+]
