@@ -6,6 +6,8 @@
 
 这是独立适配项目，功能仍在逐步完善。各版本变更见 [更新记录](CHANGELOG.md)。
 
+开发与修复须遵守 [项目规则](AGENTS.md) 和 [工程规范](docs/engineering/README.md)。当前领域审查进度与遗留问题分别记录在 [审查计划](docs/engineering/AUDIT_PLAN.md) 和 [问题台账](docs/engineering/audits/FINDINGS.md)。
+
 ## 主要功能
 
 | 功能 | 说明 |

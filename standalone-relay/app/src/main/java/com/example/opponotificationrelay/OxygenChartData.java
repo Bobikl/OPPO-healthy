@@ -6,6 +6,11 @@ import java.util.*;
 
 /** Official oxygen grouping: hourly ranges, daily ranges, then monthly ranges. */
 final class OxygenChartData {
+    static boolean completeDay(HealthMetricsData data,LocalDate date){
+        if(data==null||data.window==null||!data.window.anchor.equals(date))return false;
+        HealthMetricsData.Day day=data.find(date);if(day==null||day.oxygenCount<=0)return false;
+        return data.oxygen.subMap(HealthMetricsData.time(date),true,HealthMetricsData.time(date.plusDays(1)),false).size()==day.oxygenCount;
+    }
     static List<HealthMetricsData.Point> ranges(HealthMetricsData data,HealthMetricsData.Period period) {
         List<HealthMetricsData.Point> result=new ArrayList<>();if(data==null)return result;
         TreeMap<Long,int[]> bins=new TreeMap<>();long start=HealthMetricsData.time(period.start);

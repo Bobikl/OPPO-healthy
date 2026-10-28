@@ -21,7 +21,7 @@ public final class OafSession {
     private final Events events;
     private final OafDeviceChannel device;
     private final OafHealthChannel health;
-    private final Map<Integer, ByteArrayOutputStream> fragments = new HashMap<>();
+    private final OafFragments fragments=new OafFragments();
     private volatile int notificationSession = -1;
     private int maxFragment = 960;
     private boolean discoveryQueried;
@@ -74,15 +74,9 @@ public final class OafSession {
         if ((frame[0] & 16) != 0) { events.status("收到 OAF 传输控制帧 session=" + sid); return; }
         int flag = frame[1] & 3;
         byte[] data = Arrays.copyOfRange(frame, 2, frame.length);
-        if (flag != 0) {
-            // OAF：1=首片，2=中片，3=末片。
-            if (flag == 1) fragments.put(sid, new ByteArrayOutputStream());
-            ByteArrayOutputStream partial = fragments.get(sid);
-            if (partial == null || partial.size() + data.length > 20480) throw new IOException("OAF invalid fragments");
-            partial.write(data);
-            if (flag != 3) return;
-            data = partial.toByteArray(); fragments.remove(sid);
-        }
+        boolean healthSid=health!=null&&health.matches(sid);
+        if(sid!=1&&sid!=2&&sid!=notificationSession&&!(device!=null&&device.matches(sid))&&!healthSid)return;
+        data=fragments.accept(sid,healthSid?health.fragmentGeneration():0,flag,data,System.nanoTime());if(data==null)return;
         if (sid == 2) discovery(data);
         else if (sid == 1) control(data);
         else if (device!=null && device.matches(sid)) device.receive(data);

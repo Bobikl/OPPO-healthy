@@ -7,10 +7,12 @@ public final class OsaLocalAnalysis {
  public static String last(Context c){try{String key=RelayConfig.getTargetMac(c)+"|"+LocalDate.now();String s=c.getSharedPreferences("osa_local_results",0).getString(key,"");return s.isEmpty()?"尚无本机分析结果":label(new JSONObject(s));}catch(Exception e){return "尚无本机分析结果";}}
  public static String run(Context c,BooleanSupplier cancelled)throws Exception{
   if(SnoreRecordingService.isRunning())throw new IOException("OSA_RECORDING_BUSY");String device=RelayConfig.getTargetMac(c);DeviceIdentity identity=DeviceIdentityStore.read(c);if(identity==null||!"OWW251".equals(identity.model))throw new IOException("OSA_MODEL_UNVERIFIED");LocalDate date=LocalDate.now();
-  OsaAnalysisRepository.refresh(c,device,date,cancelled);if(cancelled.getAsBoolean()||!device.equals(RelayConfig.getTargetMac(c)))throw new IOException("OSA_SYNC_CANCELLED");
-  OsaAnalysisInput input=OsaAnalysisRepository.load(c,device,date);OsaResultBean result=OsaRiskAdapter.watch(identity.model,input,OsaSnoreInput.load(c,device,input.start*1000,input.end*1000));
+  OsaAnalysisScope scope=new OsaAnalysisScope(device,date,ZoneId.systemDefault());
+  OsaAnalysisRepository.refresh(c,scope,cancelled);scope.check(RelayConfig.getTargetMac(c),LocalDate.now(),ZoneId.systemDefault(),cancelled.getAsBoolean());
+  OsaAnalysisInput input=OsaAnalysisRepository.load(c,scope);OsaResultBean result=OsaRiskAdapter.watch(identity.model,input,OsaSnoreInput.load(c,device,input.start*1000,input.end*1000));
+  scope.check(RelayConfig.getTargetMac(c),LocalDate.now(),ZoneId.systemDefault(),cancelled.getAsBoolean());
   if(!OsaRiskAdapter.valid(result))return "本次数据不足，未生成呼吸暂停结果。"+(input.oxygenSeconds<180?"整晚血氧资料仍不足，请保持佩戴并在起床后同步。":"请保持整晚佩戴，后续有完整睡眠资料时再分析。");
-  if(cancelled.getAsBoolean()||!device.equals(RelayConfig.getTargetMac(c))||!date.equals(LocalDate.now()))throw new IOException("OSA_SYNC_CANCELLED");
+  scope.check(RelayConfig.getTargetMac(c),LocalDate.now(),ZoneId.systemDefault(),cancelled.getAsBoolean());
   JSONObject data=new JSONObject().put("source","local-OSALib-6.6.7").put("date",date.toString()).put("device",device).put("level",result.osaLevel).put("ahi",result.osaAhi).put("invalidSpo2Ratio",result.invalidSpo2Ratio).put("sleepStart",input.start).put("sleepEnd",input.end).put("sleepMinutes",input.sleepMinutes).put("sensorMinutes",input.sensorMinutes).put("oxygenSamples",input.oxygenSeconds).put("profile","official-empty-defaults").put("generatedAt",System.currentTimeMillis());
   if(!c.getSharedPreferences("osa_local_results",0).edit().putString(device+"|"+date,data.toString()).commit())throw new IOException("OSA_RESULT_STORAGE");return label(data);
  }

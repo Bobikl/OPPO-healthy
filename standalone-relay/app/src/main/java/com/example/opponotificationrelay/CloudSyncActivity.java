@@ -37,18 +37,18 @@ public final class CloudSyncActivity extends OfficialUiActivity {
         LinearLayout actions=card(options);now=new Button(this);now.setText("立即同步");actions.addView(now,new LinearLayout.LayoutParams(-1,dp(52)));DeviceStyle.styleTree(now);
         now.setOnClickListener(v->{CloudSyncEngine.startManual(this);render();});
         TextView caption=label("同步模式",15,DeviceStyle.TEXT);caption.setPadding(0,dp(14),0,dp(6));actions.addView(caption);
-        modes=new RadioGroup(this);String[] names={"每天定时同步","充电时同步","连接 Wi-Fi 时同步"};
-        for(int i=0;i<names.length;i++){RadioButton radio=new RadioButton(this);radio.setId(4100+i);radio.setText(names[i]);radio.setTextColor(DeviceStyle.TEXT);radio.setTextSize(15);radio.setMinHeight(dp(48));modes.addView(radio);}
+        modes=new RadioGroup(this);String[] names={"仅手动同步","充电时同步","连接 Wi-Fi 时同步","每天定时同步"};int[] modeIds={4103,4101,4102,4100};
+        for(int i=0;i<names.length;i++){RadioButton radio=new RadioButton(this);radio.setId(modeIds[i]);radio.setText(names[i]);radio.setTextColor(DeviceStyle.TEXT);radio.setTextSize(15);radio.setMinHeight(dp(48));modes.addView(radio);}
         actions.addView(modes);time=label("",15,DeviceStyle.ACCENT);time.setPadding(dp(8),dp(12),0,dp(12));actions.addView(time);
         time.setOnClickListener(v->new TimePickerDialog(this,(view,h,m)->{CloudSyncState.time(this,h,m);render();},CloudSyncState.hour(this),CloudSyncState.minute(this),true).show());
-        TextView modeHint=label("自动同步需要网络。充电或 Wi-Fi 条件持续满足时，每小时检查一次；系统省电可能延后执行。",12,DeviceStyle.MUTED);modeHint.setPadding(0,dp(8),0,0);actions.addView(modeHint);
+        TextView modeHint=label("开启数据类型只保存选择。自动同步等待下一次设定时间、接入充电或连接 Wi-Fi；同一次连接不会每小时重复。仅手动模式请点击「立即同步」。系统省电可能延后执行。",12,DeviceStyle.MUTED);modeHint.setPadding(0,dp(8),0,0);actions.addView(modeHint);
         for(CloudCategory category:CloudCategory.values()){
             LinearLayout box=card(options);OfficialStyleSwitch toggle=toggle(box,category.title,category.description);switches.put(category,toggle);
             TextView status=label("",12,DeviceStyle.MUTED);status.setPadding(0,dp(10),0,dp(2));box.addView(status);statuses.put(category,status);
             toggle.setOnCheckedChangeListener((button,on)->{if(!rendering){CloudSyncState.change(this,"category."+category.key,on);render();}});
         }
         master.setOnCheckedChangeListener((button,on)->{if(!rendering){CloudSyncState.change(this,"enabled",on);render();}});
-        modes.setOnCheckedChangeListener((group,id)->{if(!rendering){CloudSyncState.mode(this,new String[]{"daily","charging","wifi"}[id-4100]);render();}});
+        modes.setOnCheckedChangeListener((group,id)->{if(!rendering){CloudSyncState.mode(this,new String[]{"daily","charging","wifi","manual"}[id-4100]);render();}});
         DeviceStyle.shell(this,"数据云同步",scroll);render();
     }
     private void showCoverage(){
@@ -63,7 +63,8 @@ public final class CloudSyncActivity extends OfficialUiActivity {
                 text.append("\n");
             }
             text.append("\n作息、睡眠模式及睡眠目标等偏好的新修改支持上传并读回确认。")
-                .append("\n健康记录上行仍在核对；运动轨迹、鼾声音频、档案附件及其他扩展项目尚未开放。")
+                .append("\n已接入健康记录上传和云端回读确认；原生手表目前支持日常活动及心率，新收到的数据须已核对账号与设备归属。")
+                .append("\n云端冲突和结果未知的上传保留待处理；运动轨迹、鼾声音频、档案附件及其他扩展项目尚未开放。")
                 .append("\n每类显示的下载完成，仅代表上列已开放项目。空云账号的下载完成不代表该类型上行已验证。");
         }catch(Exception e){text.append("范围清单暂时无法读取");}
         TextView body=label(text.toString(),14,DeviceStyle.TEXT);body.setPadding(dp(20),dp(12),dp(20),dp(20));
@@ -76,7 +77,7 @@ public final class CloudSyncActivity extends OfficialUiActivity {
             boolean enabled=CloudSyncState.enabled(this);master.setChecked(enabled);options.setVisibility(enabled?View.VISIBLE:View.GONE);
             String message=!enabled?"已关闭":account.isEmpty()?"请先在「账号与登录」中登录":!CloudSyncState.any(this)?"请选择需要同步的数据类别":CloudSyncEngine.running()?CloudSyncEngine.progress():CloudSyncState.prefs(this).getString(account+".summary","等待同步");
             overall.setText(message);now.setEnabled(enabled&&!account.isEmpty()&&CloudSyncState.any(this)&&!CloudSyncEngine.running());
-            String mode=CloudSyncState.mode(this);modes.check("charging".equals(mode)?4101:"wifi".equals(mode)?4102:4100);
+            String mode=CloudSyncState.mode(this);modes.check("manual".equals(mode)?4103:"charging".equals(mode)?4101:"wifi".equals(mode)?4102:4100);
             time.setVisibility("daily".equals(mode)?View.VISIBLE:View.GONE);time.setText(String.format(Locale.CHINA,"同步时间  %02d:%02d  ›",CloudSyncState.hour(this),CloudSyncState.minute(this)));
             for(CloudCategory category:CloudCategory.values()){switches.get(category).setChecked(CloudSyncState.selected(this,category));statuses.get(category).setText(account.isEmpty()?"登录后显示同步记录":CloudSyncState.result(this,account,category));}
         }finally{rendering=false;}

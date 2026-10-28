@@ -34,6 +34,11 @@ public final class RecoveryBoundaryTest {
         }
         check(StartupPolicy.restore(true,true),"saved intent remains recoverable after regrant");
         check(!StartupPolicy.restore(true,false),"explicit stop wins");
+        check(StartupPolicy.listenerRepair(true,true,true,false,true,true,HandoverPolicy.Presence.OFFLINE,true,true),"only missing actual binding permits opted-in repair");
+        for(int missing=0;missing<7;missing++)check(!StartupPolicy.listenerRepair(missing!=0,missing!=1,missing!=2,false,missing!=3,missing!=4,HandoverPolicy.Presence.OFFLINE,missing!=5,missing!=6),"every prerequisite is required");
+        check(!StartupPolicy.listenerRepair(true,true,true,true,true,true,HandoverPolicy.Presence.OFFLINE,true,true),"healthy binding is never reset");
+        check(!StartupPolicy.listenerRepair(true,true,true,false,true,true,HandoverPolicy.Presence.ONLINE,true,true),"official owner blocks repair");
+        check(!StartupPolicy.listenerRepair(true,true,true,false,true,true,HandoverPolicy.Presence.UNKNOWN,true,true),"unknown owner blocks repair");
         Observer watcher=new Observer(){};int[] ids={10577,10578};
         Legacy old=new Legacy();check(!ObserverRegistration.register(old,Legacy.class,Observer.class,watcher,3,19,ids),"old API fallback");check(old.calls==1&&old.watcher==watcher,"register legacy once");
         Modern modern=new Modern();check(ObserverRegistration.register(modern,Modern.class,Observer.class,watcher,3,19,ids),"prefer selected UID API");check(modern.targeted==1&&modern.calls==0&&Arrays.equals(ids,modern.selected),"no duplicate registration");
@@ -42,13 +47,17 @@ public final class RecoveryBoundaryTest {
         failed=false;try{ObserverRegistration.register(new Object(),Object.class,Observer.class,watcher,3,19,ids);}catch(NoSuchMethodException e){failed=!ObserverRegistration.retryable(ObserverRegistration.failure(e));}check(failed,"missing both APIs stops retries");
         for(Throwable e:new Throwable[]{new NoSuchFieldException(),new ClassNotFoundException(),new NoSuchMethodError(),new InvocationTargetException(new NoSuchMethodException())})check(!ObserverRegistration.retryable(ObserverRegistration.failure(e)),"permanent capability failure");
         for(Throwable e:new Throwable[]{new SecurityException(),new IllegalStateException(),new java.io.IOException()})check(ObserverRegistration.retryable(ObserverRegistration.failure(e)),"transient failure can retry");
-        String[] launch=PairingImportLaunch.command("/data/app/a'b/base.apk","com.heytap.health",10577,"AA:BB:CC:DD:EE:FF");
-        check(launch.length==4&&launch[0].equals("su")&&launch[1].equals("10577")&&launch[2].equals("-c"),"UID applied before starting ART");
-        check(launch[3].contains("a'\\''b")&&launch[3].endsWith("com.heytap.health 10577 AA:BB:CC:DD:EE:FF"),"shell quoting and fixed target");
-        for(String path:new String[]{null,"relative","/tmp/a\ncommand","/tmp/a\rcommand","/tmp/a\0command"}){failed=false;try{PairingImportLaunch.command(path,"com.heytap.health",10577,"AA:BB:CC:DD:EE:FF");}catch(IllegalArgumentException e){failed=true;}check(failed,"reject invalid classpath");}
-        for(String pkg:new String[]{"other", "com.heytap.health;id",null}){failed=false;try{PairingImportLaunch.command("/base.apk",pkg,10577,"AA:BB:CC:DD:EE:FF");}catch(IllegalArgumentException e){failed=true;}check(failed,"reject nonofficial target");}
-        failed=false;try{PairingImportLaunch.command("/base.apk","com.heytap.health",0,"AA:BB:CC:DD:EE:FF");}catch(IllegalArgumentException e){failed=true;}check(failed,"never read pairing as root");
-        failed=false;try{PairingImportLaunch.command("/base.apk","com.heytap.health",10577,"AA:BB:CC:DD:EE:FF;id");}catch(IllegalArgumentException e){failed=true;}check(failed,"reject MAC injection");
+        String[] launch=PairingImportLaunch.command("/data/app/a'b/base.apk","/data/app/official/base.apk","com.heytap.health",10577,"AA:BB:CC:DD:EE:FF");
+        check(launch.length==5&&launch[0].equals("su")&&launch[1].equals("--mount-master")&&launch[2].equals("10577")&&launch[3].equals("-c"),"global mount visibility and official UID applied before starting ART");
+        check(launch[4].contains("a'\\''b")&&launch[4].endsWith("com.heytap.health 10577 AA:BB:CC:DD:EE:FF"),"shell quoting and fixed target");
+        check(launch[4].contains("base.apk:/data/app/official/base.apk'"),"official decoder APK passed in one quoted classpath");
+        for(String path:new String[]{null,"relative","/tmp/a\ncommand","/tmp/a\rcommand","/tmp/a\0command","/tmp/a:other.apk"}){
+            failed=false;try{PairingImportLaunch.command(path,"/official.apk","com.heytap.health",10577,"AA:BB:CC:DD:EE:FF");}catch(IllegalArgumentException e){failed=true;}check(failed,"reject invalid own classpath");
+            failed=false;try{PairingImportLaunch.command("/base.apk",path,"com.heytap.health",10577,"AA:BB:CC:DD:EE:FF");}catch(IllegalArgumentException e){failed=true;}check(failed,"reject invalid official classpath");
+        }
+        for(String pkg:new String[]{"other", "com.heytap.health;id",null}){failed=false;try{PairingImportLaunch.command("/base.apk","/official.apk",pkg,10577,"AA:BB:CC:DD:EE:FF");}catch(IllegalArgumentException e){failed=true;}check(failed,"reject nonofficial target");}
+        failed=false;try{PairingImportLaunch.command("/base.apk","/official.apk","com.heytap.health",0,"AA:BB:CC:DD:EE:FF");}catch(IllegalArgumentException e){failed=true;}check(failed,"never read pairing as root");
+        failed=false;try{PairingImportLaunch.command("/base.apk","/official.apk","com.heytap.health",10577,"AA:BB:CC:DD:EE:FF;id");}catch(IllegalArgumentException e){failed=true;}check(failed,"reject MAC injection");
         System.out.println("RecoveryBoundaryTest: "+checks+" checks passed");
     }
 }

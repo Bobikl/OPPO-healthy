@@ -27,6 +27,13 @@ public final class OxygenChartDataTest {
         check(OxygenChartData.ranges(data,new HealthMetricsData.Period(LocalDate.of(2023,1,1),3)).isEmpty(),"Historical empty year");
         check(OxygenChartData.ranges(null,new HealthMetricsData.Period(date,0)).isEmpty(),"Loading state stays empty");
         check(OxygenChartData.summary(Collections.emptyList()).equals("—"),"No invented values");check(OxygenChartData.label(96,96).equals("96"),"Single reading label");
+        HealthMetricsData cached=new HealthMetricsData();cached.window=new HealthSnapshotWindow(date.minusDays(1),date.plusDays(1),date);
+        check(!OxygenChartData.completeDay(null,date),"No cache is not ready");check(!OxygenChartData.completeDay(cached,date),"Missing day still waits for import");
+        HealthMetricsData.Day raw=day(cached,date,96,98);raw.oxygenCount=2;cached.oxygen.put(start,96);
+        check(!OxygenChartData.completeDay(cached,date),"Incomplete raw day still waits");cached.oxygen.put(start+60000,98);
+        check(OxygenChartData.completeDay(cached,date),"Complete cached day can render while import is pending");
+        cached.oxygen.put(start-1,90);cached.oxygen.put(HealthMetricsData.time(date.plusDays(1)),91);check(OxygenChartData.completeDay(cached,date),"Adjacent-day samples cannot change readiness");
+        check(!OxygenChartData.completeDay(cached,date.minusDays(1)),"Wrong anchor cannot render");raw.oxygenCount=0;check(!OxygenChartData.completeDay(cached,date),"Empty day waits for final read");
         System.out.println("OxygenChartDataTest: "+checks+" checks passed");
     }
 }

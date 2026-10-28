@@ -28,6 +28,8 @@ public final class OafHealthChannel {
         synchronized(writeLock){try{while(true){Frame frame;synchronized(this){if(closed){outbox.clear();return;}frame=outbox.pollFirst();}if(frame==null)return;wire.send(frame.session,frame.data);}}
             catch(IOException failure){synchronized(this){fail("健康连接发送失败，本次操作未确认");}throw failure;}}
     }
+    private long fragmentGeneration;
+    synchronized long fragmentGeneration(){return fragmentGeneration;}
     private int peer,session=-1,requested,nextSession=40,phase;
     private long deadline,revision,readAt;
     private boolean wanted,started,connecting,closed,refreshRequested,retire;
@@ -67,7 +69,7 @@ public final class OafHealthChannel {
     public synchronized int reserved(){return session>=32?session:connecting?requested:-1;}
     public synchronized boolean matches(int sid){return !closed && sid>=32 && sid==session;}
     public synchronized Snapshot snapshot(){return new Snapshot(values,revision,readAt,phase!=0 || connecting || refreshRequested,!closed && !retire && session>=32,message);}
-    public synchronized void close(){outbox.clear();finishOsa(false,null,"呼吸监测读取已中断");finishHistory(false,null,"连接已断开");finishSleep(false,null,"手表连接已断开，本次操作未确认");closed=true;session=-1;connecting=false;phase=0;refreshRequested=false;values=Collections.emptyMap();before=null;changeKey=null;readAt=0;revision++;}
+    public synchronized void close(){fragmentGeneration++;outbox.clear();finishOsa(false,null,"呼吸监测读取已中断");finishHistory(false,null,"连接已断开");finishSleep(false,null,"手表连接已断开，本次操作未确认");closed=true;session=-1;connecting=false;phase=0;refreshRequested=false;values=Collections.emptyMap();before=null;changeKey=null;readAt=0;revision++;}
     private void changed(String msg){message=msg;events.status(msg);events.changed();}
     public synchronized void refresh(){if(closed || phase!=0 || connecting)return;wanted=true;refreshRequested=true;changed("正在读取手表设置…");}
     public synchronized boolean change(HealthSetting key,int value,long expected){
@@ -110,10 +112,10 @@ public final class OafHealthChannel {
         }else if(command==5){fail("健康设置服务需要额外鉴权");}
     }}finally{flush();}}
     private void established(int sid){
-        if(session!=sid){session=sid;values=Collections.emptyMap();readAt=0;revision++;}
+        if(session!=sid){fragmentGeneration++;session=sid;values=Collections.emptyMap();readAt=0;revision++;}
         connecting=false;deadline=0;retire=false;events.changed();
     }
-    private void fail(String msg){outbox.clear();finishOsa(false,null,"呼吸监测读取已中断");finishHistory(false,null,msg);finishSleep(false,null,msg);phase=0;refreshRequested=false;connecting=false;started=false;deadline=0;before=null;changeKey=null;values=Collections.emptyMap();readAt=0;revision++;retire=session>=32;changed(msg);}
+    private void fail(String msg){fragmentGeneration++;outbox.clear();finishOsa(false,null,"呼吸监测读取已中断");finishHistory(false,null,msg);finishSleep(false,null,msg);phase=0;refreshRequested=false;connecting=false;started=false;deadline=0;before=null;changeKey=null;values=Collections.emptyMap();readAt=0;revision++;retire=session>=32;changed(msg);}
     public void pump()throws IOException{try{synchronized(this){
         if(closed)return;long now=events.now();
         if(deadline!=0 && now>=deadline){if(sleepRequest!=null){fail("手表未确认作息设置，请核对后重试");return;}fail(changeKey==null?"读取超时，请刷新重试":"未确认保存结果，请刷新核对手表设置");return;}

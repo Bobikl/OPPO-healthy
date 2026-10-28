@@ -566,7 +566,13 @@
       "timezone": "Ljava/lang/String;",
       "updated": "I",
       "workout": "I"
-    }
+    },
+    "localOnly": [
+      "amountOfExercise",
+      "dataVersion",
+      "sedentaryState",
+      "timezone"
+    ]
   },
   {
     "id": "heart",
@@ -1947,7 +1953,10 @@
       "startTimestamp": "J",
       "syncStatus": "I",
       "updated": "I"
-    }
+    },
+    "localOnly": [
+      "algOriginData"
+    ]
   },
   {
     "id": "sleep-stat",
@@ -5483,7 +5492,13 @@
     },
     "group": {
       "array": "details"
-    }
+    },
+    "localOnly": [
+      "favoriteTime",
+      "sunshineType",
+      "vitaminDIngestion",
+      "vitaminDIngestionTime"
+    ]
   },
   {
     "id": "profile",

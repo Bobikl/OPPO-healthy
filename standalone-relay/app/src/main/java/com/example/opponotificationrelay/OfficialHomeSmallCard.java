@@ -37,15 +37,16 @@ final class OfficialHomeSmallCard extends FrameLayout {
     @Override public boolean onInterceptTouchEvent(android.view.MotionEvent e){return true;}
     void bind(HealthMetricsData data,LocalDate day){
         date=day;detailDate=day;HealthMetricsData.Day d=data==null?null:data.find(day);
+        if(kind==SUNSHINE&&data!=null&&day.equals(LocalDate.now())){d=data.sunshineDay(day);if(d!=null){date=d.date;detailDate=d.date;}}
         // Cache by rendered values, not the reader object: the home poll must not restart chart animation.
         String key=kind+"/"+day+"/"+HealthMetricsData.zone().getId()+"/"+(data==null?"":data.device)+"/";
         if(d==null)key+="empty";else switch(kind){
             case HEART:key+=d.latest+"/"+d.latestTime+"/"+d.min+"/"+d.max+"/"+d.rest;break;
             case SLEEP:key+=d.sleepMinutes+"/"+d.sleepScore+"/"+d.sleepOut;break;
             case OXYGEN:key+=d.oxygenLatest+"/"+d.oxygenTime;break;
-            case WRIST:key+=d.wristBase+"/"+d.wristValue;break;
+            case WRIST:key+=d.wristBase+"/"+d.wristValue+"/"+d.wristRawCount;break;
             case MENTAL:key+=d.mentalAverage+"/"+d.mentalState+"/"+d.mentalLatest+"/"+d.mentalLatestState+"/"+d.mentalTime;break;
-            case SUNSHINE:key+=d.sunshineMinutes+"/"+d.sunshineTarget;break;
+            case SUNSHINE:key+=d.date+"/"+d.sunshineMinutes+"/"+d.sunshineTarget;break;
             case GLUCOSE:key+=d.glucoseLatest+"/"+d.glucoseTime+"/"+d.glucoseTrend+"/"+d.glucoseLow+"/"+d.glucoseHigh;break;
             case APNEA:key+=d.apneaLevel;break;
         }
@@ -106,7 +107,7 @@ final class OfficialHomeSmallCard extends FrameLayout {
     }
     static String wristValue(HealthMetricsData.Day d){float value=Math.round((d.wristValue-d.wristBase)/10f)/10f;return String.format(Locale.CHINA,value>0?"+%.1f":"%.1f",value==0?0:value);}
     private void bindWrist(HealthMetricsData.Day d){
-        if(d==null||d.wristBase<=0||d.wristValue<=0){empty("手腕温度","health_icon_wrist",str("health_home_card_wrist_no_data_tip"));return;}
+        if(d==null||d.wristBase<=0||d.wristValue<=0){empty("手腕温度","health_icon_wrist",d!=null&&d.wristRawCount>0?"已有原始测量，点击查看":str("health_home_card_wrist_no_data_tip"));return;}
         float delta=Math.round((d.wristValue-d.wristBase)/10f)/10f;String value=wristValue(d)+str("health_base_degree_centigrade");
         card.setDataModel("手腕温度");card.n.setTextSize(22);card.setDataContent(value);card.p.setVisibility(GONE);card.e(HealthMetricsData.time(date),true);
         TextView tip=view("tvDataTip");tip.setVisibility(VISIBLE);tip.setText(str(delta>1?"health_home_card_wrist_baseline2":delta< -1?"health_home_card_wrist_baseline1":delta==0?"health_home_card_wrist_baseline_state3":"health_home_card_wrist_baseline3"));

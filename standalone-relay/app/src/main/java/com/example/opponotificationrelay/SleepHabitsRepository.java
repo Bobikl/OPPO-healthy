@@ -26,21 +26,42 @@ public final class SleepHabitsRepository {
     private String key(){return mac+":"+scope;}
     private void current(String expected)throws IOException{if(!expected.equals(target()))throw new IOException("SLEEP_TARGET_CHANGED");}
     private synchronized void status(String s){message=s;}
+    private String recoveryPointer(String owner)throws Exception {
+        JSONObject session=HealthAccountStore.load(context);java.io.File history=OfficialHistoryStore.current(context);String account=session==null?"":session.getString("account");
+        if(account.isEmpty()&&history!=null)account=OfficialHistoryStore.json(new java.io.File(history,"manifest.json")).getString("account");
+        return account.isEmpty()?"":"scope."+owner+"."+CloudSyncEngine.accountKey(account);
+    }
+    static JSONObject cachedRecovery(SharedPreferences prefs,String owner,String remembered)throws Exception {
+        if(remembered.isEmpty()||!prefs.contains(owner+":"+remembered+":pending"))return null;String saved=prefs.getString(owner+":"+remembered,null);if(saved==null)return null;JSONObject recovery=new JSONObject(saved);validate(recovery);return recovery;
+    }
     public synchronized void load(){
         if(busy)return;String selected=target();if(selected.isEmpty()){message="请先选择手表";return;}
         if(!selected.equals(mac)){values=new JSONObject();mode=null;loaded=false;scope="";mac=selected;revision++;}
         busy=true;message="正在读取本机作息记录…";final String owner=mac;
         worker.execute(()->{
             try{
+                String pointer=recoveryPointer(owner),remembered=pointer.isEmpty()?"":prefs.getString(pointer,"");
+                JSONObject recovery=cachedRecovery(prefs,owner,remembered);
+                if(recovery!=null){current(owner);synchronized(this){scope=remembered;values=recovery;loaded=true;mode=null;revision++;message="上次保存结果未确认；请先恢复睡眠模式，再核对手表上的提醒与目标";}return;}
                 JSONObject result=new OfficialSettingsClient(context).readSleep();current(owner);
                 String next=result.getString("scope");if(!next.matches("[0-9a-f]{64}"))throw new IOException("SLEEP_SCOPE");
                 JSONObject initial=baseline(result.getJSONObject("values"));
-                synchronized(this){scope=next;String saved=prefs.getString(key(),null);values=saved==null?initial:new JSONObject(saved);for(java.util.Iterator<String> keys=initial.keys();keys.hasNext();){String k=keys.next();if(!values.has(k))values.put(k,initial.get(k));}validate(values);loaded=true;mode=null;revision++;message="已读取本机作息记录，正在连接手表…";}
+                if(!pointer.isEmpty()&&!prefs.edit().putString(pointer,next).commit())throw new IOException("SLEEP_LOCAL_SAVE");
+                synchronized(this){scope=next;String saved=prefs.getString(key(),null);values=overlay(prefs,key(),initial,saved);validate(values);loaded=true;mode=null;revision++;message="已读取本机作息记录，正在连接手表…";}
                 try{if(!prefs.contains(key()+":pending")){readMode(owner,values);status("已读取作息记录，并同步睡眠模式");}}catch(Exception e){status("作息记录已读取；手表模式暂未读取，可刷新重试");}
                 if(prefs.contains(key()+":pending"))status("上次保存结果未确认；请先恢复睡眠模式，再核对手表上的提醒与目标");
             }catch(Exception e){status("作息读取失败："+safe(e)+"，请稍后刷新");}
             finally{synchronized(this){busy=false;}}
         });
+    }
+    static JSONObject overlay(SharedPreferences prefs,String key,JSONObject initial,String saved)throws Exception {
+        JSONObject fields=new JSONObject(prefs.getString(key+":fields","{}"));
+        if(!prefs.contains(key+":fields")&&saved!=null){
+            // Preserve old confirmed edits once, then retire each overlay when the current baseline agrees.
+            JSONObject legacy=new JSONObject(saved);for(String field:new String[]{"goal","bedOn","bedTime","stayOn","stayTime","music","accord","rests"})if(legacy.has(field)&&!CloudStore.canonical(legacy.get(field)).equals(CloudStore.canonical(initial.opt(field))))fields.put(field,new JSONObject().put("value",legacy.get(field)).put("revision",UUID.randomUUID().toString()));
+        }
+        JSONObject value=new JSONObject(initial.toString());Iterator<String> names=fields.keys();while(names.hasNext()){String field=names.next();JSONObject edit=fields.getJSONObject(field);if(CloudStore.canonical(edit.get("value")).equals(CloudStore.canonical(initial.opt(field)))){names.remove();continue;}value.put(field,edit.get("value"));if(field.equals("rests"))value.put("restKnown",true);}
+        if(!prefs.edit().putString(key+":fields",fields.toString()).commit())throw new IOException("SLEEP_LOCAL_SAVE");return value;
     }
     private static String safe(Exception e){String s=e.getMessage();return s!=null && s.matches("[A-Z_0-9-]{1,64}")?s:"READ_OR_CONNECTION_FAILED";}
     private static int numeric(JSONObject source,String key)throws JSONException{
@@ -139,7 +160,8 @@ public final class SleepHabitsRepository {
                     proposed.put("sync",HealthProto.parse(mode).number(4,0)).put("syncAt",HealthProto.parse(mode).number(5,0));
                     readMode(owner,proposed);if(HealthProto.parse(mode).number(2,0)!=(Integer)value)throw new IOException("SLEEP_READBACK_MISMATCH");
                 }
-                synchronized(this){current(owner);synchronized(CloudPreferences.LOCK){SharedPreferences.Editor editor=prefs.edit().putString(key(),proposed.toString()).remove(key()+":pending");CloudPreferences.remember(context,editor,scope,field,proposed);if(!editor.commit())throw new IOException("SLEEP_LOCAL_SAVE");}values=proposed;revision++;message="accord".equals(field)?"已保存，并从手表读取确认":"手表已确认保存；已记录到独立版";}
+                synchronized(this){current(owner);synchronized(CloudPreferences.LOCK){String editRevision=UUID.randomUUID().toString();JSONObject fields=new JSONObject(prefs.getString(key()+":fields","{}"));fields.put(field,new JSONObject().put("value",proposed.get(field)).put("revision",editRevision));
+                    SharedPreferences.Editor editor=prefs.edit().putString(key(),proposed.toString()).putString(key()+":fields",fields.toString()).remove(key()+":pending");CloudPreferences.remember(context,editor,scope,key(),editRevision,field,proposed);if(!editor.commit())throw new IOException("SLEEP_LOCAL_SAVE");}values=proposed;revision++;message="accord".equals(field)?"已保存，并从手表读取确认":"手表已确认保存；已记录到独立版";}
             }catch(Exception e){String reason=safe(e);status("SLEEP_SET_REMINDER_TIME_FIRST".equals(reason)?"请先设定提醒时间，再开启提醒":"SLEEP_REST_REQUIRED".equals(reason)?"请先添加作息时间":"保存未完成："+reason+(sent?"，请核对手表后重试":""));}
             finally{synchronized(this){busy=false;}}
         });return true;

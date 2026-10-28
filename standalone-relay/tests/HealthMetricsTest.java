@@ -29,6 +29,16 @@ public final class HealthMetricsTest {
   check(HealthMetricsData.rangeText(new int[]{0,0}).equals("—")&&HealthMetricsData.rangeText(new int[]{58,58}).equals("58"),"missing and single value labels");
   HealthMetricsData.Trend month=new HealthMetricsData.Trend(data,LocalDate.of(2026,10,2),4,true);check(month.start.equals(LocalDate.of(2026,9,1))&&month.end.equals(LocalDate.of(2026,9,30))&&month.beforeStart.equals(LocalDate.of(2026,8,1)),"official month boundary special case");
   HealthMetricsData.Trend rolling=new HealthMetricsData.Trend(data,LocalDate.of(2026,10,3),4,true);check(rolling.start.equals(LocalDate.of(2026,9,2))&&rolling.end.equals(LocalDate.of(2026,10,2)),"otherwise 31-day rolling windows");
+  HealthMetricsData sun=new HealthMetricsData();check(sun.sunshineDay(today)==null,"empty sunshine remains absent");
+  HealthMetricsData.Day older=sun.day(today.minusDays(90));older.sunshineMinutes=17;older.sunshineTarget=20;
+  check(sun.sunshineDay(today)==older,"sunshine card can retain a record outside home history window");
+  sun.day(today).steps=100;check(sun.sunshineDay(today)==older,"other metrics today do not hide last sunshine record");
+  HealthMetricsData.Day recent=sun.day(today.minusDays(1));recent.sunshineMinutes=8;recent.sunshineTarget=10;
+  check(sun.sunshineDay(today)==recent,"latest sunshine date selected");check(sun.sunshineDay(today).date.equals(today.minusDays(1)),"sunshine retains actual historical date");
+  HealthMetricsData.Day current=sun.day(today);current.sunshineMinutes=0;current.sunshineTarget=20;
+  check(sun.sunshineDay(today)==current&&sun.sunshineDay(today).sunshineMinutes==0,"measured zero today overrides older nonzero record");
+  sun.day(today.plusDays(1)).sunshineMinutes=40;check(sun.sunshineDay(today)==current,"future sunshine is excluded");
+  check(sun.sunshineDay(today.minusDays(2))==older,"date cutoff is respected");check(sun.sunshineDay(today.minusDays(91))==null,"dates before first record remain empty");
   System.out.println("Health metric calendar/data checks passed: "+checks);
  }
 }

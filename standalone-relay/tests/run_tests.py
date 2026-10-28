@@ -19,21 +19,31 @@ else:
 SOURCE = ROOT / "app/src/main/java/com/example/opponotificationrelay"
 BUILD = ROOT / "tests/build"
 BUILD.mkdir(exist_ok=True)
-extra = [str(ROOT / "tests/ConnectionQueueTest.java"),str(ROOT / "tests/ResourcePolicyTest.java"),str(ROOT / "tests/UidOptimizationTest.java")]
+extra = [str(ROOT / "tests/SyncSafetyTest.java"),str(ROOT / "tests/ConnectionQueueTest.java"),str(ROOT / "tests/ResourcePolicyTest.java"),str(ROOT / "tests/UidOptimizationTest.java")]
 extra.append(str(ROOT / "tests/ScreenFilterTest.java"))
 extra.append(str(ROOT / "tests/RecoveryBoundaryTest.java"))
 extra.append(str(ROOT / "tests/HealthReadWindowTest.java"))
 extra.append(str(ROOT / "tests/HealthTimeTest.java"))
 extra.append(str(ROOT / "tests/HealthChannelLockTest.java"))
-names = ["HealthTime","HealthSnapshotWindow","HealthReadWindow","OafCrypto", "OafWire", "OafSession", "RelayPayloadEncoder", "RelayEvent", "HandoverPolicy", "ObserverMessage", "RelayIcon", "WatchIconBitmap", "PairingRecord", "HandoverNoticePolicy", "ScreenForwardPolicy", "StartupPolicy", "RootListenerCommands"]
+names = ["SyncCommit","OafFragments","HealthTime","HealthSnapshotWindow","HealthReadWindow","OafCrypto", "OafWire", "OafSession", "RelayPayloadEncoder", "RelayEvent", "HandoverPolicy", "ObserverMessage", "RelayIcon", "WatchIconBitmap", "PairingRecord", "HandoverNoticePolicy", "ScreenForwardPolicy", "StartupPolicy", "RootListenerCommands"]
 names.extend(["ConnectionQueue", "NotificationSwitchPolicy", "NapQuietPolicy", "OafTraceMetadata", "MessageBudget", "ConnectionState", "SendDeadline", "BoundedWorker", "EventStatistics"])
 extra.append(str(ROOT / "tests/NotificationSwitchTest.java"))
 extra.append(str(ROOT / "tests/NotificationControlsTest.java"))
-names.extend(["NotificationForwardPolicy","ActivityBridgePolicy","HealthMetricsData","WatchSleepProjection"])
+names.extend(["NotificationForwardPolicy","ActivityBridgePolicy","HealthMetricsData","DailyActivityData","WatchSleepProjection","WatchMentalProjection","WatchOxygenProjection"])
+names.append("WatchSunshineProjection")
+names.append("WatchWristProjection")
+extra.append(str(ROOT / "tests/WatchWristTest.java"))
+names.append("HealthPageTransition")
+extra.append(str(ROOT / "tests/HealthPageTransitionTest.java"))
+extra.append(str(ROOT / "tests/WatchSunshineTest.java"))
 extra.append(str(ROOT / "tests/HealthMetricsTest.java"))
 names.append("OxygenChartData")
+names.append("HealthPageReadiness")
+extra.append(str(ROOT / "tests/HealthPageReadinessTest.java"))
 extra.append(str(ROOT / "tests/OxygenChartDataTest.java"))
+extra.append(str(ROOT / "tests/WatchOxygenTest.java"))
 extra.append(str(ROOT / "tests/SleepProjectionTest.java"))
+extra.append(str(ROOT / "tests/MentalProjectionTest.java"))
 extra.append(str(ROOT / "tests/ActivityBridgePolicyTest.java"))
 extra.append(str(ROOT / "tests/OafTraceMetadataTest.java"))
 extra.append(str(ROOT / "tests/NapQuietTest.java"))
@@ -58,11 +68,15 @@ extra.append(str(ROOT / "tests/NapWriteTest.java"))
 extra.append(str(ROOT / "tests/SettingsImportTest.java"))
 extra.extend([str(ROOT / "tests/SettingsPreviewTest.java"), str(ROOT / "tests/MmkvSnapshotTest.java")])
 names.extend(["SnoreWavWriter", "OsaWatchProtocol"])
+names.extend(["OsaAnalysisScope", "NativeAssetIntegrity"])
+extra.extend([str(ROOT / "tests/OsaAnalysisScopeTest.java"), str(ROOT / "tests/NativeAssetIntegrityTest.java")])
 extra.append(str(ROOT / "tests/SnoreWavTest.java"))
 extra.append(str(ROOT / "tests/OsaWatchProtocolTest.java"))
 subprocess.run([str(JAVA / "javac.exe"), "-J-Dfile.encoding=UTF-8", "-encoding", "UTF-8", "-d", str(BUILD), *extra,
                 *[str(SOURCE / (name + ".java")) for name in names], str(ROOT / "tests/OafProtocolTest.java"), str(ROOT / "tests/RootListenerCommandsTest.java")],
                check=True, encoding="utf-8")
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD),
+                "com.example.opponotificationrelay.WatchWristTest"], check=True, timeout=15, encoding="utf-8")
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD),
                 "com.example.opponotificationrelay.ScreenFilterTest"], check=True, timeout=15, encoding="utf-8")
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD),
@@ -138,3 +152,14 @@ subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUIL
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.SnoreWavTest"], check=True, timeout=15, encoding="utf-8")
 
 subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.OsaWatchProtocolTest"], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.MentalProjectionTest"], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.SyncSafetyTest"], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.WatchOxygenTest"], check=True, timeout=15, encoding="utf-8")
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.WatchSunshineTest"], check=True, timeout=15, encoding="utf-8")
+subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD), "com.example.opponotificationrelay.HealthPageTransitionTest"], check=True, timeout=15, encoding="utf-8")
+for test in ("OsaAnalysisScopeTest", "NativeAssetIntegrityTest", "HealthPageReadinessTest"):
+    subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD),
+                    "com.example.opponotificationrelay." + test], check=True, timeout=15, encoding="utf-8")

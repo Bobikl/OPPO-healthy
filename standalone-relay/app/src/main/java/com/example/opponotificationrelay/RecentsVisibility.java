@@ -21,7 +21,7 @@ public final class RecentsVisibility extends Application implements Application.
                 task.setExcludeFromRecents(enabled(c));
         } catch(RuntimeException e) {FileLogger.w("RecentsVisibility","系统未接受最近任务显示设置");}
     }
-    @Override public void onCreate() {super.onCreate();registerActivityLifecycleCallbacks(this);AppLabelCache.install(this);}
+    @Override public void onCreate() {super.onCreate();registerActivityLifecycleCallbacks(this);AppLabelCache.install(this);CloudSyncScheduler.schedule(this,false);}
     @Override public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         if(level>=TRIM_MEMORY_UI_HIDDEN){AppLabelCache.clear();AppIconStore.trim();RelayStore.flush();}

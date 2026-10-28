@@ -1,0 +1,15 @@
+{
+  "id": "20261024-remediation",
+  "goal": "按台账分批修复可独立验证的公共接入、时区、依赖完整性和工程流程问题；其余保留明确状态",
+  "kind": "runtime",
+  "risk": "medium",
+  "scope": ["AGENTS.md", ".gitignore", "PROJECT-CONTEXT.md", "docs/engineering/**", "standalone-relay/app/src/main/java/com/example/opponotificationrelay/*.java", "standalone-relay/tests/*.java", "standalone-relay/tests/*.py", "standalone-relay/tests/README.md", "standalone-relay/tools/quality_gate.py", "standalone-relay/build.ps1", "standalone-relay/native/build.ps1", "standalone-relay/version.txt"],
+  "domains": ["D00", "D01", "D02", "D03", "D04", "D05", "D06", "D07"],
+  "acceptance": ["先建立能失败的反例，再分批通过对应检查", "所有详情在注册监听前建立目标窗口，日历不再根据 Activity 类型猜测指标", "冻结分析时区并拒绝失效上下文，拒绝非空损坏原生缓存", "构建在任何产物修改前要求并执行本次范围与测试门禁；默认临时文件位于 D 盘且完成后清理", "不能安全完成的项目逐项说明原因与下一步，不把局部修复销为全域完成"],
+  "invariants": ["保留原有脏工作区、签名、包名、用户数据和官方优先连接策略", "不创造健康值或腕温基准；不为验证默认发起云写入、Root 修复或录音", "不通过放宽范围/移除断言或重拍基线绕过失败"],
+  "impact": ["批次 1：公共过渡和 9 类详情、11 种卡片日历及睡眠横屏入口", "批次 2：本机 OSA 分析读取上下文和原生观察器缓存提取，保留协议与分析算法", "批次 3：构建前检查、临时目录默认、历史验证脚本及状态文档入口", "每批新增来源文件与测试均明确对应问题；大型 UI 绘制/队列/通道/设置重构和未核实的云协议不混入局部修复"],
+  "rollback": "原修改前基线保留于 analysis/remediation-20261024/before.json；按本批最终差异逐文件回退，不能重置整个仓库。设备覆盖安装保留旧 APK，数据格式不做破坏性变更。",
+  "review": "self_review：逐项核对消费者、真实调用路径和失败用例；无独立评审者",
+  "required_checks": ["self", "host", "home"],
+  "deferred": ["UI-003 至 UI-006、DATA-001、LINK-001、SET-001 需要后续独立状态/任务所有者整改与消费者参数化验证，局部防护不作为完整关闭", "CLOUD-001 缺少其余原生类型已核实的完整转换语义；CLOUD-002 服务端 CAS 未核实，不猜测实现", "真实云上传、Root 自动重绑、真实录音/算法有效性不属于本次简单验证"]
+}

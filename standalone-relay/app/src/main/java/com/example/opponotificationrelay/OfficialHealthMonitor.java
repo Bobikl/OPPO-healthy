@@ -222,6 +222,7 @@ public final class OfficialHealthMonitor {
         // 订阅由活管道维持；EOF/错误/停止立即撤销。安静时不需要刷新租约。
         transport.setOwnership(!stopped && policy.canOwn(time),ownership,Long.MAX_VALUE);
         RelayAlerts.onPresence(context,policy.presence());
+        ListenerRecovery.maybeRepairRoot(context);
     }
     private void disconnect() {
         epoch++;ready=false;noOfficial=false;binderCount=0;policy.close();

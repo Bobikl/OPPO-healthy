@@ -40,8 +40,9 @@ public final class AccountActivity extends OfficialUiActivity {
             try{
                 JSONObject session=migrate?HealthAccountImporter.read(this):HealthAccountStore.load(this);
                 if(session==null)throw new java.io.IOException("ACCOUNT_MISSING");
-                if(!migrate&&"independent-sdk".equals(session.optString("source")))session=AccountSdk.fresh(this,session);
-                HealthAccountStore.save(this,HealthAccountClient.login(session),expected);notice="服务器验证通过，账号一致。";
+                if(!migrate&&"independent-sdk".equals(session.optString("source")))session=AccountSdk.fresh(this,session,()->HealthAccountStore.valid(expected));
+                if(!HealthAccountStore.valid(expected))throw new java.io.IOException("ACCOUNT_OPERATION_CANCELLED");
+                try(CloudHttp http=new CloudHttp(session,()->HealthAccountStore.valid(expected))){HealthAccountStore.save(this,HealthAccountClient.login(session,http),expected);}notice="服务器验证通过，账号一致。";
             }catch(Exception e){notice=HealthAccountClient.message(e);}
             final String result=notice;runOnUiThread(()->{if(isFinishing()||isDestroyed())return;busy=false;refresh(result);});
         });
@@ -52,7 +53,7 @@ public final class AccountActivity extends OfficialUiActivity {
             JSONObject configuration=HealthAccountStore.configuration(this);
             if(configuration==null){refresh("请先导入一次应用配置，再使用独立登录。");return;}
             busy=true;operation=HealthAccountStore.begin();final long expected=operation;refresh(null);state.setText("正在打开登录页面…");
-            AccountSdk.login(this,configuration,(session,failure)->{
+            AccountSdk.login(this,configuration,()->HealthAccountStore.valid(expected),(session,failure)->{
                 Throwable error=failure;
                 if(error==null)try{HealthAccountStore.save(this,session,expected);}catch(Throwable e){error=e;}
                 final Throwable result=error;
@@ -61,17 +62,17 @@ public final class AccountActivity extends OfficialUiActivity {
         }catch(Exception e){busy=false;refresh(HealthAccountClient.message(e));}
     }
     private void clear(){
-        if(busy)return;busy=true;operation=HealthAccountStore.begin();refresh(null);state.setText("正在退出账号…");
+        if(busy)return;busy=true;operation=HealthAccountStore.begin();final long expected=operation;refresh(null);state.setText("正在退出账号…");
         worker.execute(()->{
             Throwable failure=null;
-            try{AccountSdk.clearLocal(this);HealthAccountStore.clear(this);}catch(Throwable e){failure=e;}
+            try{HealthAccountStore.clear(this,expected);AccountSdk.clearLocal(this,expected);}catch(Throwable e){failure=e;}
             final Throwable error=failure;
             runOnUiThread(()->{
                 if(isFinishing()||isDestroyed())return;
                 if(error!=null){busy=false;refresh(HealthAccountClient.message(error));return;}
-                android.webkit.CookieManager.getInstance().removeAllCookies(removed->{
-                    android.webkit.CookieManager.getInstance().flush();android.webkit.WebStorage.getInstance().deleteAllData();
-                    if(isFinishing()||isDestroyed())return;busy=false;refresh("已退出本应用账号。");
+                if(!HealthAccountStore.valid(expected))return;AccountSdk.webCleaning=true;android.webkit.CookieManager.getInstance().removeAllCookies(removed->{
+                    AccountSdk.webCleaning=false;if(!HealthAccountStore.valid(expected))return;android.webkit.CookieManager.getInstance().flush();android.webkit.WebStorage.getInstance().deleteAllData();
+                    if(isFinishing()||isDestroyed()||!HealthAccountStore.valid(expected))return;busy=false;refresh("已退出本应用账号。");
                 });
             });
         });

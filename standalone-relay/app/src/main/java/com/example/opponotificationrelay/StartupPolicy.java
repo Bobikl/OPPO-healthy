@@ -6,4 +6,8 @@ public final class StartupPolicy {
     public static boolean bluetoothReady(int sdk,boolean connectGranted) {return sdk<31 || connectGranted;}
     public static boolean serviceAllowed(boolean enabled,boolean automatic,boolean nullIntent,boolean stop,boolean bluetooth) {return enabled && !stop && (!nullIntent || automatic) && bluetooth;}
     public static boolean restore(boolean automatic,boolean lastEnabled) {return automatic && lastEnabled;}
+    public static boolean listenerRepair(boolean optedIn,boolean enabled,boolean granted,boolean bound,boolean ordinaryFinished,
+            boolean observing,HandoverPolicy.Presence official,boolean channelReady,boolean channelOwned) {
+        return optedIn&&enabled&&granted&&!bound&&ordinaryFinished&&observing&&official==HandoverPolicy.Presence.OFFLINE&&channelReady&&channelOwned;
+    }
 }

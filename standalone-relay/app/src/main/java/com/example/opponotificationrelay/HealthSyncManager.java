@@ -65,7 +65,8 @@ final class HealthSyncManager {
         boolean failed=false,pending=false;int fresh=0;
         try{
             HealthArchive archive=HealthArchive.get(context);
-            for(HealthSyncProtocol.Kind kind:HealthSyncProtocol.Kind.values())archive.ensureCursor(mac,kind,end-172800);
+            for(HealthSyncProtocol.Kind kind:HealthSyncProtocol.Kind.values())archive.ensureCursor(mac,kind,HealthSyncProtocol.initialHistoryStart(kind,end));
+            archive.ensureSunshineBackfill(mac,HealthSyncProtocol.initialHistoryStart(HealthSyncProtocol.Kind.SUNSHINE,end));
             OafHealthChannel.Snapshot settings=RfcommWearTransport.getInstance(context).healthSettings();
             if(!settings.busy)RfcommWearTransport.getInstance(context).requestHealthSettings();
             // Current data comes first. A failed category does not prevent other categories being archived.
@@ -75,10 +76,10 @@ final class HealthSyncManager {
                 catch(Exception e){failed=true;FileLogger.w("HealthArchive",kind.name()+" 本轮读取未完成："+error(e));}
                 if(SystemClock.elapsedRealtime()>=limit)break;
             }
-            // Start with two days still on the watch. Preserve an interrupted backlog across app restarts.
+            // Sunshine also fills the home history window; preserve progress across app restarts.
             for(HealthSyncProtocol.Kind kind:HealthSyncProtocol.Kind.values()){
-                int cursor=archive.cursor(mac,kind,end-172800);
-                if(cursor>end)cursor=end-172800; // Wall-clock rollback: query overlap, never erase old data.
+                int initial=HealthSyncProtocol.initialHistoryStart(kind,end),cursor=archive.cursor(mac,kind,initial);
+                if(cursor>end)cursor=initial; // Wall-clock rollback: query overlap, never erase old data.
                 int turns=0;
                 while(cursor<end && turns++<32 && SystemClock.elapsedRealtime()<limit){
                     valid(mac,token);message="正在补存"+kind.title+"…";int stop=(int)Math.min((long)end,(long)cursor+kind.seconds-60);

@@ -7,9 +7,9 @@ public final class HealthSyncProtocol {
     private HealthSyncProtocol(){}
     public enum Kind {
         ACTIVITY_SUMMARY(218,"每日活动汇总",7200), ACTIVITY(10,"活动明细",7200), HEART(12,"心率",7200), OXYGEN(85,"血氧",7200),
-        SLEEP(99,"睡眠汇总",172800), SLEEP_STAGE(14,"睡眠阶段",7200), MIND(198,"身心状态",7200), MIND_INDEX(199,"身心日汇总",172800);
+        SLEEP(99,"睡眠汇总",172800), SLEEP_STAGE(14,"睡眠阶段",7200), SUNSHINE(237,"日照汇总",172800), WRIST_INDEX(123,"手腕温度日汇总",172800), WRIST_RAW(121,"原始腕温",172800), MIND(198,"身心状态",7200), MIND_INDEX(199,"身心日汇总",172800);
         public final int cid,seconds;public final String title;
-        public boolean daily(){return this==ACTIVITY_SUMMARY || this==SLEEP || this==MIND_INDEX;}
+        public boolean daily(){return this==ACTIVITY_SUMMARY || this==SLEEP || this==MIND_INDEX || this==SUNSHINE || this==WRIST_INDEX;}
         Kind(int cid,String title,int seconds){this.cid=cid;this.title=title;this.seconds=seconds;}
     }
     public static final class Request {
@@ -21,6 +21,7 @@ public final class HealthSyncProtocol {
         if(kind==null || start<1500000000 || end<=start || (long)end-start>172800)throw new IOException("SYNC_RANGE");
         return new Request(kind,start,end);
     }
+    static int initialHistoryStart(Kind kind,int end){return Math.max(1500000000,end-(kind==Kind.SUNSHINE||kind==Kind.WRIST_INDEX||kind==Kind.WRIST_RAW?63:2)*86400);}
     public static final class Summary {
         public final int start,end,count,latest,lastValue;public final boolean more;
         Summary(int start,int end,int count,int latest,int lastValue,boolean more){this.start=start;this.end=end;this.count=count;this.latest=latest;this.lastValue=lastValue;this.more=more;}
@@ -41,6 +42,9 @@ public final class HealthSyncProtocol {
         if(start<1500000000 || end<start || end>(long)request.end+300 || start<(long)request.start-172800)throw new IOException("SYNC_RESPONSE_RANGE");
         int count=0,latest=0,last=-1;
         for(HealthProto.Node row:rows){
+            if(request.kind==Kind.SUNSHINE&&!WatchSunshineProjection.valid(row))continue;
+            if(request.kind==Kind.WRIST_INDEX&&!WatchWristProjection.valid(row))continue;
+            if(request.kind==Kind.WRIST_RAW){int t=moment(start,row.number(1,0),60,end),value=WatchWristProjection.rawValue(row);if(value<=0)continue;count++;if(t>=latest){latest=t;last=value;}continue;}
             if(request.kind==Kind.OXYGEN){
                 byte[] offsets=row.bytes(2),values=row.bytes(3);if(offsets==null || values==null || offsets.length!=values.length)throw new IOException("SYNC_OXYGEN_SHAPE");
                 int minute=moment(start,row.number(1,0),60,end);

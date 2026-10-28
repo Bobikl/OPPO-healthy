@@ -14,6 +14,9 @@ public final class RootListenerCommandsTest {
         check(s.indexOf("trap - EXIT")>s.indexOf("restore || exit 13"));
         check(s.contains("timeout -s KILL 5"));
         check(s.startsWith("[ \"$(id -u)\" = 0 ] || exit 10"));
+        check(s.contains("settings --user 10 get secure enabled_notification_listeners"));
+        check(s.contains("com.example.opponotificationrelay/.RelayNotificationListenerService:*"));
+        check(s.indexOf("*) exit 14")<s.indexOf("trap 'restore' EXIT"));
         check(!s.contains("settings put") && !s.contains("system_server") && !s.contains("force-stop"));
         check(RootListenerCommands.script(0).contains("ListenerService 0"));
         for(int user:new int[]{-1,21475,Integer.MAX_VALUE}) {

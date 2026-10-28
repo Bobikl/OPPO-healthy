@@ -23,10 +23,10 @@ final class RootSleepSettingsReader {
     static JSONObject readLocal(Object db,String account,String scope)throws Exception {
         JSONObject values=new JSONObject(),modified=new JSONObject();
         for(String name:KEYS)try(Cursor c=RootOfficialSettingsReader.query(db,
-            "SELECT preference_value,modified_time FROM DBUserPreference WHERE ssoid=? AND preference_key=? LIMIT 2",new String[]{account,name})){
+            "SELECT preference_value,modified_time FROM DBUserPreference WHERE ssoid=? AND preference_key=? ORDER BY modified_time DESC,rowid DESC LIMIT 1",new String[]{account,name})){
             if(c.moveToFirst()){
                 String value=c.getString(0);if(value==null || value.length()>16000)throw new IOException("SLEEP_VALUE_LIMIT");
-                values.put(name,value);modified.put(name,c.getLong(1));if(c.moveToNext())throw new IOException("SLEEP_DUPLICATE");
+                values.put(name,value);modified.put(name,c.getLong(1));
             }
         }
         return new JSONObject().put("status","OK").put("values",values).put("modified",modified).put("scope",scope);

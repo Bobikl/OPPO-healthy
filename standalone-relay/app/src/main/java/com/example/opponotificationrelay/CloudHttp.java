@@ -13,11 +13,20 @@ import org.json.*;
 /** Signed requests run under our own UID; credentials never enter logs. */
 final class CloudHttp implements AutoCloseable {
     static final class Failure extends IOException { final int code; Failure(int code){super("CLOUD_SERVER_"+code);this.code=code;} }
+    static final class HttpFailure extends IOException {
+        final int status;final java.util.List<String> fields=new ArrayList<>();
+        HttpFailure(int status,String details){super("CLOUD_HTTP_"+status);this.status=status;
+            for(String field:new String[]{"clientDataId","deviceUniqueId","deviceType","updated","modifiedTime","modifiedTimestamp","ssoid","dataCreatedTimestamp","startTimestamp","endTimestamp","heartRateValue","date","sportMode"})if(details.contains(field))fields.add(field);
+        }
+    }
+    static final class NotSent extends IOException {NotSent(IOException cause){super("CLOUD_NOT_SENT",cause);}}
     private final JSONObject session; private final BooleanSupplier allowed;
     private volatile HttpsURLConnection active;
+    private final android.net.Network network;private final long deadline;
     String keyVersion="1732499446015";
-    CloudHttp(JSONObject session,BooleanSupplier allowed)throws Exception {this.session=HealthAccountStore.validate(session);this.allowed=allowed;}
-    void check()throws IOException {if(Thread.currentThread().isInterrupted()||!allowed.getAsBoolean())throw new IOException("CLOUD_CANCELLED");}
+    CloudHttp(JSONObject session,BooleanSupplier allowed)throws Exception {this(session,allowed,null,Long.MAX_VALUE);}
+    CloudHttp(JSONObject session,BooleanSupplier allowed,android.net.Network network,long deadline)throws Exception {this.session=HealthAccountStore.validate(session);this.allowed=allowed;this.network=network;this.deadline=deadline;}
+    void check()throws IOException {if(Thread.currentThread().isInterrupted()||!allowed.getAsBoolean())throw new IOException("CLOUD_CANCELLED");if(android.os.SystemClock.elapsedRealtime()>=deadline)throw new IOException("CLOUD_BUDGET_YIELD");}
     JSONObject post(String path,Object body)throws Exception {
         check();
         if(!path.matches("v[1-5]/c2s/[A-Za-z0-9/_]+"))throw new IOException("CLOUD_PATH");
@@ -34,20 +43,28 @@ final class CloudHttp implements AutoCloseable {
         Mac mac=Mac.getInstance("HmacSHA256");mac.init(new SecretKeySpec(session.getString("httpSecret").getBytes(StandardCharsets.UTF_8),"HmacSHA256"));
         headers.put("signature",Base64.encodeToString(mac.doFinal(canonical.toString().getBytes(StandardCharsets.UTF_8)),Base64.NO_WRAP));
         headers.put("versionName",session.getString("versionName"));headers.put("app-key-version",keyVersion);
-        HttpsURLConnection connection=(HttpsURLConnection)new URL((path.startsWith("v1/c2s/ai_health/")?"https://aihealth-api-cn.heytapmobi.com/sporthealth/":"https://sport.health.heytapmobi.com/sporthealth/")+path).openConnection();
+        URL url=new URL((path.startsWith("v1/c2s/ai_health/")?"https://aihealth-api-cn.heytapmobi.com/sporthealth/":"https://sport.health.heytapmobi.com/sporthealth/")+path);
+        HttpsURLConnection connection=(HttpsURLConnection)(network==null?url.openConnection():network.openConnection(url));
         active=connection;connection.setInstanceFollowRedirects(false);connection.setConnectTimeout(20000);connection.setReadTimeout(30000);
         connection.setRequestMethod("POST");connection.setDoOutput(true);connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
         for(Map.Entry<String,String> entry:headers.entrySet())connection.setRequestProperty(entry.getKey(),entry.getValue());
         connection.setFixedLengthStreamingMode(request.length);
+        boolean bodyStarted=false;
         try {
-            check();try(OutputStream out=connection.getOutputStream()){out.write(request);}
-            check();int status=connection.getResponseCode();if(status!=200)throw new IOException("CLOUD_HTTP_"+status);
+            check();OutputStream output=connection.getOutputStream();bodyStarted=true;
+            try(OutputStream out=output){out.write(request);}
+            check();int status=connection.getResponseCode();if(status!=200){
+                ByteArrayOutputStream error=new ByteArrayOutputStream();InputStream failed=connection.getErrorStream();
+                if(failed!=null)try(InputStream in=failed){byte[] buffer=new byte[4096];int size;while((size=in.read(buffer))!=-1&&error.size()<32768)error.write(buffer,0,Math.min(size,32768-error.size()));}
+                throw new HttpFailure(status,new String(error.toByteArray(),StandardCharsets.UTF_8));
+            }
             ByteArrayOutputStream response=new ByteArrayOutputStream();
             try(InputStream in=connection.getInputStream()){byte[] buffer=new byte[16384];int n;
                 while((n=in.read(buffer))!=-1){check();if(response.size()+n>32*1024*1024)throw new IOException("CLOUD_RESPONSE_LIMIT");response.write(buffer,0,n);}}
             JSONObject result=new JSONObject(new String(response.toByteArray(),StandardCharsets.UTF_8));
             int code=result.getInt("errorCode");if(code!=0)throw new Failure(code);check();return result;
-        }finally{Arrays.fill(request,(byte)0);active=null;connection.disconnect();}
+        }catch(IOException failure){if(!bodyStarted&&!(failure instanceof Failure))throw new NotSent(failure);throw failure;}
+        finally{Arrays.fill(request,(byte)0);active=null;connection.disconnect();}
     }
     public void close(){HttpsURLConnection connection=active;if(connection!=null)connection.disconnect();}
 }

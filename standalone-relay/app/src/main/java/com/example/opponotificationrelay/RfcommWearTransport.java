@@ -98,6 +98,7 @@ public final class RfcommWearTransport implements WearTransport {
             if(!control.current(s)) return;
             FileLogger.i("OAF",s.message);RelayForegroundService.update(s.message);
             OnStatusChangeListener l=listener;if(l!=null) l.onStatusChanged(s.state,s.message);
+            if(s.state==STATE_READY)ListenerRecovery.maybeRepairRoot(context);
         });
     }
     private void status(int s,String m) {publish(control.status(s,m));}
@@ -113,8 +114,7 @@ public final class RfcommWearTransport implements WearTransport {
         if (!allowed) {
             if (control.running()) stop();
             queue.clear();
-            ConnectionState.Snapshot previous=control.snapshot();
-            if (previous.state != STATE_YIELDED || !reason.equals(previous.message)) status(STATE_YIELDED,reason);
+            publish(control.relinquish(STATE_YIELDED,reason));
         } else if (RelayForegroundService.enabled(context) && !control.running()) start();
     }
     @Override public boolean isAvailable() { return getState() == STATE_READY; }
@@ -294,7 +294,18 @@ public final class RfcommWearTransport implements WearTransport {
                         +" iconBytes="+(outgoing.picture==null?0:outgoing.picture.payload.length)+" napFlagAdded="+(outgoing!=pending.event));
                 }
             } catch (GeneralSecurityException e) {
-                publish(control.fail(token,STATE_DISCONNECTED,"配对认证失败，请重新迁移凭据",true));
+                String message="连接安全校验失败，请查看诊断";
+                if(e instanceof OafCrypto.AuthenticationException) {
+                    OafCrypto.AuthenticationException failure=(OafCrypto.AuthenticationException)e;
+                    FileLogger.w("OAF","AUTH_FAILURE "+failure.reason.name()+" status="+failure.status
+                        +" length="+failure.length+" type="+failure.type+" version="+failure.version);
+                    switch(failure.reason) {
+                        case WATCH_REJECTED:message="手表拒绝配对认证"+(failure.status<0?"":"（状态 "+failure.status+"）")+"，请核对当前配对记录";break;
+                        case SERVER_MAC_MISMATCH:message="手表认证码校验不通过，请核对当前配对记录";break;
+                        case RESPONSE_FORMAT:message="手表认证响应格式异常，请查看诊断";break;
+                    }
+                } else FileLogger.w("OAF","AUTH_FAILURE SECURITY_CHECK");
+                publish(control.fail(token,STATE_DISCONNECTED,message,true));
                 return;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); return;

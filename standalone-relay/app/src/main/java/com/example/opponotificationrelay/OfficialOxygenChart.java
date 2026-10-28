@@ -11,6 +11,10 @@ import java.util.*;
 final class OfficialOxygenChart {
     static BloodOxCandleChart create(Context context,HealthMetricsData.Period period,List<HealthMetricsData.Point> points) {
         BloodOxCandleChart chart=new BloodOxCandleChart(OfficialUiResources.wrap(context));
+        bind(chart,period,points);return chart;
+    }
+    static void bind(BloodOxCandleChart chart,HealthMetricsData.Period period,List<HealthMetricsData.Point> points) {
+        chart.highlightValues(null);chart.fitScreen();
         chart.setXAxisTimeUnit(TimeUnit.ORIGINAL);chart.setXAxisMinimum(0);
         chart.setBarWidth(period.mode==0?.6f:period.mode==1?.49122804f:period.mode==2?.5263158f:.5473684f);chart.setRadius(2);
         chart.l(16,12,period.mode==1?44:period.mode==2?36.5f:period.mode==3?40.5f:34,26);
@@ -33,6 +37,6 @@ final class OfficialOxygenChart {
         chart.getXAxis().setGranularity(period.mode==0?6:period.mode==1||period.mode==3?1:5);chart.getXAxis().setGranularityEnabled(true);
         chart.setHighlightPerDragEnabled(false);chart.setHighlightPerTapEnabled(true);chart.setScaleEnabled(false);chart.setDragEnabled(false);
         chart.getAnimator().setPhaseY(1);chart.notifyDataSetChanged();chart.invalidate();
-        chart.setContentDescription("血氧范围图，"+points.size()+"个范围条");return chart;
+        chart.setContentDescription("血氧范围图，"+points.size()+"个范围条");
     }
 }

@@ -100,9 +100,9 @@ public final class SettingsActivity extends OfficialUiActivity {
         int p=dp(20);root.setPadding(p,dp(8),p,dp(28));
         String title;
         if(NOTIFICATIONS.equals(section)){title="更多通知设置";buildNotifications(root);}
-        else if(PROTECTION.equals(section)){title="防断连设置";buildConnection(root);buildListener(root,false);buildStartup(root);}
+        else if(PROTECTION.equals(section)){title="防断连设置";buildConnection(root);buildListener(root);buildStartup(root);}
         else if(DEVICE.equals(section)){title="设备管理";buildPairing(root);buildConnection(root);}
-        else {title="高级设置与诊断";buildHistoryData(root);buildListener(root,true);buildDiagnostics(root);}
+        else {title="高级设置与诊断";buildHistoryData(root);buildDiagnostics(root);}
         DeviceStyle.styleTree(root);scroll.addView(root);DeviceStyle.shell(this,title,scroll);
     }
     private boolean historyToggleRendering;
@@ -118,20 +118,18 @@ public final class SettingsActivity extends OfficialUiActivity {
         importAll.setOnClickListener(v->HistoryImportUi.show(this,()->state.setText(OfficialHistoryStore.status(this))));box.addView(importAll,wrap());box.addView(state,wrap());root.addView(box,wrap());
         if(HistoryImportUi.running())uiHandler.post(()->HistoryImportUi.show(this,()->state.setText(OfficialHistoryStore.status(this))));
     }
-    private void buildListener(LinearLayout root,boolean advanced) {
+    private void buildListener(LinearLayout root) {
         // 状态卡片
         LinearLayout statusCard = card();
         tvListenerStatus = new TextView(this);
         tvListenerStatus.setTextSize(14);
         statusCard.addView(tvListenerStatus, wrap());
 
-        if(advanced) {
         tvOfficialStatus = new TextView(this);
         tvOfficialStatus.setTextSize(14);
         tvOfficialStatus.setPadding(0,dp(8),0,dp(8));
         statusCard.addView(tvOfficialStatus, wrap());
 
-        }
         tvBtStatus = new TextView(this);
         tvBtStatus.setTextSize(14);
         tvBtStatus.setText("蓝牙链路：未连接");
@@ -154,7 +152,6 @@ public final class SettingsActivity extends OfficialUiActivity {
             Toast.makeText(this,"已请求系统重绑；15 秒后仍未绑定，请关闭再开启系统通知使用权。",Toast.LENGTH_LONG).show();
         });
         statusCard.addView(repairListener,wrap());
-        if(advanced) {
         Button rebuildListener=new Button(this);
         rebuildListener.setText("修复监听组件（重绑失败时使用）");
         rebuildListener.setOnClickListener(v -> new android.app.AlertDialog.Builder(this)
@@ -169,8 +166,11 @@ public final class SettingsActivity extends OfficialUiActivity {
             .setMessage("仅短暂关闭再恢复本应用已获得的通知使用权，触发系统重新绑定；期间可能漏收通知。不修改其他应用，不重连蓝牙。若弹出 Root 授权，请允许。最终以“已实际绑定”为准。")
             .setNegativeButton("取消",null).setPositiveButton("执行重绑",(dialog,which)->ListenerRecovery.repairRoot(this)).show());
         statusCard.addView(rootRepair,wrap());
+        addSwitchRow(statusCard,"启动后自动 Root 重绑监听","普通重绑结束、接管与蓝牙通道就绪后，若已授权但仍未实际绑定，每次应用进程启动最多自动执行一次。需已授予 Root 权限。",RelayConfig.autoRootListenerRepair(this),(button,checked)->{
+            RelayConfig.setAutoRootListenerRepair(this,checked);
+            if(checked)ListenerRecovery.maybeRepairRoot(this);
+        });
 
-        }
         root.addView(statusCard, wrap());
 
     }

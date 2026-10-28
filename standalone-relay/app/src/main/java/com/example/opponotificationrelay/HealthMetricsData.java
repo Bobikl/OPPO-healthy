@@ -27,9 +27,10 @@ final class HealthMetricsData {
     static final class Relax {final long time;final int seconds,type,subtype;int minHeart,maxHeart,mental,stress;Relax(long time,int seconds,int type,int subtype){this.time=time;this.seconds=seconds;this.type=type;this.subtype=subtype;}}
     List<Mental> mental(LocalDate day){return new ArrayList<>(mental.subMap(time(day),true,time(day.plusDays(1)),false).values());}
     List<Relax> relax(LocalDate day){return new ArrayList<>(relax.subMap(time(day),true,time(day.plusDays(1)),false).values());}
-    final TreeMap<Long,Integer> raw=new TreeMap<>(),oxygen=new TreeMap<>();final List<Warning> warnings=new LinkedList<>();
+    final TreeMap<Long,Integer> raw=new TreeMap<>(),oxygen=new TreeMap<>(),wristRaw=new TreeMap<>();final List<Warning> warnings=new LinkedList<>();
     HealthSnapshotWindow window;
-    long loadedAt,officialAt;String device="";boolean officialLoaded;
+    DailyActivityData activity;
+    long loadedAt,officialAt;String device="";boolean officialLoaded,summaryComplete;
     static final class Day {
         final LocalDate date;int min,max,rest,walk,sleepHeart,sleepScore,sleepMinutes,deep,light,rem,awake,steps=-1,calories=-1;long latestTime;int latest;
         int oxygenMin,oxygenMax,oxygenMean,oxygenLatest,oxygenCount;long oxygenTime;
@@ -38,6 +39,7 @@ final class HealthMetricsData {
         int mentalSleepHrv,mentalRestHeart,mentalReminders=-1;
         int mentalAverage,mentalState,mentalHrv,mentalBaseLow,mentalBaseMiddle,mentalBaseHigh,mentalLatest,mentalLatestState,sunshineMinutes=-1,sunshineTarget,sunshineType,relaxSeconds,relaxCount;long mentalTime;
         long sleepIn,sleepOut;int wakes,spo2,sleepHrLow,sleepHrHigh,breathLow,breathHigh,hrv,hrvLow,hrvHigh,wristBase,wristValue,wristConfidence;
+        int wristRawMin,wristRawMax,wristRawCount;
         Day(LocalDate d){date=d;}
         void range(int lo,int hi){if(lo>0&&hi>=lo){min=min==0?lo:Math.min(min,lo);max=Math.max(max,hi);}}
         int value(int metric){switch(metric){case REST:return rest;case WALK:return walk;case SLEEP_HEART:return sleepHeart;case STEPS:return steps;case CALORIES:return calories;case SLEEP_SCORE:return sleepScore;default:return latest;}}
@@ -51,6 +53,7 @@ final class HealthMetricsData {
     static final class Warning {long start,end;int type,heartType,min,max;}
     Day day(LocalDate date){Day d=days.get(date);if(d==null){d=new Day(date);days.put(date,d);}return d;}
     Day find(LocalDate date){return days.get(date);}
+    Day sunshineDay(LocalDate anchor){for(Day d:days.headMap(anchor,true).descendingMap().values())if(d.sunshineMinutes>=0)return d;return null;}
     static long time(LocalDate d){return d.atStartOfDay(zone()).toInstant().toEpochMilli();}
     static LocalDate date(long millis){return Instant.ofEpochMilli(millis).atZone(zone()).toLocalDate();}
     static LocalDate dateCode(int code){return LocalDate.of(code/10000,(code/100)%100,code%100);}

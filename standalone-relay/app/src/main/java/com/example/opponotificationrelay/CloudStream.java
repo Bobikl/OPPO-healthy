@@ -27,15 +27,19 @@ final class CloudStream {
         for(int i=0;i<array.length();i++)result.add(new CloudStream(array.getJSONObject(i)));return result;
     }
     String field(String column)throws Exception {Iterator<String> i=mapping.keys();while(i.hasNext()){String f=i.next();if(mapping.getString(f).equals(column))return f;}return null;}
-    JSONArray expanded(JSONArray source)throws Exception {
+    JSONArray expanded(JSONArray source)throws Exception {return expanded(source,()->true);}
+    JSONArray expanded(JSONArray source,java.util.function.BooleanSupplier allowed)throws Exception {
         JSONObject group=definition.optJSONObject("group");if(group==null)return source;
         JSONArray result=new JSONArray();
         for(int i=0;i<source.length();i++){
+            if(Thread.currentThread().isInterrupted()||!allowed.getAsBoolean())throw new IOException("CLOUD_CANCELLED");
             JSONObject parent=source.getJSONObject(i);String array=group.getString("array");
             JSONArray children=parent.optJSONArray(array);if(children==null)throw new IOException("CLOUD_GROUP_SHAPE");
             if(children.length()>20000-result.length())throw new IOException("CLOUD_RECORD_LIMIT");
+            JSONObject metadata=new JSONObject();Iterator<String> parentNames=parent.keys();while(parentNames.hasNext()){String name=parentNames.next();if(!name.equals(array))metadata.put(name,parent.get(name));}
             for(int j=0;j<children.length();j++){
-                JSONObject row=new JSONObject(parent.toString());row.remove(array);
+                if(Thread.currentThread().isInterrupted()||!allowed.getAsBoolean())throw new IOException("CLOUD_CANCELLED");
+                JSONObject row=new JSONObject();Iterator<String> metaNames=metadata.keys();while(metaNames.hasNext()){String name=metaNames.next();row.put(name,metadata.get(name));}
                 JSONObject child=children.getJSONObject(j);
                 Iterator<String> names=child.keys();while(names.hasNext()){String name=names.next();row.put(name,child.get(name));}
                 JSONObject rename=group.optJSONObject("rename");
@@ -73,6 +77,7 @@ final class CloudStream {
             String name=names.next();if(!row.has(name))continue;
             String column=mapping.getString(name);Object v=row.get(name);
             if(v==JSONObject.NULL){
+                if(id.equals("mental-stat")&&name.equals("avgSleepHrv"))continue;
                 boolean primitive=false,requiredText=false;
                 for(int i=0;i<fields.length();i++){JSONObject f=fields.getJSONObject(i);if(f.getString("column").equals(column)&&f.optBoolean("required")){primitive=f.getString("type").length()==1;requiredText=f.getString("type").equals("Ljava/lang/String;");}}
                 // Gson leaves Java primitive fields at their constructor value for JSON null.
@@ -101,7 +106,7 @@ final class CloudStream {
     }
     String where()throws Exception {List<String> parts=new ArrayList<>();for(int i=0;i<keys.length();i++)parts.add(OfficialHistoryStore.q(keys.getString(i))+" IS ?");return String.join(" AND ",parts);}
     String[] arguments(ContentValues row)throws Exception {String[] args=new String[keys.length()];for(int i=0;i<args.length;i++)args[i]=row.getAsString(keys.getString(i));return args;}
-    long modified(JSONObject row){return row.optLong("modifiedTimestamp",row.optLong("modifiedTime",0));}
+    long modified(JSONObject row){if(mapping.has("modifiedTimestamp"))return row.optLong("modifiedTimestamp");if(mapping.has("modifiedTime"))return row.optLong("modifiedTime");return row.optLong("modifiedTimestamp",row.optLong("modifiedTime",0));}
     String modifiedColumn()throws Exception {return has("modified_timestamp")?"modified_timestamp":has("modified_time")?"modified_time":"";}
     JSONObject fromCursor(Cursor row)throws Exception {
         JSONObject out=new JSONObject();Iterator<String> names=mapping.keys();while(names.hasNext()){
@@ -124,12 +129,13 @@ final class CloudStream {
         for(String key:new String[]{"deviceUniqueId","dataClient"})if(row.has(key)&&!row.isNull(key))row.put(key,crypto.client(row.getString(key),true));
         return row;
     }
-    JSONObject uploadRow(JSONObject original,CloudCrypto crypto)throws Exception {
+    JSONObject uploadRow(JSONObject original,CloudCrypto crypto)throws Exception {return encoded(uploadPlainRow(original),crypto);}
+    JSONObject uploadPlainRow(JSONObject original)throws Exception {
         JSONObject group=definition.optJSONObject("group");
         if(group==null){
             JSONObject out=new JSONObject();Iterator<String> names=mapping.keys();
-            while(names.hasNext()){String name=names.next();if(original.has(name))out.put(name,original.get(name));}
-            return encoded(out,crypto);
+            while(names.hasNext()){String name=names.next();if(original.has(name)&&!localOnly(name)&&uploadField(name,original))out.put(name,original.get(name));}
+            return out;
         }
         JSONObject parent=new JSONObject(),child=new JSONObject();
         for(String name:new String[]{"dataClient","clientModel"})if(original.has(name))parent.put(name,original.get(name));
@@ -144,16 +150,71 @@ final class CloudStream {
         }
         String[] permitted=id.equals("mental")?new String[]{"type","stress","stressState","display"}:
             id.equals("wrist")?new String[]{"confidence","status"}:
-            id.equals("sunshine")?new String[]{"lightIntensity","sunBathing","display"}:
+            id.equals("sunshine")?new String[]{"lightIntensity","sunBathing","display","vitaminDIngestion"}:
             new String[]{"date","totalDuration","targetDuration","vitaminD","avgVD","goalComplete"};
         for(String name:permitted)if(original.has(name))child.put(name,original.get(name));
         parent.put(group.getString("array"),new JSONArray().put(child));
-        return encoded(parent,crypto);
+        return parent;
     }
     Object uploadRequest(JSONObject row,CloudCrypto crypto)throws Exception {
         JSONArray rows=new JSONArray().put(uploadRow(row,crypto));String wrapper=definition.optString("wrapper");
         return wrapper.isEmpty()?rows:new JSONObject().put(wrapper,rows);
     }
+    boolean uploadField(String name,JSONObject row){
+        // Pinned SyncSleepHeartRateStat.k0()/SyncPhysicalMentalStat.h0() use mzi.p(): 40..220 inclusive.
+        if(id.equals("sleep-heart")&&(name.equals("minHeartRate")||name.equals("reasonableRangeLow")||name.equals("reasonableRangeHigh")||name.equals("avgSleepHeartRate"))||id.equals("mental-stat")&&name.equals("avgRestingHeartRate"))return row.optInt(name)>=40&&row.optInt(name)<=220;
+        if(id.equals("mental-stat")&&name.equals("stressState"))return row.optInt(name)>=1&&row.optInt(name)<5;
+        return true;
+    }
+    boolean receiptMetadata(String field){
+        // SleepStat is account/date aggregated; pinned SyncSleepDataStat.f0() compares the sleep values, not its device annotation.
+        return id.equals("sleep-stat")&&field.equals("deviceUniqueId");
+    }
+    static Object metadataValue(Object value){
+        if(value instanceof String)try{JSONTokener token=new JSONTokener((String)value);Object parsed=token.nextValue();if((parsed instanceof JSONObject||parsed instanceof JSONArray)&&token.nextClean()==0)return parsed;}catch(JSONException ignored){}
+        return value;
+    }
+    boolean hasMeasurements(JSONObject row){
+        if(!id.equals("glucose-stat"))return true;
+        // The official database also creates empty daily placeholders; zero is not a glucose measurement.
+        for(String field:new String[]{"average","min","max","normalCounts","highCounts","lowCounts","warningCounts"})if(row.optDouble(field)>0)return true;
+        return false;
+    }
+    boolean localOnly(String field)throws Exception {
+        JSONArray fields=definition.optJSONArray("localOnly");if(fields!=null)for(int i=0;i<fields.length();i++)if(field.equals(fields.getString(i)))return true;return false;
+    }
+    String projectionFingerprint(JSONObject row)throws Exception {
+        ContentValues values=values(row,"projection",true);JSONObject normalized=new JSONObject();Iterator<String> names=mapping.keys();
+        while(names.hasNext()){String field=names.next();Object value=values.get(mapping.getString(field));if(value==null)continue;
+            String type=wireTypes.optString(field);if(type.equals("Z")||type.equals("Ljava/lang/Boolean;"))value=((Number)value).longValue()!=0;
+            else if(type.equals("Ljava/util/List;"))value=new JSONArray(value.toString());
+            normalized.put(field,value);
+        }
+        return CloudStore.fingerprint(normalized);
+    }
+    boolean sameBusiness(JSONObject expected,JSONObject actual)throws Exception {
+        return sameBusiness(expected,actual,null);
+    }
+    boolean partiallyMatches(JSONObject expected,JSONObject actual)throws Exception {
+        return id.equals("mental-stat")&&pull.equals("v5/c2s/health/physical/mental/pullStatVersionPageData")
+            &&expected.has("avgSleepHrv")&&!expected.isNull("avgSleepHrv")&&!actual.has("avgSleepHrv")
+            &&sameBusiness(expected,actual,"avgSleepHrv");
+    }
+    private boolean sameBusiness(JSONObject expected,JSONObject actual,String unverified)throws Exception {
+        if(!identity(values(expected,"compare",true)).equals(identity(values(actual,"compare",true))))return false;
+        JSONObject plain=uploadPlainRow(expected);JSONArray flat=expanded(new JSONArray().put(plain));
+        if(flat.length()!=1)throw new IOException("CLOUD_UPLOAD_SHAPE");JSONObject transmitted=flat.getJSONObject(0);
+        Iterator<String> fields=transmitted.keys();while(fields.hasNext()){
+            String key=fields.next();if(!mapping.has(key)||metadata(key)||receiptMetadata(key)||key.equals(unverified))continue;
+            Object left=transmitted.get(key),right=actual.opt(key);
+            if(id.equals("mental-stat")&&key.equals("avgSleepHrv")&&(left==JSONObject.NULL||right==null||right==JSONObject.NULL))return false;
+            if(key.equals("metadata")){left=metadataValue(left);right=metadataValue(right);}
+            if(left instanceof Number&&right instanceof Number){if(new java.math.BigDecimal(left.toString()).compareTo(new java.math.BigDecimal(right.toString()))!=0)return false;}
+            else if(!CloudStore.canonical(left).equals(CloudStore.canonical(right)))return false;
+        }
+        return true;
+    }
+    private static boolean metadata(String key){return key.equals("modifiedTime")||key.equals("modifiedTimestamp")||key.equals("updated")||key.equals("syncStatus")||key.equals("ssoid")||key.equals("clientDataId");}
     JSONObject versionRequest(long cursor)throws Exception {return new JSONObject().put(definition.getString("versionField"),cursor).put("queryFlag",0);}
     JSONObject pullRequest(long version)throws Exception {
         return definition.optBoolean("range")?new JSONObject().put("startModifiedTimestamp",version-1).put("endModifiedTimestamp",version+1):

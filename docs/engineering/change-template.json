@@ -1,0 +1,15 @@
+{
+  "id": "REPLACE_CHANGE_ID",
+  "goal": "填写一个可独立验证的目标和当前行为",
+  "kind": "docs",
+  "risk": "low",
+  "scope": ["docs/engineering/填写实际文件.md"],
+  "domains": ["D00"],
+  "acceptance": ["填写可观测的通过条件及失败反例"],
+  "invariants": ["填写必须保持的数据、行为和兼容契约"],
+  "impact": ["填写生产者、消费者、线程、生命周期及数据写入影响"],
+  "rollback": "填写仅回退本批修改的方法及持久化副作用处理",
+  "review": "填写实际自审或评审方式，不能虚构独立评审",
+  "required_checks": [],
+  "deferred": ["填写未执行的必要验收、原因与关闭条件；确无待验项才用空数组"]
+}

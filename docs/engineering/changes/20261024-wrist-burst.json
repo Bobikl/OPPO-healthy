@@ -1,0 +1,55 @@
+{
+  "id": "20261024-wrist-burst",
+  "goal": "修复腕温周视图快速真实箭头点按时等待后台读取而跳过可见中间周，以及重复创建页面/图表的开销",
+  "kind": "runtime",
+  "risk": "medium",
+  "scope": [
+    "docs/engineering/**",
+    "standalone-relay/app/src/main/java/com/example/opponotificationrelay/HealthDataManager.java",
+    "standalone-relay/app/src/main/java/com/example/opponotificationrelay/HealthMetricsData.java",
+    "standalone-relay/app/src/main/java/com/example/opponotificationrelay/HealthMetricsStore.java",
+    "standalone-relay/app/src/main/java/com/example/opponotificationrelay/HealthPageReadiness.java",
+    "standalone-relay/app/src/main/java/com/example/opponotificationrelay/VitalsDetailActivity.java",
+    "standalone-relay/app/src/main/java/com/example/opponotificationrelay/HealthUi.java",
+    "standalone-relay/app/src/main/java/com/example/opponotificationrelay/OfficialWristChart.java",
+    "standalone-relay/app/src/main/java/com/example/opponotificationrelay/OfficialOxygenChart.java",
+    "standalone-relay/tests/*.java",
+    "standalone-relay/tests/run_tests.py",
+    "standalone-relay/tests/run_health_home_tests.py",
+    "standalone-relay/version.txt",
+    "standalone-relay/app/src/main/java/com/example/opponotificationrelay/HealthSnapshotWindow.java"
+  ],
+  "domains": [
+    "D01",
+    "D02"
+  ],
+  "acceptance": [
+    "真实箭头连续前后点按覆盖 120/180ms 节奏，逐次核对目标周和可见数据，而非只检查最终日期",
+    "阻塞慢读时，具有已提交完整覆盖的本地汇总可显示；未覆盖的日期仍等待，旧回调不覆盖新目标",
+    "复用页面壳和腕温图表，数据日期与标题保持一致，模式切换/空态/分页/血氧回归通过",
+    "同一手机对照基线/修复后的响应与布局，实际构建和安装哈希一致"
+  ],
+  "invariants": [
+    "不伪造健康值、原始腕温基准或未覆盖日期的空记录",
+    "不改变真实云、Root、手表连接或其他应用状态",
+    "保留脏工作区与此前过渡/范围保护",
+    "加载期间可保留旧帧，但不把旧数据标成新日期"
+  ],
+  "impact": [
+    "共享管理器发布只读汇总覆盖元数据及公共就绪策略，不放宽所有明细页条件",
+    "Vitals 血氧和腕温共享宿主，保留各自绘制适配器和明细完整性规则",
+    "HealthUi 日期控件调用者保持兼容，箭头从选择意图累加，显示日期从已接受快照绑定",
+    "1.0.117 真机仍有本地查询等待：扩展不可变窗口的内容身份，腕温仅查询原有腕温汇总与原始记录；时区/历史失效保留该身份，完整首页及其他消费者不能复用部分快照。原始基线不变。"
+  ],
+  "rollback": "按 analysis/wrist-burst-20261024/before.json 回退本批差异；保留 1.0.116 APK 和真实私有数据，元数据为派生只读字段，无数据库格式迁移",
+  "review": "self_review：核对选择/呈现/读取身份与覆盖范围、共享血氧消费者、实际箭头和失败反例；无独立评审者",
+  "required_checks": [
+    "self",
+    "host",
+    "home"
+  ],
+  "deferred": [
+    "未执行真实云写入、Root 修复、录音或原始腕温回填",
+    "其他小卡的公共宿主迁移仍按独立领域台账推进，不凭本页通过销项全部卡片"
+  ]
+}

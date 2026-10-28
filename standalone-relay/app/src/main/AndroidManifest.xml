@@ -55,6 +55,7 @@
         <activity android:name=".AdditionalHealthActivity" android:exported="false" android:theme="@style/DeviceTheme" />
         <activity android:name=".WellnessDetailActivity" android:exported="false" android:theme="@style/DeviceTheme" />
         <activity android:name=".VitalsDetailActivity" android:exported="false" android:theme="@style/DeviceTheme" />
+        <activity android:name=".WristRawDetailActivity" android:exported="false" android:theme="@style/DeviceTheme" />
         <activity android:name=".TrendMetricActivity" android:screenOrientation="portrait" android:exported="false" android:theme="@style/DeviceTheme" />
         <activity android:name=".HealthSyncProbeActivity" android:exported="false" android:theme="@style/DeviceTheme" />
         <provider android:name=".AccountSdkProvider" android:authorities="com.example.opponotificationrelay.account.open.sdk.AcOpenCoreProvider" android:enabled="true" android:exported="false" />

@@ -39,3 +39,20 @@
 !/official-app/6.6.7/ui-resources/official-ui-resources.apk
 
 !/standalone-relay/CLOUD_SYNC_STATUS.md
+!/standalone-relay/SYNC_REVIEW_FIXES.md
+
+# Engineering governance and current verification entry points
+!/AGENTS.md
+!/docs/
+/docs/*
+!/docs/engineering/
+!/docs/engineering/**/
+!/docs/engineering/**/*.md
+!/docs/engineering/**/*.json
+!/standalone-relay/tests/test_quality_gate.py
+!/standalone-relay/tests/run_health_home_tests.py
+!/standalone-relay/tests/README.md
+!/standalone-relay/tests/verify_v106.py
+!/standalone-relay/tests/verify_v108.py
+!/standalone-relay/tests/verify_v109.py
+!/PROJECT-CONTEXT.md

@@ -1,10 +1,30 @@
+﻿param(
+    [string]$Baseline,
+    [string]$ChangeRecord,
+    [string]$TemporaryRoot = 'D:\CodexData\scratch'
+)
 $ErrorActionPreference = 'Stop'
 $OutputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$work = Join-Path $env:TEMP ('oppo-notification-relay-' + [Guid]::NewGuid().ToString('N'))
+if ([string]::IsNullOrWhiteSpace($Baseline) -or [string]::IsNullOrWhiteSpace($ChangeRecord)) {
+    throw 'Build requires -Baseline and -ChangeRecord from the current change. See docs/engineering/CHANGE_AND_TEST.md.'
+}
+if (-not [IO.Path]::IsPathRooted($TemporaryRoot)) { throw 'TemporaryRoot must be an absolute task path' }
+$workTempRoot = ([IO.Path]::GetFullPath($TemporaryRoot)).TrimEnd([char[]]@('\', '/'))
+New-Item -ItemType Directory -Force -Path $workTempRoot | Out-Null
+if ((Get-Item -LiteralPath $workTempRoot).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'TemporaryRoot must not be a reparse point' }
+$work = Join-Path $workTempRoot ('oppo-notification-relay-' + [Guid]::NewGuid().ToString('N'))
+try {
 $workApp = Join-Path $work 'app'
 New-Item -ItemType Directory -Force -Path $work | Out-Null
+$repository = Split-Path -Parent $root
+$preflightReport = 'analysis/build-preflight/' + [Guid]::NewGuid().ToString('N') + '/gate.json'
+Push-Location $repository
+try {
+    & python -X utf8 -B (Join-Path $root 'tools/quality_gate.py') check --baseline $Baseline --change $ChangeRecord --out $preflightReport --scratch $work --for-build
+    if ($LASTEXITCODE -ne 0) { throw 'Build preflight failed; APK and version were not modified' }
+} finally { Pop-Location }
 $sourceApp = Join-Path $root 'app'
 Copy-Item -LiteralPath $sourceApp -Destination $workApp -Recurse -Force
 
@@ -111,7 +131,7 @@ $helperPackage = Join-Path $helperClasses 'com\example\opponotificationrelay'
 $helperDex = Join-Path $workBuild 'helper-dex'
 $assets = Join-Path $workBuild 'assets'
 # Build and bundle the native observer; legacy devices retain the Java helper.
-& (Join-Path $root 'native\build.ps1')
+& (Join-Path $root 'native\build.ps1') -TemporaryRoot $work
 if ($LASTEXITCODE -ne 0) { throw 'Native observer build failed' }
 
 New-Item -ItemType Directory -Force -Path $helperPackage, $helperDex, $assets | Out-Null
@@ -160,6 +180,12 @@ if ($LASTEXITCODE -ne 0) { throw "apksigner sign 失败: $LASTEXITCODE" }
 & $apksigner verify --verbose $output
 if ($LASTEXITCODE -ne 0) { throw "apksigner verify 失败: $LASTEXITCODE" }
 
+$buildManifest = [ordered]@{ version=$versionName; apk=$output; sha256=(Get-FileHash -LiteralPath $output -Algorithm SHA256).Hash; preflight=$preflightReport }
+$manifestText = $buildManifest | ConvertTo-Json
+$manifestPath = $output + '.build.json'
+[IO.File]::WriteAllText($manifestPath, $manifestText, [Text.UTF8Encoding]::new($false))
+if ([IO.File]::ReadAllText($manifestPath,[Text.Encoding]::UTF8) -cne $manifestText) { throw 'Build manifest UTF-8 readback failed' }
+
 # ========== 版本号自动递增 ==========
 $newPatch = [int]$vParts[2] + 1
 $newVersion = "$($vParts[0]).$($vParts[1]).$newPatch"
@@ -172,3 +198,21 @@ Write-Output ""
 Write-Output "已生成: $output"
 Write-Output "版本: $versionName (versionCode=$versionCode)"
 Write-Output "下次构建版本将自动递增为: $newVersion"
+} finally {
+    try {
+        if (Test-Path -LiteralPath $work) {
+            $cleanupDirectory = Get-Item -LiteralPath $work -Force -ErrorAction Stop
+            if (-not $cleanupDirectory.PSIsContainer -or
+                -not [string]::Equals([IO.Path]::GetDirectoryName($cleanupDirectory.FullName), $workTempRoot, [StringComparison]::OrdinalIgnoreCase) -or
+                $cleanupDirectory.Name -notmatch '^oppo-notification-relay-[0-9a-f]{32}$' -or
+                ($cleanupDirectory.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                throw 'Build cleanup target failed path validation'
+            }
+            $linkedEntry = Get-ChildItem -LiteralPath $cleanupDirectory.FullName -Recurse -Force -Attributes ReparsePoint -ErrorAction Stop | Select-Object -First 1
+            if ($null -ne $linkedEntry) { throw 'Build cleanup target contains a reparse point' }
+            Remove-Item -LiteralPath $cleanupDirectory.FullName -Recurse -Force -ErrorAction Stop
+        }
+    } catch {
+        Write-Warning "临时构建目录清理失败：$work；$($_.Exception.Message)"
+    }
+}

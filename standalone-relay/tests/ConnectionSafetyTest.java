@@ -29,6 +29,15 @@ public final class ConnectionSafetyTest {
             long failed=state.begin();
             check(state.fail(failed,0,"auth",true)!=null && state.begin()==0,"auth blocks automatic retry");
             state.stop(0,"manual");check(state.begin()!=0,"explicit stop clears block");
+            state.stop(0,"stop");long terminal=state.begin();
+            ConnectionState.Snapshot error=state.fail(terminal,0,"auth",true);
+            check(state.begin()==0,"terminal failure still blocks within same ownership epoch");
+            ConnectionState.Snapshot yielded=state.relinquish(4,"official state checking");
+            check(yielded!=null && yielded.generation>error.generation && !state.current(error),"relinquish invalidates failed epoch and stale error publication");
+            check(state.relinquish(4,"official state checking")==null,"unchanged yield does not republish or churn generation");
+            long resumed=state.begin();check(resumed!=0 && state.active(resumed),"confirmed new ownership epoch can reconnect after prior terminal failure");
+            check(state.fail(terminal,0,"late error",true)==null && state.active(resumed),"old failed worker cannot block resumed ownership");
+            state.relinquish(4,"official online");check(!state.active(resumed),"yield retires active connection generation");
         } finally {pool.shutdownNow();}
         ScheduledThreadPoolExecutor timer=new ScheduledThreadPoolExecutor(1);timer.setRemoveOnCancelPolicy(true);
         try {

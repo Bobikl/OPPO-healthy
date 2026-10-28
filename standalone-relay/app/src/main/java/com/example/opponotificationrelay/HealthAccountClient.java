@@ -45,6 +45,11 @@ final class HealthAccountClient {
             return new JSONObject(session.toString()).put("verifiedAt",System.currentTimeMillis()).put("verification","server");
         }finally{Arrays.fill(request,(byte)0);connection.disconnect();}
     }
+    static JSONObject login(JSONObject session,CloudHttp http)throws Exception {
+        JSONObject result=http.post("v1/c2s/account/login",new JSONObject().put("token",session.getString("token")).put("appPackage",session.getString("wirePackage")));
+        if(!session.getString("account").equals(result.getJSONObject("body").getString("ssoid")))throw new IOException("ACCOUNT_ID_MISMATCH");
+        http.check();return new JSONObject(session.toString()).put("verifiedAt",System.currentTimeMillis()).put("verification","server");
+    }
     static String message(Throwable e){
         if(e instanceof Failure){int code=((Failure)e).code;
             if(code==10101)return "登录凭据已失效，请重新登录。";
@@ -54,6 +59,7 @@ final class HealthAccountClient {
         if(e instanceof java.net.UnknownHostException)return "暂时无法连接账号服务器，请检查网络后重试。";
         if(e instanceof java.net.SocketTimeoutException||e instanceof java.util.concurrent.TimeoutException)return "登录验证超时，请稍后重试。";
         if(e instanceof android.content.pm.PackageManager.NameNotFoundException)return "未安装可供导入的官方健康应用。";
+        if("ACCOUNT_LOGIN_REQUIRED".equals(e.getMessage()))return "登录凭据已失效，请重新登录。";
         if("ACCOUNT_OPERATION_CANCELLED".equals(e.getMessage()))return "登录操作已取消。";
         if("ACCOUNT_HISTORY_MISMATCH".equals(e.getMessage()))return "登录账号与本机健康资料不一致，未替换原账号。";
         String code=e.getMessage();if(code==null||!code.matches("[A-Z_0-9]{1,64}"))code="ACCOUNT_FAILED";

@@ -2,9 +2,15 @@ package com.example.opponotificationrelay;
 import java.time.*;
 /** Immutable view demand. History stays on disk; dense samples only cover the selected day and prior night. */
 final class HealthSnapshotWindow {
+    enum Content { ALL, WRIST_SUMMARY }
+    final Content content;
     final LocalDate start,end,anchor,detailStart,detailEnd;
     final long from,to,detailFrom,detailTo;final ZoneId zone;
     HealthSnapshotWindow(LocalDate start,LocalDate end,LocalDate anchor){
+        this(start,end,anchor,Content.ALL);
+    }
+    HealthSnapshotWindow(LocalDate start,LocalDate end,LocalDate anchor,Content content){
+        this.content=content;
         zone=ZoneId.systemDefault();this.anchor=anchor;detailStart=anchor.minusDays(1);detailEnd=anchor.plusDays(1);
         this.start=start.isBefore(detailStart)?start:detailStart;this.end=end.isAfter(detailEnd)?end:detailEnd;
         if(!this.start.isBefore(this.end)||java.time.temporal.ChronoUnit.DAYS.between(this.start,this.end)>733)throw new IllegalArgumentException("SNAPSHOT_RANGE");
@@ -13,5 +19,5 @@ final class HealthSnapshotWindow {
     static HealthSnapshotWindow home(LocalDate day){return new HealthSnapshotWindow(day.minusDays(62),day.plusDays(1),day);}
     boolean detail(long stamp){return stamp>=detailFrom&&stamp<detailTo;}
     boolean detail(LocalDate day){return !day.isBefore(detailStart)&&day.isBefore(detailEnd);}
-    boolean same(HealthSnapshotWindow other){return other!=null&&zone.equals(other.zone)&&start.equals(other.start)&&end.equals(other.end)&&anchor.equals(other.anchor)&&from==other.from&&to==other.to;}
+    boolean same(HealthSnapshotWindow other){return other!=null&&content==other.content&&zone.equals(other.zone)&&start.equals(other.start)&&end.equals(other.end)&&anchor.equals(other.anchor)&&from==other.from&&to==other.to;}
 }

@@ -12,6 +12,16 @@ import javax.crypto.spec.SecretKeySpec;
 
 /** OAF v1 认证；认证 MAC 的时间为小端，线上字段及加密计数器为大端。 */
 public final class OafCrypto {
+    public enum AuthenticationFailure { RESPONSE_FORMAT, WATCH_REJECTED, SERVER_MAC_MISMATCH }
+    public static final class AuthenticationException extends GeneralSecurityException {
+        public final AuthenticationFailure reason;
+        public final int status, length, type, version;
+        private AuthenticationException(AuthenticationFailure reason, byte[] response) {
+            super(reason.name());this.reason=reason;length=response.length;
+            type=length>0?response[0]&255:-1;version=length>1?response[1]&255:-1;
+            status=type==17 && version==1 && length>2?response[2]&255:-1;
+        }
+    }
     private final byte[] key, challenges;
     private long sent, received;
     public OafCrypto(byte[] key, byte[] clientChallenge, byte[] serverChallenge) {
@@ -43,12 +53,18 @@ public final class OafCrypto {
             .put(challengeMac(key, challenge, time)).put(localId).put(alias).array();
     }
     public static byte[] verifyResponse(byte[] key, byte[] qc, byte[] response) throws GeneralSecurityException {
-        if (response.length != 27 || response[0] != 17 || response[1] != 1 || response[2] != 0)
-            throw new GeneralSecurityException("OAF authentication rejected");
+        if(response.length==2 && response[0]==20 && response[1]==1)
+            throw new AuthenticationException(AuthenticationFailure.WATCH_REJECTED,response);
+        if (response.length < 3 || response[0] != 17 || response[1] != 1)
+            throw new AuthenticationException(AuthenticationFailure.RESPONSE_FORMAT,response);
+        if (response[2] != 0)
+            throw new AuthenticationException(AuthenticationFailure.WATCH_REJECTED,response);
+        if (response.length != 27)
+            throw new AuthenticationException(AuthenticationFailure.RESPONSE_FORMAT,response);
         byte[] qs = Arrays.copyOfRange(response, 3, 11);
         long ts = ByteBuffer.wrap(response, 11, 8).getLong();
         if (!MessageDigest.isEqual(challengeMac(key, concat(qc, qs), ts), Arrays.copyOfRange(response, 19, 27)))
-            throw new GeneralSecurityException("OAF server authentication mismatch");
+            throw new AuthenticationException(AuthenticationFailure.SERVER_MAC_MISMATCH,response);
         return qs;
     }
     public static byte[] confirm(byte[] key, byte[] qs, long clientTime) throws GeneralSecurityException {

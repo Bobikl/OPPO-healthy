@@ -12,14 +12,15 @@ import org.json.*;
 final class HealthArchive extends SQLiteOpenHelper {
     private static HealthArchive instance;
     static synchronized HealthArchive get(Context c){if(instance==null)instance=new HealthArchive(c.getApplicationContext());return instance;}
-    private HealthArchive(Context c){super(c,"health-archive.db",null,4);setWriteAheadLoggingEnabled(true);}
+    private final Context context;
+    private HealthArchive(Context c){super(c,"health-archive.db",null,6);context=c.getApplicationContext();setWriteAheadLoggingEnabled(true);}
     @Override public void onConfigure(SQLiteDatabase db){super.onConfigure(db);db.execSQL("PRAGMA synchronous=FULL");}
     @Override public void onCreate(SQLiteDatabase db){
         db.execSQL("CREATE TABLE packets(device TEXT NOT NULL,kind TEXT NOT NULL,hash TEXT NOT NULL,request_start INTEGER,request_end INTEGER,response_start INTEGER,response_end INTEGER,received_at INTEGER NOT NULL,body BLOB NOT NULL,PRIMARY KEY(device,kind,hash))");
         db.execSQL("CREATE TABLE records(device TEXT NOT NULL,kind TEXT NOT NULL,stamp INTEGER NOT NULL,received_at INTEGER NOT NULL,origin_start INTEGER NOT NULL,source_end INTEGER NOT NULL,body BLOB NOT NULL,PRIMARY KEY(device,kind,stamp))");
         db.execSQL("CREATE TABLE daily(device TEXT NOT NULL,day TEXT NOT NULL,stamp INTEGER,steps INTEGER,kcal INTEGER,minutes INTEGER,moves INTEGER,step_goal INTEGER,kcal_goal INTEGER,minute_goal INTEGER,move_goal INTEGER,source_end INTEGER NOT NULL,saved_at INTEGER NOT NULL,PRIMARY KEY(device,day))");
         db.execSQL("CREATE TABLE cursors(device TEXT NOT NULL,kind TEXT NOT NULL,through INTEGER NOT NULL,PRIMARY KEY(device,kind))");
-        createGoalSchema(db);createOfficialActivity(db);createRevision(db);
+        createGoalSchema(db);createOfficialActivity(db);createRevision(db);createCloudSources(db);
         db.execSQL("CREATE INDEX packets_time ON packets(device,received_at)");
     }
     private static void createGoalSchema(SQLiteDatabase db){db.execSQL("CREATE TABLE IF NOT EXISTS goal_schema(device TEXT PRIMARY KEY,verified_at INTEGER NOT NULL)");}
@@ -27,9 +28,21 @@ final class HealthArchive extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS official_activity(scope TEXT NOT NULL,device TEXT NOT NULL,day TEXT NOT NULL,body TEXT NOT NULL,saved_at INTEGER NOT NULL,PRIMARY KEY(scope,device,day))");
         db.execSQL("CREATE TABLE IF NOT EXISTS official_activity_scope(device TEXT PRIMARY KEY,scope TEXT NOT NULL)");
     }
+    private static void createCloudSources(SQLiteDatabase db){
+        db.execSQL("CREATE TABLE IF NOT EXISTS cloud_source_events(sequence INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL UNIQUE,scope TEXT NOT NULL,device TEXT NOT NULL,kind TEXT NOT NULL,stamp INTEGER NOT NULL,received_at INTEGER NOT NULL,packet_hash TEXT NOT NULL,body BLOB NOT NULL,zone TEXT NOT NULL,model TEXT NOT NULL,metadata TEXT NOT NULL DEFAULT '{}')");
+        db.execSQL("CREATE INDEX IF NOT EXISTS cloud_source_order ON cloud_source_events(scope,kind,sequence)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS cloud_source_identity ON cloud_source_events(scope,device,kind,stamp,sequence)");
+    }
+    private static void source(SQLiteDatabase db,JSONObject owner,String device,String kind,long stamp,long now,String packetHash,HealthProto.Node row)throws Exception {
+        String scope=owner.getString("scope");
+        try(Cursor prior=db.rawQuery("SELECT body FROM cloud_source_events WHERE scope=? AND device=? AND kind=? AND stamp=? ORDER BY sequence DESC LIMIT 1",new String[]{scope,device,kind,Long.toString(stamp)})){
+            if(prior.moveToFirst()&&sameRecord(prior.getBlob(0),row))return;
+        }
+        ContentValues event=new ContentValues();event.put("event_id",UUID.randomUUID().toString());event.put("scope",scope);event.put("device",device);event.put("kind",kind);event.put("stamp",stamp);event.put("received_at",now);event.put("packet_hash",packetHash);event.put("body",row.encode());event.put("zone",owner.getString("zone"));event.put("model",owner.getString("model"));event.put("metadata",new JSONObject().put("deviceType",owner.optString("deviceType")).put("goalsVerified",owner.optBoolean("goalsVerified")).toString());db.insertOrThrow("cloud_source_events",null,event);
+    }
     private static void createRevision(SQLiteDatabase db){db.execSQL("CREATE TABLE IF NOT EXISTS revisions(device TEXT PRIMARY KEY,value INTEGER NOT NULL)");}
     @Override public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){
-        if(oldVersion<2)createGoalSchema(db);if(oldVersion<3)createOfficialActivity(db);if(oldVersion<4)createRevision(db);
+        if(oldVersion<2)createGoalSchema(db);if(oldVersion<3)createOfficialActivity(db);if(oldVersion<4)createRevision(db);if(oldVersion<5)createCloudSources(db);if(oldVersion==5)db.execSQL("ALTER TABLE cloud_source_events ADD COLUMN metadata TEXT NOT NULL DEFAULT '{}'");
     }
     long revision(String mac)throws IOException{try(Cursor c=getReadableDatabase().rawQuery("SELECT value FROM revisions WHERE device=?",new String[]{device(mac)})){return c.moveToFirst()?c.getLong(0):0;}}
     private static void changed(SQLiteDatabase db,String device){db.execSQL("INSERT OR IGNORE INTO revisions(device,value) VALUES(?,0)",new Object[]{device});db.execSQL("UPDATE revisions SET value=value+1 WHERE device=?",new Object[]{device});}
@@ -51,7 +64,9 @@ final class HealthArchive extends SQLiteOpenHelper {
     /** Archive and projections commit together. A cursor is only advanced after the entire window succeeds. */
     void save(String mac,HealthSyncProtocol.Request request,byte[] bytes,Map<HealthSetting,Integer> goals)throws IOException{
         String device=device(mac);HealthSyncProtocol.Summary summary=HealthSyncProtocol.parse(request,bytes);
-        List<HealthProto.Node> rows=HealthProto.parse(bytes).messages(4);long now=System.currentTimeMillis();SQLiteDatabase db=getWritableDatabase();db.beginTransaction();
+        List<HealthProto.Node> rows=HealthProto.parse(bytes).messages(4);long now=System.currentTimeMillis();
+        JSONObject owner=CloudNativeProducer.owner(context,mac);SQLiteDatabase db=getWritableDatabase();db.beginTransaction();long initialSequence=0;
+        try(Cursor previous=db.rawQuery("SELECT coalesce(max(sequence),0) FROM cloud_source_events",null)){previous.moveToFirst();initialSequence=previous.getLong(0);}
         try{
             boolean contentChanged=false;boolean verifiedGoals=goalSchema(db,device);
             if(!verifiedGoals && request.kind==HealthSyncProtocol.Kind.ACTIVITY_SUMMARY){
@@ -62,6 +77,9 @@ final class HealthArchive extends SQLiteOpenHelper {
             ContentValues p=new ContentValues();p.put("device",device);p.put("kind",request.kind.name());p.put("hash",hash(bytes));p.put("request_start",request.start);p.put("request_end",request.end);p.put("response_start",summary.start);p.put("response_end",summary.end);p.put("received_at",now);p.put("body",bytes);
             db.insertWithOnConflict("packets",null,p,SQLiteDatabase.CONFLICT_IGNORE);
             for(HealthProto.Node row:rows){
+                if(request.kind==HealthSyncProtocol.Kind.SUNSHINE&&!WatchSunshineProjection.valid(row))continue;
+                if(request.kind==HealthSyncProtocol.Kind.WRIST_INDEX&&!WatchWristProjection.valid(row))continue;
+                if(request.kind==HealthSyncProtocol.Kind.WRIST_RAW&&WatchWristProjection.rawValue(row)<=0)continue;
                 int stamp=request.kind.daily()?row.number(1,0):summary.start+row.number(1,0)*(request.kind==HealthSyncProtocol.Kind.HEART?1:60);
                 ContentValues r=new ContentValues();r.put("device",device);r.put("kind",request.kind.name());r.put("stamp",stamp);r.put("received_at",now);r.put("origin_start",summary.start);r.put("source_end",summary.end);r.put("body",row.encode());
                 try(Cursor previous=db.rawQuery("SELECT source_end,body FROM records WHERE device=? AND kind=? AND stamp=?",new String[]{device,request.kind.name(),String.valueOf(stamp)})){
@@ -71,6 +89,7 @@ final class HealthArchive extends SQLiteOpenHelper {
                         else if(previous.getInt(0)<summary.end){ContentValues newer=new ContentValues();newer.put("source_end",summary.end);db.update("records",newer,"device=? AND kind=? AND stamp=?",new String[]{device,request.kind.name(),String.valueOf(stamp)});}
                     }
                 }
+                if(owner!=null)try{JSONObject frozen=new JSONObject(owner.toString()).put("goalsVerified",verifiedGoals);source(db,frozen,device,request.kind.name(),stamp,now,hash(bytes),row);}catch(Exception failure){throw new IOException("SYNC_SOURCE_STORAGE",failure);}
                 if(request.kind==HealthSyncProtocol.Kind.ACTIVITY_SUMMARY){
                     DailyActivityData d=DailyActivityData.parse(row,goals,now,verifiedGoals);String day=DailyActivityData.day(d.timestamp);
                     // Backfill may contain an older snapshot of today's totals. Keep the latest observation.
@@ -86,8 +105,12 @@ final class HealthArchive extends SQLiteOpenHelper {
                     else {ContentValues newer=new ContentValues();newer.put("source_end",summary.end);db.update("daily",newer,"device=? AND day=?",new String[]{device,day});}
                 }
             }
-            if(contentChanged)changed(db,device);db.setTransactionSuccessful();
-        }finally{db.endTransaction();}
+            if(contentChanged)changed(db,device);
+            synchronized(SyncCommit.LOCK){
+                if(owner!=null&&(owner.optLong("generation",-1)!=HealthAccountStore.generation()||!HealthAccountStore.exists(context)))db.delete("cloud_source_events","sequence>?",new String[]{Long.toString(initialSequence)});
+                db.setTransactionSuccessful();db.endTransaction();
+            }
+        }finally{if(db.inTransaction())db.endTransaction();}
     }
     private DailyActivityData daily(SQLiteDatabase db,String device,String day){
         try(Cursor c=db.rawQuery("SELECT stamp,steps,kcal,minutes,moves,step_goal,kcal_goal,minute_goal,move_goal,saved_at FROM daily WHERE device=? AND day=?",new String[]{device,day})){
@@ -126,6 +149,14 @@ final class HealthArchive extends SQLiteOpenHelper {
     }
     void ensureCursor(String mac,HealthSyncProtocol.Kind kind,int initial)throws IOException{
         ContentValues v=new ContentValues();v.put("device",device(mac));v.put("kind",kind.name());v.put("through",initial);getWritableDatabase().insertWithOnConflict("cursors",null,v,SQLiteDatabase.CONFLICT_IGNORE);
+    }
+    void ensureSunshineBackfill(String mac,int initial)throws IOException {
+        String key=device(mac)+".sunshine_backfill_v1";SharedPreferences prefs=context.getSharedPreferences("health_sync",0);
+        if(prefs.getBoolean(key,false))return;
+        ensureCursor(mac,HealthSyncProtocol.Kind.SUNSHINE,initial);
+        if(cursor(mac,HealthSyncProtocol.Kind.SUNSHINE,initial)>initial)advance(mac,HealthSyncProtocol.Kind.SUNSHINE,initial);
+        // Mark only after the durable cursor write. A failed marker retries safely after restart.
+        if(!prefs.edit().putBoolean(key,true).commit())throw new IOException("SYNC_CURSOR_STORAGE");
     }
     void advance(String mac,HealthSyncProtocol.Kind kind,int through)throws IOException{
         ContentValues v=new ContentValues();v.put("device",device(mac));v.put("kind",kind.name());v.put("through",through);getWritableDatabase().insertWithOnConflict("cursors",null,v,SQLiteDatabase.CONFLICT_REPLACE);

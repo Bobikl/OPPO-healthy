@@ -7,16 +7,15 @@ import android.widget.*;
 import java.time.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.*;
 
 /** First health home card. No sample values: empty dates remain explicitly empty. */
 final class HealthPage implements HealthDataManager.Listener {
     private final OfficialHomeSmallCard sleepCard,trendCard,heartCard,oxygenCard,wristCard,mentalCard,relaxCard,sunshineCard,weightCard,glucoseCard,apneaCard;private HealthMetricsData detail,boundDetail;private String boundDate;
     private final Activity activity;private final DailyActivityCard card;private final TextView date,status,updated;private final Button refresh;private final Button officialSync;private final TextView officialStatus;
-    private final Handler main=new Handler(Looper.getMainLooper());private final ExecutorService reader=Executors.newSingleThreadExecutor(r->new Thread(r,"health-home-read"));
+    private final Handler main=new Handler(Looper.getMainLooper());
     private final LinearLayout cardRows;private final OfficialHomeSmallCard[] smallCards;private String cardOrder;
     private String renderedMac,renderedDate;private ZoneId renderedZone;
-    private boolean active,loading,closed;private String selected=LocalDate.now().toString();private boolean followToday=true;
+    private boolean active,closed;private String selected=LocalDate.now().toString();private boolean followToday=true;
     private final Runnable tick=new Runnable(){public void run(){if(!active)return;HealthSyncManager.get(activity).request(false);HealthDataManager.get(activity).local();load();main.postDelayed(this,2000);}};
     HealthPage(Activity a,Runnable health,Runnable device){
         activity=a;LinearLayout root=new LinearLayout(a);root.setOrientation(1);root.setBackgroundColor(DeviceStyle.BG);
@@ -49,31 +48,27 @@ final class HealthPage implements HealthDataManager.Listener {
     }
     private int dp(int n){return DeviceStyle.dp(activity,n);}
     private TextView text(String s,int size,int color){TextView t=new TextView(activity);t.setText(s);t.setTextSize(size);t.setTextColor(color);return t;}
-    void start(){if(closed||active)return;active=true;applyOrder();if(followToday)selected=LocalDate.now().toString();bindDetails();HealthDataManager.get(activity).add(this);HealthDataManager.get(activity).request(LocalDate.parse(selected),false,false);HealthDataManager.get(activity).request(LocalDate.parse(selected),true,false);HealthSyncManager.get(activity).request(false);main.removeCallbacks(tick);main.post(tick);}
+    void start(){if(closed||active)return;active=true;applyOrder();if(followToday)selected=LocalDate.now().toString();detail=HealthDataManager.get(activity).snapshot(HealthSnapshotWindow.home(LocalDate.parse(selected)));bindDetails();HealthDataManager.get(activity).add(this);HealthDataManager.get(activity).request(LocalDate.parse(selected),false,false);HealthDataManager.get(activity).request(LocalDate.parse(selected),true,false);HealthSyncManager.get(activity).request(false);main.removeCallbacks(tick);main.post(tick);}
     void stop(){active=false;detail=null;boundDetail=null;boundDate=null;HealthDataManager.get(activity).remove(this);main.removeCallbacks(tick);}
-    void close(){closed=true;stop();reader.shutdown();}
-    private void chooseDate(){HealthUi.pick(activity,LocalDate.parse(selected),day->{selected=day.toString();followToday=day.equals(LocalDate.now());HealthDataManager.get(activity).request(day,false,false);HealthDataManager.get(activity).request(day,true,false);bindDetails();load();});}
-    @Override public void changed(HealthMetricsData data,String message,boolean busy){if(closed||!active)return;detail=data;bindDetails();}
+    void close(){closed=true;stop();}
+    private void chooseDate(){HealthUi.pick(activity,LocalDate.parse(selected),"steps",day->{selected=day.toString();followToday=day.equals(LocalDate.now());HealthDataManager.get(activity).request(day,false,false);HealthDataManager.get(activity).request(day,true,false);bindDetails();load();});}
+    @Override public void changed(HealthMetricsData data,String message,boolean busy){if(closed||!active||data!=null&&!HealthDataManager.get(activity).settled(data))return;detail=data;bindDetails();}
     private void bindDetails(){
         String mac=RelayConfig.getTargetMac(activity);ZoneId zone=ZoneId.systemDefault();LocalDate day=LocalDate.parse(selected);
-        // Keep only the already rendered views while waiting; stopped pages release their full snapshot.
-        if(detail!=null&&(!mac.equalsIgnoreCase(detail.device)||!HealthSnapshotWindow.home(day).same(detail.window)))detail=null;
+        // Pages release their reference while the manager keeps one reusable home snapshot.
+        boolean sameOwner=mac.equalsIgnoreCase(renderedMac)&&zone.equals(renderedZone);
+        if(detail!=null&&!mac.equalsIgnoreCase(detail.device))detail=null;
+        if(detail==null||!HealthSnapshotWindow.home(day).same(detail.window)){if(sameOwner)return;detail=null;}
         boolean sameScope=mac.equalsIgnoreCase(renderedMac)&&selected.equals(renderedDate)&&zone.equals(renderedZone);
         if(detail==null&&sameScope)return;
         if(sameScope&&detail==boundDetail&&selected.equals(boundDate))return;
-        if(!sameScope)card.bind(null);
+        if(!sameOwner)card.bind(null);
+        if(detail!=null){DailyActivityData value=detail.activity;card.bind(value);date.setText(day.equals(LocalDate.now())?"今天 ▾":selected+" ▾");updated.setText(value==null?"尚无当天记录":"已保存 · "+new SimpleDateFormat("MM-dd HH:mm",Locale.ROOT).format(new Date(value.savedAt))+" 更新");}
         renderedMac=mac;renderedDate=selected;renderedZone=zone;boundDetail=detail;boundDate=selected;trendCard.bind(detail,day);heartCard.bind(detail,day);sleepCard.bind(detail,day);oxygenCard.bind(detail,day);wristCard.bind(detail,day);mentalCard.bind(detail,day);relaxCard.bind(detail,day);sunshineCard.bind(detail,day);weightCard.bind(detail,day);glucoseCard.bind(detail,day);apneaCard.bind(detail,day);}
     private void load(){
         if(!active||closed)return;if(followToday&&!selected.equals(LocalDate.now().toString())){selected=LocalDate.now().toString();HealthDataManager.get(activity).request(LocalDate.parse(selected),false,false);HealthDataManager.get(activity).request(LocalDate.parse(selected),true,false);bindDetails();}
         HealthSyncManager manager=HealthSyncManager.get(activity);status.setText(manager.message());refresh.setEnabled(!manager.running());refresh.setText(manager.running()?"同步中":"同步");
         ActivityBridgeManager bridge=ActivityBridgeManager.get(activity);officialStatus.setText(bridge.message());officialSync.setEnabled(!bridge.running());
-        if(loading)return;loading=true;String day=selected,mac=RelayConfig.getTargetMac(activity);
-        reader.execute(()->{DailyActivityData value=null;boolean error=false;try{value=HealthArchive.get(activity).daily(mac,day);}catch(Exception e){error=true;}
-            final DailyActivityData result=value;final boolean failed=error;main.post(()->{loading=false;if(closed||!active||!day.equals(selected)||!mac.equalsIgnoreCase(RelayConfig.getTargetMac(activity)))return;
-                card.bind(result);bindDetails();date.setText(day.equals(LocalDate.now().toString())?"今天 ▾":day+" ▾");
-                updated.setText(result==null?(failed?"暂时无法读取本地记录":"尚无当天记录"):
-                    "已保存 · "+new SimpleDateFormat("MM-dd HH:mm",Locale.ROOT).format(new Date(result.savedAt))+" 更新");
-            });
-        });
+        bindDetails();
     }
 }

@@ -39,6 +39,11 @@ final class CloudCrypto {
         return Base64.encodeToString(combined,Base64.NO_WRAP);
     }
     String client(String value,boolean encrypt)throws Exception {
+        String result=clientLayer(value,encrypt);
+        // Pinned ueb.Companion.a() decodes a legacy nested client identifier once more.
+        return !encrypt&&result.length()>32?clientLayer(result,false):result;
+    }
+    private String clientLayer(String value,boolean encrypt)throws Exception {
         if(value==null||value.isEmpty())return "";
         if(encrypt&&value.length()>32||!encrypt&&value.length()<=32)return value;
         Cipher aes=Cipher.getInstance("AES/CTR/NoPadding");

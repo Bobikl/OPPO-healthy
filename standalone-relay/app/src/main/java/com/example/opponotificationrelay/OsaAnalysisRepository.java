@@ -3,9 +3,15 @@ import android.content.Context;import android.database.Cursor;import java.time.*
 /** Reads independent watch rows, never imported official risk results. */
 public final class OsaAnalysisRepository {
  private OsaAnalysisRepository(){}
+ private static void checkScope(Context c,OsaAnalysisScope scope,java.util.function.BooleanSupplier cancel)throws IOException{scope.check(RelayConfig.getTargetMac(c),LocalDate.now(),ZoneId.systemDefault(),cancel.getAsBoolean());}
  private static void guard(Context c,String device,java.util.function.BooleanSupplier cancel,long until)throws IOException{if(cancel.getAsBoolean()||!device.equals(RelayConfig.getTargetMac(c)))throw new IOException("OSA_SYNC_CANCELLED");if(android.os.SystemClock.elapsedRealtime()>=until)throw new IOException("OSA_SYNC_DEADLINE");}
  public static void refresh(Context c,String device,LocalDate date,java.util.function.BooleanSupplier cancel)throws Exception {
-  long deadline=android.os.SystemClock.elapsedRealtime()+180000;ZoneId zone=ZoneId.systemDefault();int from=(int)date.minusDays(1).atTime(20,0).atZone(zone).toEpochSecond(),to=(int)Math.min(System.currentTimeMillis()/1000,date.atTime(20,0).atZone(zone).toEpochSecond());
+  refresh(c,new OsaAnalysisScope(device,date,ZoneId.systemDefault()),cancel);
+ }
+ static void refresh(Context c,OsaAnalysisScope scope,java.util.function.BooleanSupplier cancelled)throws Exception {
+  checkScope(c,scope,cancelled);String device=scope.device;
+  java.util.function.BooleanSupplier cancel=()->cancelled.getAsBoolean()||!scope.current(RelayConfig.getTargetMac(c),LocalDate.now(),ZoneId.systemDefault(),false);
+  long deadline=android.os.SystemClock.elapsedRealtime()+180000;int from=scope.from,to=(int)Math.min(System.currentTimeMillis()/1000,scope.to);
   for(HealthSyncProtocol.Kind kind:new HealthSyncProtocol.Kind[]{HealthSyncProtocol.Kind.SLEEP_STAGE,HealthSyncProtocol.Kind.OXYGEN}){
    int next=from;boolean complete=false;for(int page=0;page<48;page++){
     guard(c,device,cancel,deadline);HealthSyncProtocol.Request request=HealthSyncProtocol.range(kind,next,to);byte[] bytes=read(c,device,request,cancel,deadline);HealthSyncProtocol.Summary result=HealthSyncProtocol.parse(request,bytes);HealthArchive.get(c).save(device,request,bytes,Collections.emptyMap());
@@ -22,7 +28,10 @@ public final class OsaAnalysisRepository {
   while(!done.await(100,java.util.concurrent.TimeUnit.MILLISECONDS))guard(c,device,cancel,until);guard(c,device,cancel,deadline);if(!accepted[0]||generation!=t.healthConnection()||bytes[0]==null)throw new IOException("OSA_INPUT_RESPONSE");return bytes[0];
  }
  public static OsaAnalysisInput load(Context context,String device,LocalDate date)throws Exception{
-  ZoneId zone=ZoneId.systemDefault();int from=(int)date.minusDays(1).atTime(20,0).atZone(zone).toEpochSecond(),to=(int)date.atTime(20,0).atZone(zone).toEpochSecond();
+  return load(context,new OsaAnalysisScope(device,date,ZoneId.systemDefault()));
+ }
+ static OsaAnalysisInput load(Context context,OsaAnalysisScope scope)throws Exception{
+  checkScope(context,scope,()->false);String device=scope.device;int from=scope.from,to=scope.to;
   TreeMap<Integer,Integer> sleep=new TreeMap<>(),oxygen=new TreeMap<>();String canonical=HealthArchive.device(device);
   try(Cursor c=HealthArchive.get(context).getReadableDatabase().rawQuery("SELECT kind,stamp,body FROM records WHERE device=? AND kind IN ('SLEEP_STAGE','OXYGEN') AND stamp>=? AND stamp<? ORDER BY stamp LIMIT 6001",new String[]{canonical,""+from,""+to})){
    int rows=0;while(c.moveToNext()){if(++rows>6000)throw new IOException("OSA_INPUT_LIMIT");int stamp=c.getInt(1);HealthProto.Node n=HealthProto.parse(c.getBlob(2));if(c.getString(0).equals("SLEEP_STAGE"))sleep.put(stamp,n.number(2,0));else{
@@ -30,6 +39,6 @@ public final class OsaAnalysisRepository {
     for(int i=0;i<values.length;i++){int sec=(offsets[i]&255)>>>2,value=(values[i]&255)>>>3;if(sec>59)throw new IOException("OSA_OXYGEN_TIME");int packed=OsaAnalysisInput.packedSpo2(offsets[i]&255,values[i]&255);if(packed>0)oxygen.put(stamp+sec,packed);}
    }}
   }
-  try(OsaInputStore store=new OsaInputStore(context)){return OsaAnalysisInput.build(sleep,store.samples(device,"sensor",from,to),oxygen);}
+  try(OsaInputStore store=new OsaInputStore(context)){OsaAnalysisInput result=OsaAnalysisInput.build(sleep,store.samples(device,"sensor",from,to),oxygen);checkScope(context,scope,()->false);return result;}
  }
 }

@@ -53,7 +53,19 @@ public final class OafProtocolTest {
         check(Arrays.equals(OafCrypto.verifyResponse(key,qc,response),qs),"auth server verify");
         response[26]^=1;
         try { OafCrypto.verifyResponse(key,qc,response); throw new AssertionError("bad auth accepted"); }
-        catch (GeneralSecurityException expected) { assertions++; }
+        catch (OafCrypto.AuthenticationException expected) {
+            check(expected.reason==OafCrypto.AuthenticationFailure.SERVER_MAC_MISMATCH && expected.status==0,"bad MAC is classified and rejected");
+        }
+        for(byte[] invalid:new byte[][]{new byte[0],hex("1101"),hex("120100"),hex("110200"),hex("110100"),Arrays.copyOf(response,28)}) {
+            try {OafCrypto.verifyResponse(key,qc,invalid);throw new AssertionError("bad auth format accepted");}
+            catch(OafCrypto.AuthenticationException expected) {check(expected.reason==OafCrypto.AuthenticationFailure.RESPONSE_FORMAT && expected.length==invalid.length && expected.type==(invalid.length>0?invalid[0]&255:-1),"invalid auth response classification and safe header metadata");}
+        }
+        for(byte[] rejected:new byte[][]{hex("1101ff"),cat(hex("110102"),new byte[24])}) {
+            try {OafCrypto.verifyResponse(key,qc,rejected);throw new AssertionError("watch rejection accepted");}
+            catch(OafCrypto.AuthenticationException expected) {check(expected.reason==OafCrypto.AuthenticationFailure.WATCH_REJECTED && expected.status==(rejected[2]&255),"watch rejection preserves unsigned status only");}
+        }
+        try {OafCrypto.verifyResponse(key,qc,hex("1401"));throw new AssertionError("watch failure control accepted");}
+        catch(OafCrypto.AuthenticationException expected) {check(expected.reason==OafCrypto.AuthenticationFailure.WATCH_REJECTED && expected.type==20 && expected.status==-1,"real watch failure control is not reported as MAC mismatch or malformed response");}
     }
     private static void framing() throws Exception {
         check(OafWire.crc16(bytes("123456789"))==0xbb3d,"CRC16 ARC check vector");

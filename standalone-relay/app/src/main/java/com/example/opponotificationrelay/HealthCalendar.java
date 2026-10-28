@@ -1,6 +1,7 @@
 package com.example.opponotificationrelay;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Trace;
 import android.view.View;
 import android.widget.*;
 import com.coui.appcompat.panel.COUIBottomSheetDialog;
@@ -12,9 +13,10 @@ import kotlin.jvm.functions.Function1;
 /** Original calendar panel, RecyclerView adapter, month/day renderers and date hit testing. */
 final class HealthCalendar {
     private static final Map<Activity,Object> requests=new WeakHashMap<>();
-    static void show(Activity activity,LocalDate selected,HealthUi.DateChanged callback){
-        boolean sleep=activity instanceof SleepDetailActivity||activity instanceof SleepTimelineActivity;
-        String metric=sleep?"sleep":activity instanceof HeartDetailActivity?"heart":activity instanceof VitalsDetailActivity?(((VitalsDetailActivity)activity).oxygen()?"oxygen":"wrist"):activity instanceof WellnessDetailActivity?(activity.getIntent().getIntExtra("vital",5)==5?"mind":activity.getIntent().getIntExtra("vital",5)==6?"relax":"sunshine"):activity instanceof AdditionalHealthActivity?(activity.getIntent().getIntExtra("vital",8)==8?"weight":activity.getIntent().getIntExtra("vital",8)==9?"glucose":"apnea"):activity.getIntent().getIntExtra("metric",HealthMetricsData.STEPS)==HealthMetricsData.CALORIES?"calories":"steps";
+    private static final Set<Activity> closing=Collections.newSetFromMap(new WeakHashMap<Activity,Boolean>());
+    static boolean closing(Object listener){return listener instanceof Activity&&closing.contains(listener);}
+    static void show(Activity activity,LocalDate selected,String metric,HealthUi.DateChanged callback){
+        boolean sleep="sleep".equals(metric);
         Object request=new Object();requests.put(activity,request);
         HealthDataManager.get(activity).calendar(metric,(dates,error)->{
             if(requests.get(activity)!=request)return;requests.remove(activity);
@@ -25,7 +27,24 @@ final class HealthCalendar {
     }
     private static void showComplete(Activity activity,LocalDate selected,HealthUi.DateChanged callback,Map<LocalDate,Float> marked,boolean sleep){
         Context c=OfficialUiResources.panel(activity);COUIBottomSheetDialog dialog=new COUIBottomSheetDialog(c);
-        Function1 choose=new Function1(){public Object invoke(Object day){dialog.dismiss();callback.change((LocalDate)day);return Unit.INSTANCE;}};
+        LocalDate[] chosen={null};
+        int traceCookie=System.identityHashCode(dialog);
+        dialog.setOnDismissListener(ignored->{
+            if(chosen[0]!=null)Trace.endAsyncSection("HealthCalendar.close",traceCookie);
+            View decor=activity.getWindow().getDecorView();
+            // Animation callbacks run before traversal. Post the date change from that
+            // callback so the uncovered detail frame is drawn before rebuilding its views.
+            decor.postOnAnimation(()->decor.post(()->{
+                closing.remove(activity);
+                if(activity.isFinishing()||activity.isDestroyed())return;
+                Trace.beginSection("HealthCalendar.applyDate");
+                try{
+                    if(chosen[0]!=null&&!chosen[0].equals(selected))callback.change(chosen[0]);
+                    HealthDataManager.get(activity).local();
+                }finally{Trace.endSection();}
+            }));
+        });
+        Function1 choose=new Function1(){public Object invoke(Object day){if(chosen[0]==null){chosen[0]=(LocalDate)day;closing.add(activity);Trace.beginAsyncSection("HealthCalendar.close",traceCookie);dialog.dismiss();}return Unit.INSTANCE;}};
         CommonCalendarFragment fragment=new CommonCalendarFragment(selected,null,marked,sleep?HealthMetricsData.PURPLE:activity instanceof HeartDetailActivity?HealthMetricsData.RED:HealthMetricsData.GREEN,choose,null);
         FrameLayout panel=new FrameLayout(c);fragment.setContentView(panel);fragment.initView(panel);
         // initView adds an inflated root without LayoutParams; FrameLayout otherwise defaults to MATCH_PARENT.

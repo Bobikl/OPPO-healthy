@@ -36,6 +36,8 @@ public final class RelayConfig {
     }
     public static boolean autoRestore(Context c) {return getPrefs(c).getBoolean("auto_restore",true);}
     public static void setAutoRestore(Context c,boolean enabled) {getPrefs(c).edit().putBoolean("auto_restore",enabled).apply();}
+    public static boolean autoRootListenerRepair(Context c) {return getPrefs(c).getBoolean("auto_root_listener_repair",false);}
+    public static void setAutoRootListenerRepair(Context c,boolean enabled) {getPrefs(c).edit().putBoolean("auto_root_listener_repair",enabled).apply();}
     public static boolean suppressWhileScreenOn(Context c) {return getPrefs(c).getBoolean("suppress_screen_on",false);}
     public static void setSuppressWhileScreenOn(Context c,boolean value) {getPrefs(c).edit().putBoolean("suppress_screen_on",value).apply();}
     public static void setSourceInTitle(Context c,boolean value) {getPrefs(c).edit().putBoolean("source_in_title",value).apply();}
@@ -72,8 +74,14 @@ public final class RelayConfig {
         } catch(Exception e) {return "本地没有与当前 MAC 匹配的配对凭据，请先由官方完成配对并连接，再点击读取。";}
     }
     public static synchronized void markCredentialsVerified(Context c,JSONObject used) {
-        if(used.toString().equals(getPrefs(c).getString("oaf_credentials","")))
-            getPrefs(c).edit().putLong("credentials_verified_at",System.currentTimeMillis()).apply();
+        try {
+            JSONObject saved=credentials(c);validate(used);
+            if(!used.getString("mac").equalsIgnoreCase(saved.getString("mac")))return;
+            for(String field:new String[]{"ksc","localDeviceId","kscAlias"})
+                if(!java.util.Arrays.equals(field(used,field),field(saved,field)))return;
+            if(!getPrefs(c).edit().putLong("credentials_verified_at",System.currentTimeMillis()).commit())
+                FileLogger.w("OAF","身份验证标记保存失败，暂不建立新数据的上传归属");
+        }catch(Exception invalid){FileLogger.w("OAF","配对信息已变化，暂不建立新数据的上传归属");}
     }
     public static final class ImportResult {
         public final boolean updated;
@@ -86,12 +94,12 @@ public final class RelayConfig {
         String mac=getTargetMac(c),failure="未找到已安装的官方健康应用";
         if(!mac.matches("(?i)([0-9a-f]{2}:){5}[0-9a-f]{2}")) return new ImportResult(false,"请先保存有效手表 MAC 地址");
         for(String pkg:new String[]{"com.heytap.health","com.coloros.health"}) {
-            int uid;
-            try {uid=c.getPackageManager().getApplicationInfo(pkg,android.content.pm.PackageManager.MATCH_DISABLED_COMPONENTS).uid;}
+            int uid;String officialApk;
+            try {android.content.pm.ApplicationInfo info=c.getPackageManager().getApplicationInfo(pkg,android.content.pm.PackageManager.MATCH_DISABLED_COMPONENTS);uid=info.uid;officialApk=info.sourceDir;}
             catch(android.content.pm.PackageManager.NameNotFoundException ignored) {continue;}
             Process child=null;
             try {
-                child=OfficialHistoryStore.launch(c,new ProcessBuilder(PairingImportLaunch.command(c.getApplicationInfo().sourceDir,pkg,uid,mac)).redirectErrorStream(true));
+                child=OfficialHistoryStore.launch(c,new ProcessBuilder(PairingImportLaunch.command(c.getApplicationInfo().sourceDir,officialApk,pkg,uid,mac)).redirectErrorStream(true));
                 final Process running=child;
                 FutureTask<String> read=new FutureTask<>(() -> {
                     try(InputStream in=running.getInputStream();ByteArrayOutputStream bytes=new ByteArrayOutputStream()) {
@@ -137,6 +145,7 @@ public final class RelayConfig {
         if("DATABASE_READ_FAILED".equals(code)) return "官方配对数据库不可读或记录格式不兼容";
         if("LOCAL_ID_NOT_FOUND".equals(code)) return "官方本机标识尚未生成，请先完成官方连接";
         if("OFFICIAL_RECORD_UNAVAILABLE".equals(code)) return "官方配对记录不可读，请检查 Root 权限及官方是否完成连接";
+        if("CURRENT_RECORD_FAILED".equals(code)) return "官方当前连接记录读取失败或版本不兼容，保留原配对缓存";
         return "无法读取官方配对，请确认本应用获得 Root 权限";
     }
 }

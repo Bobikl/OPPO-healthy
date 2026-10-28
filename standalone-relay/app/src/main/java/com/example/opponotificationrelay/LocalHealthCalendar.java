@@ -14,12 +14,18 @@ final class LocalHealthCalendar {
             String column=metric.equals("steps")?"steps":"kcal";try(Cursor rows=archive.rawQuery("SELECT day FROM daily WHERE device=? AND "+column+">0",new String[]{device})){while(rows.moveToNext())add(out,LocalDate.parse(rows.getString(0)));}
             try(Cursor rows=archive.rawQuery("SELECT a.day,a.body FROM official_activity a JOIN official_activity_scope s ON a.scope=s.scope AND a.device=s.device WHERE a.device=?",new String[]{device})){while(rows.moveToNext()){JSONArray values=new JSONObject(rows.getString(1)).getJSONArray("values");if(values.optLong(metric.equals("steps")?0:1)>0)add(out,LocalDate.parse(rows.getString(0)));}}
         }
-        if(metric.equals("heart")||metric.equals("sleep")){
-            String kinds=metric.equals("heart")?"'HEART'":"'SLEEP','SLEEP_STAGE'";
+        if(metric.equals("heart")||metric.equals("sleep")||metric.equals("mind")||metric.equals("oxygen")||metric.equals("sunshine")||metric.equals("wrist")){
+            String kinds=metric.equals("wrist")?"'WRIST_INDEX','WRIST_RAW'":metric.equals("sunshine")?"'SUNSHINE'":metric.equals("oxygen")?"'OXYGEN'":metric.equals("heart")?"'HEART'":metric.equals("mind")?"'MIND','MIND_INDEX'":"'SLEEP','SLEEP_STAGE'";
             try(Cursor rows=archive.rawQuery("SELECT kind,stamp,body FROM records WHERE device=? AND kind IN("+kinds+") ORDER BY stamp",new String[]{device})){
                 while(rows.moveToNext()){String kind=rows.getString(0);long time=rows.getLong(1)*1000;HealthProto.Node data=HealthProto.parse(rows.getBlob(2));boolean valid;
-                    if(kind.equals("HEART")){int value=data.number(2,0),type=data.number(4,0);valid=value>0&&value<=300&&type!=1&&type!=4&&type!=5;}
+                    if(kind.equals("OXYGEN")){valid=!WatchOxygenProjection.minute(time,data).isEmpty();}
+                    else if(kind.equals("SUNSHINE")){valid=WatchSunshineProjection.valid(data);}
+                    else if(kind.equals("WRIST_INDEX")){valid=WatchWristProjection.valid(data);}
+                    else if(kind.equals("WRIST_RAW")){valid=WatchWristProjection.rawValue(data)>0;}
+                    else if(kind.equals("HEART")){int value=data.number(2,0),type=data.number(4,0);valid=value>0&&value<=300&&type!=1&&type!=4&&type!=5;}
                     else if(kind.equals("SLEEP")){int score=data.number(2,0),minutes=data.number(7,0);valid=score>0&&score<=100&&minutes>0&&minutes<=1440;}
+                    else if(kind.equals("MIND")){valid=WatchMentalProjection.raw(time,data)!=null;}
+                    else if(kind.equals("MIND_INDEX")){valid=WatchMentalProjection.validIndex(data);}
                     else {valid=WatchSleepProjection.rawStage(data.number(2,0))>0;time+=4*3600000L;}
                     if(valid)add(out,Instant.ofEpochMilli(time).atZone(zone).toLocalDate());
                 }

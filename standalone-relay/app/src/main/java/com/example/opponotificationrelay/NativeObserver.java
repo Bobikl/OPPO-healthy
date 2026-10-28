@@ -15,7 +15,8 @@ public final class NativeObserver {
         File directory=new File(c.getCodeCacheDir(),"observer-native");
         if(!directory.isDirectory()&&!directory.mkdirs())throw new IOException("native directory");
         File destination=new File(directory,"observer-"+version);
-        if(destination.isFile()&&destination.length()>0)return destination.getAbsolutePath();
+        byte[] expected=NativeAssetIntegrity.hash(c.getAssets().open("root-observer-arm64"));
+        if(NativeAssetIntegrity.matches(destination,expected))return destination.getAbsolutePath();
         File temp=File.createTempFile("observer-",".tmp",directory);
         try {
             try(InputStream in=c.getAssets().open("root-observer-arm64");FileOutputStream out=new FileOutputStream(temp)) {
@@ -24,6 +25,8 @@ public final class NativeObserver {
                 while((n=in.read(buffer))!=-1){total+=n;if(total>1024*1024)throw new IOException("native size");out.write(buffer,0,n);}
                 if(total==0)throw new IOException("native empty");out.getFD().sync();
             }
+            if(!NativeAssetIntegrity.matches(temp,expected))throw new IOException("native integrity");
+            if(destination.exists()&&!destination.delete())throw new IOException("native replace");
             if(!temp.renameTo(destination))throw new IOException("native publish");
             File[] old=directory.listFiles();
             if(old!=null)for(File f:old)if(!f.equals(destination)&&f.getName().matches("observer-[0-9]+"))f.delete();

@@ -1,0 +1,15 @@
+{
+  "id": "20261024-requirements-clarification",
+  "goal": "明确需求不清晰时第一时间询问和讨论，澄清前不猜测需求或实施依赖改动",
+  "kind": "docs",
+  "risk": "low",
+  "scope": ["AGENTS.md", "docs/engineering/DEVELOPMENT.md", "docs/engineering/changes/20261024-requirements-clarification.json"],
+  "domains": ["D00"],
+  "acceptance": ["执行入口与 E01 均明确及时询问、讨论澄清、暂停依赖实施和记录结论", "消除原有仅在需求变化时才提问的限制，保留常规技术判断", "UTF-8 回读与本次范围门禁通过"],
+  "invariants": ["保留既有工程规则与任务前所有修改", "不修改运行时代码、版本或用户数据"],
+  "impact": ["影响未来需求澄清流程，不影响应用行为；不依赖歧义的检查仍可继续"],
+  "rollback": "仅撤回本批新增段落与对应措辞调整，保留 analysis/requirements-clarification-20261024/before.json 对应的既有工作区状态",
+  "review": "self_review：核对用户要求、两个规则入口的一致性及 UTF-8 回读",
+  "required_checks": [],
+  "deferred": []
+}

@@ -39,8 +39,12 @@ final class HealthMetricsStore extends SQLiteOpenHelper {
         try(Cursor c=getReadableDatabase().rawQuery("SELECT revision FROM scopes WHERE device=?",new String[]{device})){if(c.moveToFirst())value=c.getLong(0);}
         return value;
     }
+    void invalidateRanges(){SQLiteDatabase db=getWritableDatabase();db.beginTransaction();try{db.execSQL("UPDATE ranges SET read_at=0");db.delete("items","kind='latestWeight'",null);db.execSQL("UPDATE scopes SET revision=revision+1");db.setTransactionSuccessful();}finally{db.endTransaction();}}
     boolean fresh(String mac,long from,long to,boolean raw,long age)throws Exception {
-        List<long[]> spans=new ArrayList<>();long cutoff=System.currentTimeMillis()-age;
+        return covered(mac,from,to,raw,Math.max(0,System.currentTimeMillis()-age));
+    }
+    private boolean covered(String mac,long from,long to,boolean raw,long cutoff)throws Exception {
+        List<long[]> spans=new ArrayList<>();
         try(Cursor c=getReadableDatabase().rawQuery("SELECT r.start,r.end FROM ranges r JOIN scopes s ON r.device=s.device AND r.scope=s.scope WHERE r.device=? AND r.kind=? AND r.read_at>? AND r.end>? AND r.start<? ORDER BY r.start",new String[]{HealthArchive.device(mac),raw?"raw3":"bins",Long.toString(cutoff),Long.toString(from),Long.toString(to)})){
             while(c.moveToNext())spans.add(new long[]{c.getLong(0),c.getLong(1)});
         }return HealthReadWindow.covered(from,to,spans);
@@ -49,20 +53,24 @@ final class HealthMetricsStore extends SQLiteOpenHelper {
         ZoneId zone=ZoneId.of(data.optString("zone",ZoneId.systemDefault().getId()));if(!zone.equals(ZoneId.systemDefault()))throw new IOException("HEALTH_TIMEZONE_CHANGED");ensureZone(mac,zone);
         String device=HealthArchive.device(mac),scope=data.getString("scope");if(!scope.matches("[a-f0-9]{64}"))throw new IOException("HEALTH_SCOPE");
         long start=data.getLong("start"),end=data.getLong("end"),readAt=data.getLong("readAt");
-        if(start<1546272000000L||end<=start||end-start>367L*86400000L||readAt<=0)throw new IOException("HEALTH_RANGE");
+        if(start<LocalDate.of(2019,1,1).atStartOfDay(zone).toInstant().toEpochMilli()||end<=start||end-start>367L*86400000L||readAt<=0)throw new IOException("HEALTH_RANGE");
         SQLiteDatabase db=getWritableDatabase();db.beginTransaction();try{
             long revision=0;boolean changed=false;try(Cursor prior=db.rawQuery("SELECT scope,revision FROM scopes WHERE device=?",new String[]{device})){if(prior.moveToFirst()){revision=prior.getLong(1);changed=!scope.equals(prior.getString(0));}else changed=true;}
-            for(String kind:raw?new String[]{"raw","oxygen","glucoseRaw"}:new String[]{"heart","sleep","bins","warnings","latest","activityBins","activityHalves","moveHours","sleepNight","sleepSegments","sleepIndex","sleepWrist","oxygenDays","mentalDays","mentalRaw","sunshineDays","relaxRows","weightRows","glucoseDays","apneaDays"}){
-                JSONArray rows=(kind.equals("oxygen")||kind.equals("oxygenDays")||kind.startsWith("mental")||kind.equals("sunshineDays")||kind.equals("relaxRows")||kind.equals("weightRows")||kind.startsWith("glucose")||kind.equals("apneaDays"))?data.optJSONArray(kind):data.getJSONArray(kind);if(rows==null)rows=new JSONArray();int limit=(kind.equals("sleepSegments")?40000:(kind.equals("raw")||kind.equals("oxygen")||kind.equals("mentalRaw")||kind.equals("glucoseRaw"))?20000:kind.equals("bins")||kind.equals("activityHalves")?18000:kind.equals("activityBins")||kind.equals("moveHours")?9000:5000);if(rows.length()>limit)throw new IOException("HEALTH_ROW_LIMIT");
+            for(String kind:raw?new String[]{"raw","oxygen","glucoseRaw"}:new String[]{"heart","sleep","bins","warnings","latest","activityBins","activityHalves","moveHours","sleepNight","sleepSegments","sleepIndex","sleepWrist","oxygenDays","mentalDays","mentalRaw","sunshineDays","latestSunshine","relaxRows","weightRows","latestWeight","glucoseDays","apneaDays"}){
+                JSONArray rows=(kind.equals("oxygen")||kind.equals("oxygenDays")||kind.startsWith("mental")||kind.equals("sunshineDays")||kind.equals("latestSunshine")||kind.equals("relaxRows")||kind.equals("weightRows")||kind.equals("latestWeight")||kind.startsWith("glucose")||kind.equals("apneaDays"))?data.optJSONArray(kind):data.getJSONArray(kind);if(rows==null){if(data.has(kind))throw new IOException("HEALTH_ROW_SHAPE");continue;}int limit=(kind.equals("sleepSegments")?40000:(kind.equals("raw")||kind.equals("oxygen")||kind.equals("mentalRaw")||kind.equals("glucoseRaw"))?20000:kind.equals("bins")||kind.equals("activityHalves")?18000:kind.equals("activityBins")||kind.equals("moveHours")?9000:5000);if(rows.length()>limit)throw new IOException("HEALTH_ROW_LIMIT");
                 String column=kind.equals("sleepSegments")?"day":"stamp";
                 boolean dateKind=kind.equals("sleepSegments")||kind.equals("heart")||kind.equals("sleep")||kind.equals("sleepNight")||kind.equals("sleepWrist")||kind.equals("mentalDays")||kind.equals("sunshineDays")||kind.equals("glucoseDays")||kind.equals("apneaDays");
                 String from=dateKind?HealthMetricsData.date(start).toString().replace("-",""):Long.toString(start),to=dateKind?HealthMetricsData.date(end).toString().replace("-",""):Long.toString(end);
-                Map<Long,String> old=new HashMap<>();try(Cursor prior=db.rawQuery("SELECT stamp,body FROM items WHERE device=? AND scope=? AND kind=? AND "+column+">=? AND "+column+"<?",new String[]{device,scope,kind,from,to})){while(prior.moveToNext())old.put(prior.getLong(0),prior.getString(1));}
+                String cacheKind=kind.equals("latestSunshine")?"sunshineDays":kind;
+                if(kind.equals("latestSunshine")){from=rows.length()==0?"0":Long.toString(rows.getJSONArray(0).getLong(0));to=rows.length()==0?"0":Long.toString(rows.getJSONArray(0).getLong(0)+1);}
+                Map<Long,String> old=new HashMap<>();try(Cursor prior=db.rawQuery("SELECT stamp,body FROM items WHERE device=? AND scope=? AND kind=? AND "+column+">=? AND "+column+"<?",new String[]{device,scope,cacheKind,from,to})){while(prior.moveToNext())old.put(prior.getLong(0),prior.getString(1));}
                 Set<Long> seen=new HashSet<>();
-                for(int i=0;i<rows.length();i++){JSONArray row=rows.getJSONArray(i);int width=kind.equals("glucoseDays")?6:kind.equals("apneaDays")?4:kind.equals("glucoseRaw")?3:kind.equals("mentalDays")?7:kind.equals("mentalRaw")?5:kind.equals("sunshineDays")||kind.equals("relaxRows")?4:kind.equals("sleepNight")?9:kind.equals("sleepSegments")||kind.equals("activityHalves")?5:kind.equals("sleepIndex")?10:kind.equals("sleepWrist")?4:kind.equals("heart")||kind.equals("bins")||kind.equals("oxygenDays")?7:kind.equals("sleep")?8:kind.equals("activityBins")?4:kind.equals("raw")?3:kind.equals("warnings")?6:2;
+                for(int i=0;i<rows.length();i++){JSONArray row=rows.getJSONArray(i);int width=kind.equals("glucoseDays")?6:kind.equals("apneaDays")?4:kind.equals("glucoseRaw")?3:kind.equals("mentalDays")?7:kind.equals("mentalRaw")?5:kind.equals("sunshineDays")||kind.equals("latestSunshine")||kind.equals("relaxRows")?4:kind.equals("sleepNight")?9:kind.equals("sleepSegments")||kind.equals("activityHalves")?5:kind.equals("sleepIndex")?10:kind.equals("sleepWrist")?4:kind.equals("heart")||kind.equals("bins")||kind.equals("oxygenDays")?7:kind.equals("sleep")?8:kind.equals("activityBins")?4:kind.equals("raw")?3:kind.equals("warnings")?6:2;
                     if(row.length()!=width&&!(kind.equals("mentalDays")&&(row.length()==9||row.length()==10))&&!(kind.equals("relaxRows")&&row.length()==8))throw new IOException("HEALTH_ROW_SHAPE");long stamp=row.getLong(0);if(!seen.add(stamp))throw new IOException("HEALTH_DUPLICATE");
-                    if(kind.equals("heart")||kind.equals("sleep")||kind.equals("sleepNight")||kind.equals("sleepWrist")||kind.equals("mentalDays")||kind.equals("sunshineDays")||kind.equals("glucoseDays")||kind.equals("apneaDays")){LocalDate d=HealthMetricsData.dateCode((int)stamp);if(d.isBefore(HealthMetricsData.date(start))||!d.isBefore(HealthMetricsData.date(end)))throw new IOException("HEALTH_DATE");}
+                    if(kind.equals("latestSunshine")){LocalDate d=HealthMetricsData.dateCode((int)stamp);if(rows.length()>1||d.isBefore(LocalDate.of(2019,1,1))||!d.isBefore(HealthMetricsData.date(start)))throw new IOException("HEALTH_DATE");}
+                    else if(kind.equals("heart")||kind.equals("sleep")||kind.equals("sleepNight")||kind.equals("sleepWrist")||kind.equals("mentalDays")||kind.equals("sunshineDays")||kind.equals("glucoseDays")||kind.equals("apneaDays")){LocalDate d=HealthMetricsData.dateCode((int)stamp);if(d.isBefore(HealthMetricsData.date(start))||!d.isBefore(HealthMetricsData.date(end)))throw new IOException("HEALTH_DATE");}
                     else if(kind.equals("sleepSegments")){LocalDate owner=HealthMetricsData.dateCode(row.getInt(4));if(owner.isBefore(HealthMetricsData.date(start))||!owner.isBefore(HealthMetricsData.date(end))||stamp<1420070400000L||stamp>System.currentTimeMillis()+86400000L)throw new IOException("HEALTH_STAMP");}
+                    else if(kind.equals("latestWeight")){if(stamp<=0||stamp>=start||rows.length()>1)throw new IOException("HEALTH_STAMP");}
                     else if(stamp<start||stamp>=end)throw new IOException("HEALTH_STAMP");
                     for(int k=1;k<row.length();k++){if(row.isNull(k))continue;long value=row.getLong(k);if(value<0)throw new IOException("HEALTH_VALUE");}
                     if(kind.equals("raw")&&(row.getInt(1)<=0||row.getInt(1)>300))throw new IOException("HEALTH_VALUE");
@@ -74,16 +82,16 @@ final class HealthMetricsStore extends SQLiteOpenHelper {
                     }
                     if(kind.equals("mentalDays")||kind.equals("sunshineDays")||kind.equals("glucoseDays")||kind.equals("apneaDays")){long t=HealthMetricsData.time(HealthMetricsData.dateCode((int)stamp));if(t<start||t>=end)throw new IOException("HEALTH_STAMP");}
                     if(kind.equals("mentalDays")||kind.equals("mentalRaw")){if(row.getInt(1)<1||row.getInt(1)>100||row.getInt(2)<1||row.getInt(2)>4)throw new IOException("HEALTH_VALUE");}
-                    if(kind.equals("sunshineDays")&&(row.getInt(1)>1440||row.getInt(2)>1440))throw new IOException("HEALTH_VALUE");
+                    if((kind.equals("sunshineDays")||kind.equals("latestSunshine"))&&(row.getInt(1)>1440||row.getInt(2)>1440))throw new IOException("HEALTH_VALUE");
                     if(kind.equals("relaxRows")&&(row.getInt(1)<=0||row.getInt(1)>86400))throw new IOException("HEALTH_VALUE");
-                    if(kind.equals("weightRows")&&(row.getInt(1)<=0||row.getInt(1)>1000000))throw new IOException("HEALTH_VALUE");
+                    if((kind.equals("weightRows")||kind.equals("latestWeight"))&&(row.getInt(1)<=0||row.getInt(1)>1000000))throw new IOException("HEALTH_VALUE");
                     if(kind.equals("glucoseRaw")&&(row.getInt(1)<=0||row.getInt(1)>1000000))throw new IOException("HEALTH_VALUE");
                     if(kind.equals("glucoseDays")){for(int j=1;j<6;j++)if(!row.isNull(j)&&row.getLong(j)>1000000)throw new IOException("HEALTH_VALUE");int lo=row.optInt(1),hi=row.optInt(2),mean=row.optInt(3);if(mean>0&&(lo<=0||hi<lo||mean<lo||mean>hi))throw new IOException("HEALTH_VALUE");int low=row.optInt(4),high=row.optInt(5);if(low>0&&high>0&&low>=high)throw new IOException("HEALTH_VALUE");}
                     if(kind.equals("apneaDays")&&(row.getInt(1)>4||(!row.isNull(2)&&row.getLong(2)>1000000)))throw new IOException("HEALTH_VALUE");
                     String body=row.toString();if(body.equals(old.remove(stamp)))continue;changed=true;
-                    ContentValues v=new ContentValues();v.put("device",device);v.put("scope",scope);v.put("kind",kind);v.put("stamp",stamp);v.put("body",body);if(kind.equals("sleepSegments"))v.put("day",row.getInt(4));db.insertWithOnConflict("items",null,v,SQLiteDatabase.CONFLICT_REPLACE);
+                    ContentValues v=new ContentValues();v.put("device",device);v.put("scope",scope);v.put("kind",cacheKind);v.put("stamp",stamp);v.put("body",body);if(kind.equals("sleepSegments"))v.put("day",row.getInt(4));db.insertWithOnConflict("items",null,v,SQLiteDatabase.CONFLICT_REPLACE);
                 }
-                for(long removed:old.keySet()){db.delete("items","device=? AND scope=? AND kind=? AND stamp=?",new String[]{device,scope,kind,Long.toString(removed)});changed=true;}
+                for(long removed:old.keySet()){db.delete("items","device=? AND scope=? AND kind=? AND stamp=?",new String[]{device,scope,cacheKind,Long.toString(removed)});changed=true;}
             }
             if(!raw){JSONArray articles=data.optJSONArray("knowledge");if(articles!=null){if(articles.length()>120)throw new IOException("KNOWLEDGE_LIMIT");Map<Long,String> oldArticles=new HashMap<>();try(Cursor prior=db.rawQuery("SELECT stamp,body FROM items WHERE device=? AND scope=? AND kind='knowledge'",new String[]{device,scope})){while(prior.moveToNext())oldArticles.put(prior.getLong(0),prior.getString(1));}for(int i=0;i<articles.length();i++){JSONArray row=articles.getJSONArray(i);if(row.length()!=8||!row.getString(1).matches("2005|2006|2007|2008|2011|2014|2021")||row.getString(3).length()>200||row.getString(4).length()>2000||RootKnowledgeReader.safeUrl(row.getString(5)).isEmpty())throw new IOException("KNOWLEDGE_VALUE");if(row.toString().equals(oldArticles.remove((long)i+1)))continue;changed=true;ContentValues article=new ContentValues();article.put("device",device);article.put("scope",scope);article.put("kind","knowledge");article.put("stamp",i+1);article.put("body",row.toString());db.insertWithOnConflict("items",null,article,SQLiteDatabase.CONFLICT_REPLACE);}for(long removed:oldArticles.keySet()){db.delete("items","device=? AND scope=? AND kind='knowledge' AND stamp=?",new String[]{device,scope,Long.toString(removed)});changed=true;}}}
             ContentValues state=new ContentValues();state.put("device",device);state.put("scope",scope);state.put("read_at",readAt);state.put("revision",revision+(changed?1:0));state.put("zone",zone.getId());db.insertWithOnConflict("scopes",null,state,SQLiteDatabase.CONFLICT_REPLACE);
@@ -95,16 +103,23 @@ final class HealthMetricsStore extends SQLiteOpenHelper {
     HealthMetricsData load(Context context,String mac,HealthSnapshotWindow window)throws Exception {
         ensureZone(mac,window.zone);
         String device=HealthArchive.device(mac);HealthMetricsData out=new HealthMetricsData();out.window=window;out.device=device;out.loadedAt=System.currentTimeMillis();try(Cursor state=getReadableDatabase().rawQuery("SELECT read_at FROM scopes WHERE device=?",new String[]{device})){if(state.moveToFirst())out.officialAt=state.getLong(0);}out.officialLoaded=out.officialAt>0;
+        if(window.content==HealthSnapshotWindow.Content.WRIST_SUMMARY){
+            try(Cursor rows=getReadableDatabase().rawQuery("SELECT i.body FROM items i JOIN scopes s ON i.device=s.device AND i.scope=s.scope WHERE i.device=? AND i.kind='sleepWrist' AND i.stamp>=? AND i.stamp<? ORDER BY i.stamp",new String[]{device,window.start.toString().replace("-",""),window.end.toString().replace("-","")})){
+                while(rows.moveToNext()){JSONArray r=new JSONArray(rows.getString(0));HealthMetricsData.Day d=out.day(HealthMetricsData.dateCode(r.getInt(0)));d.wristBase=r.optInt(1);d.wristConfidence=r.optInt(2);d.wristValue=r.optInt(3);}
+            }
+            loadWrist(out,device,HealthArchive.get(context).getReadableDatabase(),window);
+            out.summaryComplete=covered(mac,window.from,window.to,false,0);return out;
+        }
         TreeMap<Long,Long> officialHours=new TreeMap<>(),officialHalves=new TreeMap<>();
         Set<LocalDate> officialSleep=new HashSet<>();
         String[] dateKinds={"heart","sleep","sleepNight","sleepWrist","mentalDays","sunshineDays","glucoseDays","apneaDays"};
         Set<String> dailyKinds=new HashSet<>(Arrays.asList(dateKinds)),detailKinds=new HashSet<>(Arrays.asList("raw","oxygen","glucoseRaw","activityBins","activityHalves","moveHours"));
-        for(String itemKind:new String[]{"heart","sleep","sleepNight","sleepWrist","mentalDays","sunshineDays","glucoseDays","apneaDays","bins","sleepIndex","oxygenDays","mentalRaw","relaxRows","weightRows","latest","warnings","raw","oxygen","glucoseRaw","activityBins","activityHalves","moveHours","sleepSegments","knowledge"}){
+        for(String itemKind:new String[]{"heart","sleep","sleepNight","sleepWrist","mentalDays","sunshineDays","glucoseDays","apneaDays","bins","sleepIndex","oxygenDays","relaxRows","weightRows","latestWeight","latest","warnings","raw","oxygen","glucoseRaw","activityBins","activityHalves","moveHours","sleepSegments","knowledge"}){
             boolean daily=dailyKinds.contains(itemKind),segment=itemKind.equals("sleepSegments"),detailed=detailKinds.contains(itemKind);
             LocalDate first=segment?window.detailStart:window.start,last=segment?window.detailEnd:window.end;
             String from=daily||segment?first.toString().replace("-",""):Long.toString(detailed?window.detailFrom:window.from),to=daily||segment?last.toString().replace("-",""):Long.toString(detailed?window.detailTo:window.to);
             String select="SELECT i.kind,i.body FROM items i JOIN scopes s ON i.device=s.device AND i.scope=s.scope WHERE i.device=? AND i.kind=?",column=segment?"i.day":"i.stamp";
-            boolean knowledge=itemKind.equals("knowledge");String[] args=knowledge?new String[]{device,itemKind}:new String[]{device,itemKind,from,to};
+            boolean knowledge=itemKind.equals("knowledge")||itemKind.equals("latestWeight");String[] args=knowledge?new String[]{device,itemKind}:new String[]{device,itemKind,from,to};
             try(Cursor c=getReadableDatabase().rawQuery(select+(knowledge?"":" AND "+column+">=? AND "+column+"<?")+" ORDER BY i.stamp",args)){
             while(c.moveToNext()){String kind=c.getString(0);JSONArray r=new JSONArray(c.getString(1));long stamp=r.getLong(0);
                 if(kind.equals("heart")){HealthMetricsData.Day d=out.day(HealthMetricsData.dateCode((int)stamp));d.range(r.optInt(1),r.optInt(2));d.rest=r.optInt(4);d.walk=r.optInt(5);d.sleepHeart=r.optInt(6);}
@@ -120,10 +135,9 @@ final class HealthMetricsStore extends SQLiteOpenHelper {
                 else if(kind.equals("oxygenDays")){HealthMetricsData.Day d=out.day(HealthMetricsData.date(stamp));d.oxygenMin=r.getInt(1);d.oxygenMax=r.getInt(2);d.oxygenMean=r.getInt(3);d.oxygenLatest=r.getInt(4);d.oxygenTime=r.getLong(5);d.oxygenCount=r.getInt(6);}
                 else if(kind.equals("knowledge")){HealthMetricsData.Knowledge k=new HealthMetricsData.Knowledge();k.page=r.getString(1);k.card=r.getString(2);k.title=r.getString(3);k.description=r.getString(4);k.url=r.getString(5);k.start=r.optLong(6);k.end=r.optLong(7);out.knowledge.add(k);}
                 else if(kind.equals("mentalDays")){HealthMetricsData.Day d=out.day(HealthMetricsData.dateCode((int)stamp));d.mentalAverage=r.getInt(1);d.mentalState=r.getInt(2);d.mentalHrv=r.getInt(3);d.mentalBaseLow=r.getInt(4);d.mentalBaseMiddle=r.getInt(5);d.mentalBaseHigh=r.getInt(6);d.mentalSleepHrv=r.optInt(7);d.mentalRestHeart=r.optInt(8);d.mentalReminders=r.optInt(9,-1);}
-                else if(kind.equals("mentalRaw")){HealthMetricsData.Mental point=new HealthMetricsData.Mental(stamp,r.getInt(1),r.getInt(2),r.getInt(3),r.getInt(4));if(window.detail(stamp))out.mental.put(stamp,point);HealthMetricsData.Day d=out.day(HealthMetricsData.date(stamp));if(d.mentalMin==null||point.value<=d.mentalMin.value)d.mentalMin=point;if(d.mentalMax==null||point.value>=d.mentalMax.value)d.mentalMax=point;if(stamp>=d.mentalTime){d.mentalTime=stamp;d.mentalLatest=point.value;d.mentalLatestState=point.state;}}
-                else if(kind.equals("sunshineDays")){HealthMetricsData.Day d=out.day(HealthMetricsData.dateCode((int)stamp));d.sunshineMinutes=r.getInt(1);d.sunshineTarget=r.getInt(2);d.sunshineType=r.getInt(3);}
+                else if(kind.equals("sunshineDays")||kind.equals("latestSunshine")){HealthMetricsData.Day d=out.day(HealthMetricsData.dateCode((int)stamp));d.sunshineMinutes=r.getInt(1);d.sunshineTarget=r.getInt(2);d.sunshineType=r.getInt(3);}
                 else if(kind.equals("relaxRows")){HealthMetricsData.Relax item=new HealthMetricsData.Relax(stamp,r.getInt(1),r.getInt(2),r.getInt(3));item.minHeart=r.optInt(4,0);item.maxHeart=r.optInt(5,0);item.mental=r.optInt(6,0);item.stress=r.optInt(7,0);out.relax.put(stamp,item);HealthMetricsData.Day d=out.day(HealthMetricsData.date(stamp));d.relaxSeconds+=item.seconds;d.relaxCount++;}
-                else if(kind.equals("weightRows")){int grams=r.getInt(1);out.weights.put(stamp,grams);HealthMetricsData.Day d=out.day(HealthMetricsData.date(stamp));if(stamp>=d.weightTime){d.weightTime=stamp;d.weightGrams=grams;}}
+                else if(kind.equals("weightRows")||kind.equals("latestWeight")){int grams=r.getInt(1);out.weights.put(stamp,grams);HealthMetricsData.Day d=out.day(HealthMetricsData.date(stamp));if(stamp>=d.weightTime){d.weightTime=stamp;d.weightGrams=grams;}}
                 else if(kind.equals("glucoseDays")){HealthMetricsData.Day d=out.day(HealthMetricsData.dateCode((int)stamp));d.glucoseMin=r.optInt(1);d.glucoseMax=r.optInt(2);d.glucoseMean=r.optInt(3);if(r.optInt(4)>0&&r.optInt(5)>r.optInt(4)){d.glucoseLow=r.getInt(4);d.glucoseHigh=r.getInt(5);}}
                 else if(kind.equals("glucoseRaw")){HealthMetricsData.Glucose point=new HealthMetricsData.Glucose(stamp,r.getInt(1),r.getInt(2));out.glucose.put(stamp,point);HealthMetricsData.Day d=out.day(HealthMetricsData.date(stamp));if(stamp>=d.glucoseTime){d.glucoseTime=stamp;d.glucoseLatest=point.milli;d.glucoseTrend=point.trend;}}
                 else if(kind.equals("apneaDays")){HealthMetricsData.Day d=out.day(HealthMetricsData.dateCode((int)stamp));d.apneaLevel=r.getInt(1)-1;d.apneaAhi=r.isNull(2)?-1:r.getInt(2);d.apneaVersion=r.getInt(3);}
@@ -134,7 +148,21 @@ final class HealthMetricsStore extends SQLiteOpenHelper {
             }
         }
         }
+        // A predecessor is an ordinary dated record; another window cannot replace or erase it.
+        try(Cursor previous=getReadableDatabase().rawQuery("SELECT i.body FROM items i JOIN scopes s ON i.device=s.device AND i.scope=s.scope WHERE i.device=? AND i.kind='sunshineDays' AND i.stamp<? ORDER BY i.stamp DESC LIMIT 1",new String[]{device,window.start.toString().replace("-","")})){
+            if(previous.moveToFirst()){JSONArray r=new JSONArray(previous.getString(0));HealthMetricsData.Day d=out.day(HealthMetricsData.dateCode(r.getInt(0)));d.sunshineMinutes=r.getInt(1);d.sunshineTarget=r.getInt(2);d.sunshineType=r.getInt(3);}
+        }
         HealthArchive archive=HealthArchive.get(context);SQLiteDatabase local=archive.getReadableDatabase();
+        loadMental(out,device,local,window);
+        loadOxygen(context,out,device,local,window);
+        try(Cursor rows=local.rawQuery("SELECT stamp,body FROM records WHERE device=? AND kind='SUNSHINE' AND stamp>=? AND stamp<? ORDER BY stamp",new String[]{device,Long.toString(window.from/1000),Long.toString(window.to/1000)})){
+            while(rows.moveToNext())WatchSunshineProjection.apply(out,rows.getLong(0)*1000,HealthProto.parse(rows.getBlob(1)));
+        }
+        try(Cursor previous=local.rawQuery("SELECT stamp,body FROM records WHERE device=? AND kind='SUNSHINE' AND stamp<? ORDER BY stamp DESC LIMIT 1",new String[]{device,Long.toString(window.from/1000)})){
+            if(previous.moveToFirst())WatchSunshineProjection.apply(out,previous.getLong(0)*1000,HealthProto.parse(previous.getBlob(1)));
+        }
+
+        loadWrist(out,device,local,window);
         try(Cursor c=local.rawQuery("SELECT a.day,a.body FROM official_activity a JOIN official_activity_scope s ON a.scope=s.scope AND a.device=s.device WHERE a.device=? AND a.day>=? AND a.day<?",new String[]{device,window.start.toString(),window.end.toString()})){while(c.moveToNext()){HealthMetricsData.Day d=out.day(LocalDate.parse(c.getString(0)));JSONArray values=new JSONObject(c.getString(1)).getJSONArray("values");d.steps=values.getInt(0);d.calories=(int)(values.getLong(1)/1000);}}
         try(Cursor c=local.rawQuery("SELECT day,steps,kcal FROM daily WHERE device=? AND day>=? AND day<?",new String[]{device,window.start.toString(),window.end.toString()})){while(c.moveToNext()){HealthMetricsData.Day d=out.day(LocalDate.parse(c.getString(0)));d.steps=Math.max(d.steps,c.getInt(1));d.calories=Math.max(d.calories,c.getInt(2));}}
         TreeMap<Long,HealthMetricsData.Bin> watchBins=new TreeMap<>();
@@ -174,7 +202,62 @@ final class HealthMetricsStore extends SQLiteOpenHelper {
             }
         }
         if(sleepDate!=null)sleepDay(out,sleepMinutes,sleepDate,window,officialSleep);
+        out.activity=archive.daily(mac,window.anchor.toString());
+        out.summaryComplete=covered(mac,window.from,window.to,false,0);
         return out;
+    }
+    private static final class OxygenWatch implements AutoCloseable {
+        final Cursor rows;final TreeMap<Long,Integer> minute=new TreeMap<>();Map.Entry<Long,Integer> point;
+        OxygenWatch(Cursor rows)throws Exception{this.rows=rows;advance();}
+        void advance()throws Exception{while(minute.isEmpty()){if(!rows.moveToNext()){point=null;return;}minute.putAll(WatchOxygenProjection.minute(rows.getLong(0)*1000,HealthProto.parse(rows.getBlob(1))));}point=minute.pollFirstEntry();}
+        public void close(){rows.close();}
+    }
+    private static void loadWrist(HealthMetricsData out,String device,SQLiteDatabase local,HealthSnapshotWindow window)throws Exception {
+        try(Cursor rows=local.rawQuery("SELECT stamp,body FROM records WHERE device=? AND kind='WRIST_INDEX' AND stamp>=? AND stamp<? ORDER BY stamp",new String[]{device,Long.toString(window.from/1000),Long.toString(window.to/1000)})){
+            while(rows.moveToNext())WatchWristProjection.apply(out,rows.getLong(0)*1000,HealthProto.parse(rows.getBlob(1)));
+        }
+        try(Cursor rows=local.rawQuery("SELECT stamp,body FROM records WHERE device=? AND kind='WRIST_RAW' AND stamp>=? AND stamp<? ORDER BY stamp",new String[]{device,Long.toString(window.from/1000),Long.toString(window.to/1000)})){
+            while(rows.moveToNext())WatchWristProjection.applyRaw(out,rows.getLong(0)*1000,HealthProto.parse(rows.getBlob(1)));
+        }
+    }
+    private static void loadOxygen(Context context,HealthMetricsData out,String device,SQLiteDatabase archive,HealthSnapshotWindow window)throws Exception {
+        String[] range={device,Long.toString(window.from/1000),Long.toString(window.to/1000)};
+        try(Cursor count=archive.rawQuery("SELECT 1 FROM records WHERE device=? AND kind='OXYGEN' AND stamp>=? AND stamp<? LIMIT 1",range)){if(!count.moveToFirst())return;}
+        synchronized(OfficialHistoryStore.LOCK){
+            java.io.File folder=OfficialHistoryStore.current(context);SQLiteDatabase official=null;Cursor raw=null;
+            TreeMap<LocalDate,long[]> totals=new TreeMap<>();
+            try(OxygenWatch watch=new OxygenWatch(archive.rawQuery("SELECT stamp,body FROM records WHERE device=? AND kind='OXYGEN' AND stamp>=? AND stamp<? ORDER BY stamp",range))){
+                if(folder!=null){JSONObject meta=OfficialHistoryStore.json(new java.io.File(folder,"manifest.json"));official=OfficialHistoryStore.open(new java.io.File(folder,"databases/database.db"));raw=official.rawQuery("SELECT data_created_timestamp,max(blood_oxygen_saturation_value) FROM DBBloodOxygenSaturation WHERE ssoid=? AND upper(device_unique_id)=? AND display=1 AND blood_oxygen_saturation_value BETWEEN 1 AND 100 AND data_created_timestamp>=? AND data_created_timestamp<? GROUP BY data_created_timestamp ORDER BY data_created_timestamp",new String[]{meta.getString("account"),device,Long.toString(window.from),Long.toString(window.to)});}
+                boolean hasOfficial=raw!=null&&raw.moveToFirst();int scanned=0;
+                while(hasOfficial||watch.point!=null){if(++scanned>3000000)throw new IOException("HEALTH_RECORD_LIMIT");long officialTime=hasOfficial?raw.getLong(0):Long.MAX_VALUE,watchTime=watch.point==null?Long.MAX_VALUE:watch.point.getKey(),time;int value;
+                    if(officialTime<=watchTime){time=officialTime;value=raw.getInt(1);hasOfficial=raw.moveToNext();if(officialTime==watchTime)watch.advance();}
+                    else {time=watchTime;value=watch.point.getValue();watch.advance();}
+                    LocalDate day=Instant.ofEpochMilli(time).atZone(window.zone).toLocalDate();long[] total=totals.get(day);if(total==null){total=new long[]{value,value,0,0,0,0};totals.put(day,total);}total[0]=Math.min(total[0],value);total[1]=Math.max(total[1],value);total[2]+=value;total[3]++;total[4]=time;total[5]=value;if(window.detail(time))out.oxygen.put(time,value);
+                }
+                for(Map.Entry<LocalDate,long[]> entry:totals.entrySet()){long[] value=entry.getValue();HealthMetricsData.Day day=out.day(entry.getKey());day.oxygenMin=(int)value[0];day.oxygenMax=(int)value[1];day.oxygenMean=(int)Math.round((double)value[2]/value[3]);day.oxygenCount=(int)value[3];day.oxygenTime=value[4];day.oxygenLatest=(int)value[5];}
+            }finally{if(raw!=null)raw.close();if(official!=null)official.close();}
+        }
+    }
+    private void loadMental(HealthMetricsData out,String device,SQLiteDatabase archive,HealthSnapshotWindow window)throws Exception {
+        String[] range={device,Long.toString(window.from/1000),Long.toString(window.to/1000)};
+        try(Cursor rows=archive.rawQuery("SELECT stamp,body FROM records WHERE device=? AND kind='MIND_INDEX' AND stamp>=? AND stamp<? ORDER BY stamp",range)){
+            while(rows.moveToNext())WatchMentalProjection.index(out,rows.getLong(0)*1000,HealthProto.parse(rows.getBlob(1)));
+        }
+        // Merge ordered sources by timestamp before computing extrema; retain dense samples only for the selected day.
+        try(Cursor official=getReadableDatabase().rawQuery("SELECT i.stamp,i.body FROM items i JOIN scopes s ON i.device=s.device AND i.scope=s.scope WHERE i.device=? AND i.kind='mentalRaw' AND i.stamp>=? AND i.stamp<? ORDER BY i.stamp",new String[]{device,Long.toString(window.from),Long.toString(window.to)});
+            Cursor watch=archive.rawQuery("SELECT stamp,body FROM records WHERE device=? AND kind='MIND' AND stamp>=? AND stamp<? ORDER BY stamp",range)){
+            boolean hasOfficial=official.moveToFirst(),hasWatch=watch.moveToFirst();
+            while(hasOfficial||hasWatch){
+                long officialTime=hasOfficial?official.getLong(0):Long.MAX_VALUE,watchTime=hasWatch?watch.getLong(0)*1000:Long.MAX_VALUE;
+                HealthMetricsData.Mental point;
+                if(officialTime<=watchTime){
+                    JSONArray row=new JSONArray(official.getString(1));point=new HealthMetricsData.Mental(officialTime,row.getInt(1),row.getInt(2),row.getInt(3),row.getInt(4));
+                    hasOfficial=official.moveToNext();
+                    if(officialTime==watchTime){if(!WatchMentalProjection.valid(point.value,point.state))point=WatchMentalProjection.raw(watchTime,HealthProto.parse(watch.getBlob(1)));hasWatch=watch.moveToNext();}
+                }else {point=WatchMentalProjection.raw(watchTime,HealthProto.parse(watch.getBlob(1)));hasWatch=watch.moveToNext();}
+                WatchMentalProjection.point(out,point);
+            }
+        }
     }
     private static void sleepDay(HealthMetricsData out,TreeMap<Long,Integer> minutes,LocalDate date,HealthSnapshotWindow window,Set<LocalDate> official){
         if(!official.contains(date)||window.detail(date))WatchSleepProjection.apply(out,minutes);

@@ -13,25 +13,26 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 /** Local record binding for the original wellness controls. */
 public final class WellnessDetailActivity extends OfficialUiActivity implements HealthDataManager.Listener {
+ private final HealthPageTransition transition=new HealthPageTransition();
  private OfficialComposeOwner composeOwner;
  private int kind=5,mode,visible=30;private LocalDate date=LocalDate.now();private HealthMetricsData data;private TextView status;private ScrollView scroll;
  private String title(){return kind==5?"身心状态":kind==6?"放松":"日照";}
  @Override public void onUiCreate(Bundle saved){super.onUiCreate(saved);composeOwner=new OfficialComposeOwner(this);kind=getIntent().getIntExtra("vital",5);if(kind<5||kind>7)kind=5;try{date=LocalDate.parse(saved!=null?saved.getString("date"):getIntent().getStringExtra("date"));}catch(Exception ignored){}if(saved!=null)mode=saved.getInt("mode");build(false);}
- @Override protected void onUiStart(){super.onUiStart();HealthDataManager.get(this).add(this);request();}
+ @Override protected void onUiStart(){super.onUiStart();transition.select(new HealthMetricsData.Period(date,mode));HealthDataManager.get(this).add(this);request();}
  @Override protected void onUiResume(){super.onUiResume();composeOwner.state("RESUMED");}
  @Override protected void onUiPause(){composeOwner.state("STARTED");super.onUiPause();}
  @Override protected void onUiDestroy(){composeOwner.state("DESTROYED");super.onUiDestroy();}
  @Override protected void onUiStop(){composeOwner.state("CREATED");HealthDataManager.get(this).remove(this);data=null;super.onUiStop();}
  @Override protected void onUiSaveInstanceState(Bundle saved){saved.putString("date",date.toString());saved.putInt("mode",mode);super.onUiSaveInstanceState(saved);}
  private void request(){HealthDataManager.get(this).request(new HealthMetricsData.Period(date,mode),date,false);}
- private void change(LocalDate day,int selectedMode){if(day.isBefore(LocalDate.of(2019,1,1)))return;date=day.isAfter(LocalDate.now())?LocalDate.now():day;mode=selectedMode;visible=30;build(false);request();}
- @Override public void changed(HealthMetricsData value,String message,boolean busy){if(data!=value){data=value;build(true);}status.setText(message);status.setVisibility(message.isEmpty()?View.GONE:View.VISIBLE);}
+ private void change(LocalDate day,int selectedMode){if(day.isBefore(LocalDate.of(2019,1,1)))return;date=day.isAfter(LocalDate.now())?LocalDate.now():day;mode=selectedMode;visible=30;transition.select(new HealthMetricsData.Period(date,mode));request();}
+ @Override public void changed(HealthMetricsData value,String message,boolean busy){if(transition.update(value,data,date,RelayConfig.getTargetMac(this),HealthDataManager.get(this).settled(value))){data=value;build(transition.keepScroll());}status.setText(message);status.setVisibility(message.isEmpty()?View.GONE:View.VISIBLE);}
  boolean has(HealthMetricsData.Day d){return kind==5?d.mentalAverage>0:kind==6?d.relaxCount>0:d.sunshineMinutes>=0;}
  private float metric(HealthMetricsData.Day d){return kind==5?d.mentalAverage:kind==6?d.relaxSeconds/60f:d.sunshineMinutes;}
  private String number(float value){return value==Math.round(value)?String.valueOf(Math.round(value)):String.format(Locale.CHINA,"%.1f",value);}
  private String duration(int seconds){return seconds/60+" 分钟"+(seconds%60==0?"":" "+seconds%60+" 秒");}
  private void build(boolean keep){int y=keep&&scroll!=null?scroll.getScrollY():0;Context ui=OfficialUiResources.wrap(this);HealthMetricsData.Period p=new HealthMetricsData.Period(date,mode);List<HealthMetricsData.Day> days=new ArrayList<>();if(data!=null)for(HealthMetricsData.Day d:data.days.subMap(p.start,true,p.end,true).values())if(has(d))days.add(d);
-  LinearLayout root=HealthUi.vertical(this);root.setBackgroundColor(0xff1a1a1a);HealthUi.header(this,root,title(),null);HealthUi.segments(this,root,mode,m->change(date,m));LinearLayout calendar=HealthUi.vertical(this);HealthUi.padding(calendar,18,0,18,0);HealthUi.dateRow(this,calendar,p.label(),p.end.isBefore(LocalDate.now()),()->change(p.previous().start,mode),()->change(p.next(),mode),()->HealthUi.pick(this,date,d->change(d,mode)));root.addView(calendar);
+  LinearLayout root=HealthUi.vertical(this);root.setBackgroundColor(0xff1a1a1a);HealthUi.header(this,root,title(),null);HealthUi.segments(this,root,mode,m->change(date,m));LinearLayout calendar=HealthUi.vertical(this);HealthUi.padding(calendar,18,0,18,0);HealthUi.dateRow(this,calendar,p.label(),p.end.isBefore(LocalDate.now()),()->change(new HealthMetricsData.Period(date,mode).previous().start,mode),()->change(new HealthMetricsData.Period(date,mode).next(),mode),()->HealthUi.pick(this,date,kind==5?"mind":kind==6?"relax":"sunshine",d->change(d,mode)));root.addView(calendar);
   scroll=new ScrollView(this);scroll.setVerticalScrollBarEnabled(false);LinearLayout body=HealthUi.vertical(this);scroll.addView(body);LinearLayout top=HealthUi.vertical(this);HealthUi.padding(top,18,4,18,16);HealthMetricsData.Day selected=data==null?null:data.find(date);float sum=0;for(HealthMetricsData.Day d:days)sum+=metric(d);String summary=days.isEmpty()?"—":number(kind==5?sum/days.size():sum);
   if(mode==0&&kind==5&&selected!=null&&selected.mentalLatest>0)summary=String.valueOf(selected.mentalLatest);top.addView(HealthUi.text(this,kind==5?(mode==0?"最近身心状态":"平均身心状态"):"累计"+title()+"时长",16,HealthUi.MUTED));top.addView(HealthUi.value(this,summary,kind==5?"":"分钟",42));
   if(mode==0&&selected!=null){if(kind==5&&selected.mentalLatest>0)top.addView(HealthUi.text(this,WellnessUi.mentalState(selected.mentalLatestState)+" · "+HealthMetricsData.timeLabel(selected.mentalTime),16,HealthUi.MUTED));if(kind==7&&selected.sunshineMinutes>=0)top.addView(HealthUi.text(this,"每日目标 "+selected.sunshineTarget+" 分钟",16,HealthUi.MUTED));}body.addView(top);

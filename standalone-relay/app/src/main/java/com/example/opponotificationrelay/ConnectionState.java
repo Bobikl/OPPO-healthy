@@ -19,6 +19,11 @@ public final class ConnectionState {
     public synchronized Snapshot stop(int s,String m) {
         generation++;running=false;blocked=false;return update(s,m);
     }
+    /** A yielded ownership epoch cannot carry its terminal block into the next epoch. */
+    public synchronized Snapshot relinquish(int s,String m) {
+        if(running || blocked)return stop(s,m);
+        return state==s && message.equals(m)?null:update(s,m);
+    }
     public synchronized boolean active(long token) {return running && generation==token;}
     public synchronized boolean running() {return running;}
     public synchronized long generation() {return generation;}

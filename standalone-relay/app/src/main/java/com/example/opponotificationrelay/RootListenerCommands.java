@@ -8,6 +8,10 @@ public final class RootListenerCommands {
         String target="com.example.opponotificationrelay/com.example.opponotificationrelay.RelayNotificationListenerService "+user;
         String command="/system/bin/timeout -s KILL 5 /system/bin/cmd notification ";
         return "[ \"$(id -u)\" = 0 ] || exit 10\n"
+            +"listeners=$(/system/bin/timeout -s KILL 5 /system/bin/settings --user "+user+" get secure enabled_notification_listeners) || exit 14\n"
+            +"case \":$listeners:\" in\n"
+            +"  *:com.example.opponotificationrelay/com.example.opponotificationrelay.RelayNotificationListenerService:*|*:com.example.opponotificationrelay/.RelayNotificationListenerService:*) ;;\n"
+            +"  *) exit 14 ;;\nesac\n"
             +"restore() { "+command+"allow_listener "+target+"; }\n"
             +"trap 'restore' EXIT\ntrap 'exit 12' HUP INT TERM\n"
             +command+"disallow_listener "+target+" || exit 11\n"

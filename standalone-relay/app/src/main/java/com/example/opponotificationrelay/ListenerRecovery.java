@@ -14,6 +14,7 @@ public final class ListenerRecovery {
     private static boolean pending;
     private static int generation;
     private static boolean rootBusy;
+    private static boolean ordinaryFinished,autoRootAttempted;
     private static final String REPAIR_PENDING="listener_component_repair_pending";
     public static volatile String detail="";
     private ListenerRecovery() { }
@@ -41,10 +42,12 @@ public final class ListenerRecovery {
             main.postDelayed(() -> {
                 if(token!=generation) return;
                 pending=false;
+                ordinaryFinished=true;
                 if(!RelayNotificationListenerService.bound) {
                     detail="系统尚未重新绑定：请检查系统后台自启动，或点击“修复监听组件”；必要时关闭再开启通知使用权。蓝牙就绪不代表监听正常";
                     FileLogger.w("ListenerRecovery",detail);
                 }
+                maybeRepairRoot(app);
             },15000);
         });
     }
@@ -81,15 +84,35 @@ public final class ListenerRecovery {
     }
     public static void connected() {main.post(() -> {generation++;pending=false;detail="";});}
 
-    /** Explicit, one-shot system authorization reset; never an automatic root loop. */
+    private static boolean autoRootReady(Context app) {
+        if(autoRootAttempted||rootBusy||pending||!RelayConfig.autoRootListenerRepair(app))return false;
+        int component=app.getPackageManager().getComponentEnabledSetting(new ComponentName(app,RelayNotificationListenerService.class));
+        if(component==PackageManager.COMPONENT_ENABLED_STATE_DISABLED||component==PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER||
+                component==PackageManager.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED)return false;
+        OfficialHealthMonitor.Snapshot official=OfficialHealthMonitor.snapshot();
+        RfcommWearTransport transport=RfcommWearTransport.getInstance(app);
+        return BackgroundStart.bluetoothReady(app)&&
+            StartupPolicy.listenerRepair(RelayConfig.autoRootListenerRepair(app),RelayForegroundService.enabled(app),authorized(app),
+                RelayNotificationListenerService.bound,ordinaryFinished,official.listening,official.presence,
+                transport.getState()==RfcommWearTransport.STATE_READY,transport.ownsChannel());
+    }
+    /** Readiness events recheck the gate; there is no recurring Root repair timer. */
+    public static void maybeRepairRoot(Context context) {repairRoot(context,true);}
+    /** One-shot reset, manually requested or explicitly opted in once per app process. */
     public static void repairRoot(Context context) {
+        repairRoot(context,false);
+    }
+    private static void repairRoot(Context context,boolean automatic) {
         Context app=context.getApplicationContext();
         main.post(() -> {
+            if(automatic&&!autoRootReady(app))return;
             if(rootBusy) return;
             if(RelayNotificationListenerService.bound) {detail="监听已经绑定，无需修复";return;}
             if(!authorized(app)) {detail="请先在系统设置授予通知使用权，再执行 Root 重绑";return;}
             restoreInterruptedRepair(app);
+            autoRootAttempted=true;
             rootBusy=true;generation++;pending=false;
+            FileLogger.i("ListenerRecovery",automatic?"启动条件已满足，自动执行一次 Root 重绑":"用户请求 Root 重绑");
             detail="正在请求 Root 系统级重绑，请处理可能出现的 Root 授权弹窗";
             new Thread(() -> {
                 int result=-1;
