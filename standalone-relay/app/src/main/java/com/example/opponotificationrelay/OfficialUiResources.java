@@ -14,11 +14,10 @@ final class OfficialUiResources {
     private static final java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
     private static final Handler main=new Handler(Looper.getMainLooper());private static Context global;
     // APK parsing is process-wide; Resources, themes and window contexts remain per wrapper.
-    private static ResourcesLoader sharedLoader;
     static boolean ready(){return prepared;}
     static synchronized void ensureReady(Context context){
         if(prepared)return;
-        try{File file=extract(context.getApplicationContext(),false);loader(file);archive=file;prepared=true;}
+        try{File file=extract(context.getApplicationContext(),false);if(Build.VERSION.SDK_INT>=30)Api30.loader(file);archive=file;prepared=true;}
         catch(Exception e){throw new IllegalStateException("UI_RESOURCES",e);}
     }
     static void prepare(Context context,Runnable callback){
@@ -27,7 +26,7 @@ final class OfficialUiResources {
             try{
                 synchronized(OfficialUiResources.class){if(!prepared){
                     File file=extract(app,false);
-                    try{loader(file);}catch(Exception first){file=extract(app,true);loader(file);}
+                    if(Build.VERSION.SDK_INT>=30)try{Api30.loader(file);}catch(Exception first){file=extract(app,true);Api30.loader(file);}
                     archive=file;prepared=true;
                 }}
             }catch(Exception e){android.util.Log.e("OfficialUiResources","Resource preparation failed",e);}
@@ -50,7 +49,7 @@ final class OfficialUiResources {
         }catch(Exception e){throw new IllegalStateException("ACCOUNT_RESOURCES",e);}
     }
     static final class AccountContext extends UiContext {
-        AccountContext(Context base,File file)throws Exception{super(base,file);resources.addLoaders(AccountVisualAssets.loader(base));}
+        AccountContext(Context base,File file)throws Exception{super(base,file);AccountVisualAssets.install(base,resources);}
         @Override public Context getApplicationContext(){return accountGlobal==null?this:accountGlobal;}
     }
     static Context panel(android.app.Activity activity){wrap(activity);try{return new PanelContext(activity,archive);}catch(Exception e){throw new IllegalStateException("Official panel resources",e);}}
@@ -75,6 +74,9 @@ final class OfficialUiResources {
     }
     private static void remember(SharedPreferences prefs,File file){prefs.edit().putString("hash",HASH).putLong("size",file.length()).putLong("modified",file.lastModified()).commit();}
     private static String hash(File f)throws Exception{MessageDigest digest=MessageDigest.getInstance("SHA-256");try(InputStream in=new FileInputStream(f)){byte[] b=new byte[65536];int n;while((n=in.read(b))>0)digest.update(b,0,n);}StringBuilder s=new StringBuilder();for(byte b:digest.digest())s.append(String.format(java.util.Locale.ROOT,"%02x",b&255));return s.toString();}
+    private static final class Api30 {
+    private static ResourcesLoader sharedLoader;
+    static void install(Resources resources,File file)throws IOException{resources.addLoaders(loader(file));}
     private static synchronized ResourcesLoader loader(File file)throws IOException{
         if(sharedLoader==null){
             ResourcesLoader created=new ResourcesLoader();
@@ -87,6 +89,7 @@ final class OfficialUiResources {
         }
         return sharedLoader;
     }
+    }
     static int id(Context c,String type,String name){int id=c.getResources().getIdentifier(name,type,"com.heytap.health");if(id==0)throw new IllegalArgumentException(type+"/"+name);return id;}
     static class UiContext extends ContextWrapper{
         final Resources resources;final Resources.Theme theme;
@@ -97,7 +100,7 @@ final class OfficialUiResources {
             AssetManager manager=AssetManager.class.getConstructor().newInstance();
             if(Build.VERSION.SDK_INT<30)AssetManager.class.getMethod("addAssetPath",String.class).invoke(manager,file.getPath());
             resources=new Resources(manager,dm,config);
-            if(Build.VERSION.SDK_INT>=30)resources.addLoaders(loader(file));
+            if(Build.VERSION.SDK_INT>=30)Api30.install(resources,file);
             theme=resources.newTheme();theme.applyStyle(0x7f160648,true);
         }
         @Override public Resources getResources(){return resources;}@Override public AssetManager getAssets(){return resources.getAssets();}@Override public Resources.Theme getTheme(){return theme;}@Override public void setTheme(int id){if(theme!=null)theme.applyStyle(id,true);}

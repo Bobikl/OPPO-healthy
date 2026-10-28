@@ -6,7 +6,7 @@ import java.util.*;
 
 /** Replayable consumer. Source events are committed with the raw watch packet, never inferred on login. */
 final class CloudNativeProducer {
-    static JSONObject owner(Context c,String mac){
+    static JSONObject owner(Context c,String mac)throws java.io.IOException{
         try{
             long generation=HealthAccountStore.generation();JSONObject session=HealthAccountStore.load(c);
             if(session==null||!HealthArchive.device(mac).equals(HealthArchive.device(RelayConfig.credentials(c).getString("mac")))||RelayConfig.getPrefs(c).getLong("credentials_verified_at",0)<=0)return null;
@@ -22,7 +22,7 @@ final class CloudNativeProducer {
             }
             if(!known||generation!=HealthAccountStore.generation())return null;
             return new JSONObject().put("deviceType",category).put("scope",CloudSyncEngine.accountKey(account)).put("generation",generation).put("model",identity.model).put("zone",java.time.ZoneId.systemDefault().getId());
-        }catch(Exception unknown){return null;}
+        }catch(Exception failure){throw new java.io.IOException("SYNC_SOURCE_OWNER_READ",failure);}
     }
     static String kind(CloudStream stream){
         switch(stream.id){case "activity-detail":return "ACTIVITY";case "activity-stat":return "ACTIVITY_SUMMARY";case "heart":return "HEART";default:return "";}

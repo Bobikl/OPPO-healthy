@@ -135,12 +135,7 @@ final class CloudSyncEngine {
         }
     }
     static boolean retryable(Throwable failure){
-        String code=failure.getMessage();
-        if(code==null)return true;
-        if(code.equals("CLOUD_CANCELLED")||code.equals("CLOUD_ACCOUNT_MISMATCH")||code.equals("CLOUD_LOGIN_REQUIRED")||code.equals("ACCOUNT_LOGIN_REQUIRED")||code.equals("ACCOUNT_ID_MISMATCH")||code.equals("ACCOUNT_CONFIG_NOT_IMPORTED")||code.equals("CLOUD_CATEGORY_NOT_READY"))return false;
-        if(failure instanceof CloudHttp.HttpFailure){int status=((CloudHttp.HttpFailure)failure).status;if(status==400||status==401||status==403||status==404||status==413||status==422)return false;}
-        if(failure instanceof CloudHttp.Failure){int n=((CloudHttp.Failure)failure).code;if(n==10101||n==10102||n==22300)return false;}
-        return true;
+        return CloudHttp.retryable(failure);
     }
     static String error(Throwable failure){
         String code=failure.getMessage();

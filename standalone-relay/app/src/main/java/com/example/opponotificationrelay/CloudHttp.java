@@ -20,6 +20,12 @@ final class CloudHttp implements AutoCloseable {
         }
     }
     static final class NotSent extends IOException {NotSent(IOException cause){super("CLOUD_NOT_SENT",cause);}}
+    static boolean retryable(Throwable failure){
+        if(failure instanceof NotSent)return retryable(failure.getCause());
+        if(failure instanceof HttpFailure){int status=((HttpFailure)failure).status;return status==408||status==429||(status>=500&&status<=599);}
+        if(failure instanceof Failure)return false;
+        return failure instanceof java.net.SocketTimeoutException||failure instanceof java.net.SocketException||failure instanceof java.net.UnknownHostException||"CLOUD_BUDGET_YIELD".equals(failure.getMessage());
+    }
     private final JSONObject session; private final BooleanSupplier allowed;
     private volatile HttpsURLConnection active;
     private final android.net.Network network;private final long deadline;

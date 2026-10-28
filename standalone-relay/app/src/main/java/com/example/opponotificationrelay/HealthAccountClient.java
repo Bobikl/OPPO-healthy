@@ -61,6 +61,8 @@ final class HealthAccountClient {
         if(e instanceof android.content.pm.PackageManager.NameNotFoundException)return "未安装可供导入的官方健康应用。";
         if("ACCOUNT_LOGIN_REQUIRED".equals(e.getMessage()))return "登录凭据已失效，请重新登录。";
         if("ACCOUNT_OPERATION_CANCELLED".equals(e.getMessage()))return "登录操作已取消。";
+        if("ACCOUNT_WEB_CLEANING".equals(e.getMessage()))return "登录资料仍在清理，请稍后重新登录。";
+        if("ACCOUNT_WEB_CLEANUP_TIMEOUT".equals(e.getMessage()))return "系统尚未完成登录资料清理，请重启本应用后重试。";
         if("ACCOUNT_HISTORY_MISMATCH".equals(e.getMessage()))return "登录账号与本机健康资料不一致，未替换原账号。";
         String code=e.getMessage();if(code==null||!code.matches("[A-Z_0-9]{1,64}"))code="ACCOUNT_FAILED";
         return "未完成登录（"+code+"）。";

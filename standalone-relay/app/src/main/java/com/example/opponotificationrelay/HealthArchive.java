@@ -65,7 +65,9 @@ final class HealthArchive extends SQLiteOpenHelper {
     void save(String mac,HealthSyncProtocol.Request request,byte[] bytes,Map<HealthSetting,Integer> goals)throws IOException{
         String device=device(mac);HealthSyncProtocol.Summary summary=HealthSyncProtocol.parse(request,bytes);
         List<HealthProto.Node> rows=HealthProto.parse(bytes).messages(4);long now=System.currentTimeMillis();
-        JSONObject owner=CloudNativeProducer.owner(context,mac);SQLiteDatabase db=getWritableDatabase();db.beginTransaction();long initialSequence=0;
+        JSONObject owner=null;IOException ownerFailure=null;
+        try{owner=CloudNativeProducer.owner(context,mac);}catch(IOException failure){ownerFailure=failure;}
+        SQLiteDatabase db=getWritableDatabase();db.beginTransaction();long initialSequence=0;
         try(Cursor previous=db.rawQuery("SELECT coalesce(max(sequence),0) FROM cloud_source_events",null)){previous.moveToFirst();initialSequence=previous.getLong(0);}
         try{
             boolean contentChanged=false;boolean verifiedGoals=goalSchema(db,device);
@@ -111,6 +113,7 @@ final class HealthArchive extends SQLiteOpenHelper {
                 db.setTransactionSuccessful();db.endTransaction();
             }
         }finally{if(db.inTransaction())db.endTransaction();}
+        if(ownerFailure!=null)throw ownerFailure;
     }
     private DailyActivityData daily(SQLiteDatabase db,String device,String day){
         try(Cursor c=db.rawQuery("SELECT stamp,steps,kcal,minutes,moves,step_goal,kcal_goal,minute_goal,move_goal,saved_at FROM daily WHERE device=? AND day=?",new String[]{device,day})){

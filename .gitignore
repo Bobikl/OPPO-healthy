@@ -51,6 +51,7 @@
 !/docs/engineering/**/*.json
 !/standalone-relay/tests/test_quality_gate.py
 !/standalone-relay/tests/run_health_home_tests.py
+!/standalone-relay/tests/run_defensive_tests.py
 !/standalone-relay/tests/README.md
 !/standalone-relay/tests/verify_v106.py
 !/standalone-relay/tests/verify_v108.py

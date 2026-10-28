@@ -21,7 +21,7 @@ final class HealthCalendar {
         HealthDataManager.get(activity).calendar(metric,(dates,error)->{
             if(requests.get(activity)!=request)return;requests.remove(activity);
             if(activity.isFinishing()||activity.isDestroyed()||!activity.hasWindowFocus())return;
-            if(!error.isEmpty()){Toast.makeText(activity,error,Toast.LENGTH_LONG).show();return;}
+            if(!error.isEmpty()){Toast.makeText(activity,error,Toast.LENGTH_LONG).show();if(dates.isEmpty())return;}
             showComplete(activity,selected,callback,dates,sleep);
         });
     }

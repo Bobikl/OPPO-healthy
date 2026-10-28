@@ -4,7 +4,7 @@ import android.content.*;import java.time.*;import java.io.IOException;import ja
 public final class OsaLocalAnalysis {
  private OsaLocalAnalysis(){}
  public static String label(JSONObject result)throws JSONException{int level=result.getInt("level");String[] labels={"未见异常","疑似轻度","疑似中度","疑似重度"};return "本机分析 · "+result.getString("date")+"\n"+labels[level]+" · AHI "+String.format(java.util.Locale.CHINA,"%.2f",result.getDouble("ahi"));}
- public static String last(Context c){try{String key=RelayConfig.getTargetMac(c)+"|"+LocalDate.now();String s=c.getSharedPreferences("osa_local_results",0).getString(key,"");return s.isEmpty()?"尚无本机分析结果":label(new JSONObject(s));}catch(Exception e){return "尚无本机分析结果";}}
+ public static String last(Context c){try{String key=RelayConfig.getTargetMac(c)+"|"+LocalDate.now();String s=c.getSharedPreferences("osa_local_results",0).getString(key,"");return s.isEmpty()?"尚无本机分析结果":label(new JSONObject(s));}catch(Exception e){return "本机分析结果暂时无法读取，请重试。";}}
  public static String run(Context c,BooleanSupplier cancelled)throws Exception{
   if(SnoreRecordingService.isRunning())throw new IOException("OSA_RECORDING_BUSY");String device=RelayConfig.getTargetMac(c);DeviceIdentity identity=DeviceIdentityStore.read(c);if(identity==null||!"OWW251".equals(identity.model))throw new IOException("OSA_MODEL_UNVERIFIED");LocalDate date=LocalDate.now();
   OsaAnalysisScope scope=new OsaAnalysisScope(device,date,ZoneId.systemDefault());

@@ -163,3 +163,5 @@ subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUIL
 for test in ("OsaAnalysisScopeTest", "NativeAssetIntegrityTest", "HealthPageReadinessTest"):
     subprocess.run([str(JAVA / "java.exe"), "-Dfile.encoding=UTF-8", "-cp", str(BUILD),
                     "com.example.opponotificationrelay." + test], check=True, timeout=15, encoding="utf-8")
+
+subprocess.run([sys.executable, "-X", "utf8", "-B", str(ROOT / "tests/run_defensive_tests.py")], check=True, timeout=90)

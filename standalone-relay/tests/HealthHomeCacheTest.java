@@ -85,6 +85,13 @@ public final class HealthHomeCacheTest {
    manager.add(nextPage);check(initialPartial.get()==0,"NEW_PAGE_NOT_GIVEN_UNREQUESTED_PARTIAL_SNAPSHOT");manager.remove(nextPage);
    manager.request(new HealthMetricsData.Period(day,0),day,false);await(manager,()->manager.snapshot()!=null&&manager.snapshot().window.content==HealthSnapshotWindow.Content.ALL&&manager.settled(manager.snapshot()));
    check(manager.snapshot().window.content==HealthSnapshotWindow.Content.ALL,"NEXT_DETAIL_REQUEST_RESTORES_COMPLETE_CONTENT");
+   java.util.concurrent.atomic.AtomicReference<Map<LocalDate,Float>> calendar=new java.util.concurrent.atomic.AtomicReference<>();
+   java.util.concurrent.atomic.AtomicReference<String> calendarError=new java.util.concurrent.atomic.AtomicReference<>();
+   LocalHealthCalendar.seed=day.minusDays(1);manager.calendar("sunshine",(dates,error)->{calendar.set(dates);calendarError.set(error);});
+   await(manager,()->calendar.get()!=null);check(calendar.get().containsKey(day.minusDays(1)),"LOCAL_CALENDAR_RETAINED_WHEN_HISTORY_FAILS");
+   check(!calendarError.get().isEmpty(),"PARTIAL_CALENDAR_DOES_NOT_CLAIM_COMPLETE");
+   LocalHealthCalendar.seed=null;calendar.set(null);manager.calendar("sunshine",(dates,error)->{calendar.set(dates);calendarError.set(error);});
+   await(manager,()->calendar.get()!=null);check(calendar.get().isEmpty()&&!calendarError.get().isEmpty(),"CALENDAR_FAILURE_WITHOUT_VALID_DATES_STAYS_ERROR");
    System.out.println("HEALTH_HOME_CACHE_PASS checks="+checks+" offline=true");
   }finally{
    manager.remove(listener);for(String name:new String[]{"worker","snapshots"}){Field field=HealthDataManager.class.getDeclaredField(name);field.setAccessible(true);((ExecutorService)field.get(manager)).shutdownNow();}

@@ -25,7 +25,7 @@ public final class SnoreMonitoringActivity extends Activity {
     private static String label(SnoreSessionStore.Session s){switch(s.state){case "PREPARING":return "正在准备";case "RECORDING":return "录音中";case "FINALIZING":return "正在保存";case "WAITING_DATA":return "录音已保存，等待完整睡眠数据";case "TOO_SHORT":return "录音时长不足，未生成监测结果";case "INTERRUPTED":return "录音已中断";default:return "录音未完成";}}
     private void reload(){handler.removeCallbacks(refresh);if(destroyed||!resumed||loading)return;loading=true;
         worker.execute(()->{List<SnoreSessionStore.Session> list=Collections.emptyList();String error="";try(SnoreSessionStore store=new SnoreSessionStore(this)){SnoreRecordingService.recoverIfIdle(store);list=store.list();}catch(Exception e){error="记录读取失败，请重试";}
-            List<SnoreSessionStore.Session> result=list;String message=error;handler.post(()->{loading=false;if(destroyed||!resumed)return;updateAction();if(!message.isEmpty())state.setText(message);render(result);if(SnoreRecordingService.isRunning())handler.postDelayed(refresh,2000);});
+            List<SnoreSessionStore.Session> result=list;String message=error;handler.post(()->{loading=false;if(destroyed||!resumed)return;updateAction();if(!message.isEmpty())state.setText(message);else render(result);if(SnoreRecordingService.isRunning())handler.postDelayed(refresh,2000);});
         });
     }
     private void render(List<SnoreSessionStore.Session> list){StringBuilder signature=new StringBuilder(playing).append(SnoreRecordingService.isRunning());for(SnoreSessionStore.Session s:list)signature.append(s.id).append(s.state).append(s.samples);if(signature.toString().equals(fingerprint))return;fingerprint=signature.toString();rows.removeAllViews();

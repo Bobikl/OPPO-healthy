@@ -8,9 +8,13 @@ import java.util.zip.*;
 
 /** Asset-only provider: adds account animations without changing existing resource IDs. */
 final class AccountVisualAssets {
-    private static ResourcesLoader loader;
-    static synchronized ResourcesLoader loader(Context context)throws IOException {
-        if(loader!=null)return loader;
+    static void install(Context context,android.content.res.Resources resources)throws Exception {
+        if(android.os.Build.VERSION.SDK_INT>=30)Api30.install(context,resources);
+        else android.content.res.AssetManager.class.getMethod("addAssetPath",String.class).invoke(resources.getAssets(),archive(context).getPath());
+    }
+    private static File archive;
+    private static synchronized File archive(Context context)throws IOException {
+        if(archive!=null)return archive;
         File file=new File(context.getCodeCacheDir(),"account-visual-assets-v1.apk");
         if(file.exists()&&!file.delete())throw new IOException("ACCOUNT_ASSET_REPLACE");
         try(ZipOutputStream out=new ZipOutputStream(new FileOutputStream(file))){
@@ -21,10 +25,18 @@ final class AccountVisualAssets {
             }
         }
         if(!file.setReadOnly())throw new IOException("ACCOUNT_ASSET_READ_ONLY");
+        archive=file;return file;
+    }
+    private static final class Api30 {
+    private static ResourcesLoader loader;
+    static synchronized void install(Context context,android.content.res.Resources resources)throws IOException {
+        if(loader!=null){resources.addLoaders(loader);return;}
+        File file=archive(context);
         ResourcesLoader created=new ResourcesLoader();
         try(ParcelFileDescriptor descriptor=ParcelFileDescriptor.open(file,ParcelFileDescriptor.MODE_READ_ONLY)){
             created.addProvider(ResourcesProvider.loadFromApk(descriptor));
         }
-        loader=created;return created;
+        loader=created;resources.addLoaders(loader);
+    }
     }
 }

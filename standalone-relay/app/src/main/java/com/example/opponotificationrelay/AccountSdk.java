@@ -18,6 +18,7 @@ final class AccountSdk {
     private static final ExecutorService worker=Executors.newSingleThreadExecutor();
     private static String initializedApp;
     static volatile boolean webCleaning;
+    private static CompletableFuture<Void> webCleanup=CompletableFuture.completedFuture(null);
     static void silence(){
         AcLogUtil.switchDebug(false);
         AcLogUtil.setLogImpl(new AcLogUtil$IAcLogImpl(){public void d(String t,String m){}public void e(String t,String m){}public void i(String t,String m){}public void w(String t,String m){}});
@@ -73,7 +74,13 @@ final class AccountSdk {
     }
     static void login(Activity activity,JSONObject configuration,java.util.function.BooleanSupplier allowed,Result result){
         if(!allowed.getAsBoolean()){result.done(null,new IOException("ACCOUNT_OPERATION_CANCELLED"));return;}
-        if(webCleaning){new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(()->{if(!activity.isFinishing()&&!activity.isDestroyed())login(activity,configuration,allowed,result);},50);return;}
+        if(webCleaning){
+            webCleanup.whenComplete((ignored,failure)->{
+                if(failure!=null)result.done(null,failure);
+                else if(activity.isFinishing()||activity.isDestroyed()||!allowed.getAsBoolean())result.done(null,new IOException("ACCOUNT_OPERATION_CANCELLED"));
+                else login(activity,configuration,allowed,result);
+            });return;
+        }
         try {
             String appId=init(activity,configuration);
             AcAccountManager.getClient(appId).login(activity,rawResponse->{
@@ -87,5 +94,23 @@ final class AccountSdk {
                 });
             });
         }catch(Throwable failure){result.done(null,failure);}
+    }
+    static void clearWeb(long expected,java.util.function.Consumer<Throwable> result){
+        if(!HealthAccountStore.valid(expected)){result.accept(new IOException("ACCOUNT_OPERATION_CANCELLED"));return;}
+        if(webCleaning){result.accept(new IOException("ACCOUNT_WEB_CLEANING"));return;}
+        CompletableFuture<Void> cleanup=new CompletableFuture<>();webCleanup=cleanup;webCleaning=true;
+        android.os.Handler handler=new android.os.Handler(android.os.Looper.getMainLooper());
+        Runnable timeout=()->cleanup.completeExceptionally(new IOException("ACCOUNT_WEB_CLEANUP_TIMEOUT"));
+        cleanup.whenComplete((ignored,failure)->{handler.removeCallbacks(timeout);result.accept(failure);});
+        handler.postDelayed(timeout,10000);
+        try{android.webkit.CookieManager.getInstance().removeAllCookies(removed->{
+            Throwable error=null;
+            try{
+                if(!HealthAccountStore.valid(expected))throw new IOException("ACCOUNT_OPERATION_CANCELLED");
+                android.webkit.CookieManager.getInstance().flush();android.webkit.WebStorage.getInstance().deleteAllData();
+            }catch(Exception failure){error=failure;}
+            finally{webCleaning=false;}
+            if(error==null)cleanup.complete(null);else cleanup.completeExceptionally(error);
+        });}catch(RuntimeException failure){webCleaning=false;cleanup.completeExceptionally(failure);}
     }
 }

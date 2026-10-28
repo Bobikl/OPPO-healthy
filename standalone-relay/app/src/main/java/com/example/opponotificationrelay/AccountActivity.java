@@ -70,9 +70,8 @@ public final class AccountActivity extends OfficialUiActivity {
             runOnUiThread(()->{
                 if(isFinishing()||isDestroyed())return;
                 if(error!=null){busy=false;refresh(HealthAccountClient.message(error));return;}
-                if(!HealthAccountStore.valid(expected))return;AccountSdk.webCleaning=true;android.webkit.CookieManager.getInstance().removeAllCookies(removed->{
-                    AccountSdk.webCleaning=false;if(!HealthAccountStore.valid(expected))return;android.webkit.CookieManager.getInstance().flush();android.webkit.WebStorage.getInstance().deleteAllData();
-                    if(isFinishing()||isDestroyed()||!HealthAccountStore.valid(expected))return;busy=false;refresh("已退出本应用账号。");
+                if(!HealthAccountStore.valid(expected))return;AccountSdk.clearWeb(expected,cleanupFailure->{
+                    if(isFinishing()||isDestroyed()||!HealthAccountStore.valid(expected))return;busy=false;refresh(cleanupFailure==null?"已退出本应用账号。":HealthAccountClient.message(cleanupFailure));
                 });
             });
         });

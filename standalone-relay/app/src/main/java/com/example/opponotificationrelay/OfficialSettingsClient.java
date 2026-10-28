@@ -106,7 +106,11 @@ public final class OfficialSettingsClient {
                 finally{closeChild();}
             }
             throw new IllegalStateException("ROOT_UNAVAILABLE",last);
-        } finally {try{if(lease!=null)lease.close();}finally{BUSY.set(false);}}
+        } finally {
+            try{if(lease!=null)lease.close();}
+            catch(Exception cleanup){FileLogger.w("SettingsWrite","LEASE_RELEASE_FAILED");}
+            finally{BUSY.set(false);}
+        }
     }
     static OfficialSettingsPreview decode(String text) throws Exception {
         JSONObject json=new JSONObject(text);

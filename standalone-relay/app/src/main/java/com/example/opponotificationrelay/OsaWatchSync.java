@@ -9,7 +9,7 @@ public final class OsaWatchSync {
   RfcommWearTransport transport=RfcommWearTransport.getInstance(c);long until=Math.min(deadline,SystemClock.elapsedRealtime()+30000);CountDownLatch done=new CountDownLatch(1);boolean[] accepted={false};byte[][] body={null};String[] detail={""};boolean queued=false;long generation=-1;
   while(!queued){guard(c,device,cancelled,until);OafHealthChannel.Snapshot state=transport.healthSettings();if(!state.connected&&!state.busy)transport.requestHealthSettings();else if(state.connected&&!state.busy){generation=transport.healthConnection();queued=transport.readOsa(request,(ok,value,message)->{accepted[0]=ok;body[0]=value;detail[0]=message;done.countDown();});}if(!queued)Thread.sleep(100);}
   while(!done.await(100,TimeUnit.MILLISECONDS))guard(c,device,cancelled,until);
-  guard(c,device,cancelled,deadline);if(!accepted[0]||generation!=transport.healthConnection()||body[0]==null)throw new IOException("OSA_WATCH_RESPONSE_"+request.cid+"_"+(detail[0]!=null&&detail[0].matches("[A-Z_]{1,64}")?detail[0]:"UNCONFIRMED"));request.validate(body[0]);return body[0];
+  guard(c,device,cancelled,deadline);if(!accepted[0]||generation!=transport.healthConnection()||body[0]==null)throw new IOException("OSA_WATCH_RESPONSE_"+request.cid+"_"+(detail[0]!=null&&detail[0].matches("[A-Z_]{1,64}")?detail[0]:"UNCONFIRMED"));return body[0];
  }
  public static Result sync(Context context,BooleanSupplier cancelled)throws Exception {
   Context c=context.getApplicationContext();String device=RelayConfig.getTargetMac(c);if(device==null||device.isEmpty())throw new IOException("OSA_NO_DEVICE");long deadline=SystemClock.elapsedRealtime()+120000;int end=(int)(System.currentTimeMillis()/1000),start=end-86400;
